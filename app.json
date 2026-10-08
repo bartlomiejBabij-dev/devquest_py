@@ -1,36 +1,35 @@
 {
   "expo": {
-    "name": "devquest_py",
-    "slug": "devquest_py",
+    "name": "DevQuest",
+    "slug": "devquest",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
-    "scheme": "devquestpy",
-    "userInterfaceStyle": "automatic",
+    "icon": "./assets/images/devquest-icon.png",
+    "scheme": "devquest",
+    "userInterfaceStyle": "dark",
     "ios": {
-      "icon": "./assets/expo.icon"
+      "icon": "./assets/images/devquest-icon.png"
     },
     "android": {
+      "softwareKeyboardLayoutMode": "resize",
       "adaptiveIcon": {
-        "backgroundColor": "#E6F4FE",
-        "foregroundImage": "./assets/images/android-icon-foreground.png",
-        "backgroundImage": "./assets/images/android-icon-background.png",
-        "monochromeImage": "./assets/images/android-icon-monochrome.png"
+        "backgroundColor": "#0D1024",
+        "foregroundImage": "./assets/images/devquest-icon.png"
       },
       "predictiveBackGestureEnabled": false
     },
     "web": {
       "output": "static",
-      "favicon": "./assets/images/favicon.png"
+      "favicon": "./assets/images/devquest-icon.png"
     },
     "plugins": [
       "expo-router",
       [
         "expo-splash-screen",
         {
-          "backgroundColor": "#208AEF",
-          "image": "./assets/images/splash-icon.png",
-          "imageWidth": 76
+          "backgroundColor": "#0D1024",
+          "image": "./assets/images/devquest-icon.png",
+          "imageWidth": 120
         }
       ]
     ],

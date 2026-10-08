@@ -1,56 +1,24 @@
-# Welcome to your Expo app 👋
+# DevQuest — Stage 2 prototype
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+A local, playable Expo prototype of a fantasy RPG that teaches beginner Python concepts through a three-spell battle. Stage 2 adds responsive battle layout, keyboard-aware scrolling, combat effects, and a victory reward reveal.
 
-## Get started
+## Run in Expo Go
 
-1. Install dependencies
+1. Install Node.js and the [Expo Go](https://expo.dev/go) app on an Android or iOS phone.
+2. From this folder, run `npm install` and then `npx expo start`.
+3. Scan the QR code with Expo Go on Android or the Camera app on iOS. Keep the phone and computer on the same network. If local network discovery fails, run `npx expo start --tunnel`.
 
-   ```bash
-   npm install
-   ```
+## Checks
 
-2. Start the app
+Run `npx tsc --noEmit` for strict TypeScript checking and `npm run lint` for the Expo lint check.
 
-   ```bash
-   npx expo start
-   ```
+## Structure
 
-In the output, you'll find options to open the app in a
+- `src/app`: three Expo Router screens.
+- `src/components`: reusable game UI and original shapes-based character art.
+- `src/game`: challenge data, pure battle reducer, and in-memory game context.
+- `src/theme.ts`: visual theme colors.
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+Answers are checked against local challenge data; no Python code is executed. Progress is kept only in memory and resets on relaunch.
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
-
-```bash
-npm run reset-project
-```
-
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
-
-### Other setup steps
-
-- To set up ESLint for linting, run `npx expo lint`, or follow our guide on ["Using ESLint and Prettier"](https://docs.expo.dev/guides/using-eslint/)
-- If you'd like to set up unit testing, follow our guide on ["Unit Testing with Jest"](https://docs.expo.dev/develop/unit-testing/)
-- Learn more about the TypeScript setup in this template in our guide on ["Using TypeScript"](https://docs.expo.dev/guides/typescript/)
-
-## Learn more
-
-To learn more about developing your project with Expo, look at the following resources:
-
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+The battle screen scrolls on shorter phones. With the keyboard open, the answer and Cast Spell button should remain reachable; the keyboard's Done action also submits the answer.

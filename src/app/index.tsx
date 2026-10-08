@@ -1,98 +1,54 @@
-import * as Device from 'expo-device';
-import { Platform, StyleSheet } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-
-import { AnimatedIcon } from '@/components/animated-icon';
-import { HintRow } from '@/components/hint-row';
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
-import { WebBadge } from '@/components/web-badge';
-import { BottomTabInset, MaxContentWidth, Spacing } from '@/constants/theme';
-
-function getDevMenuHint() {
-  if (Platform.OS === 'web') {
-    return <ThemedText type="small">use browser devtools</ThemedText>;
-  }
-  if (Device.isDevice) {
-    return (
-      <ThemedText type="small">
-        shake device or press <ThemedText type="code">m</ThemedText> in terminal
-      </ThemedText>
-    );
-  }
-  const shortcut = Platform.OS === 'android' ? 'cmd+m (or ctrl+m)' : 'cmd+d';
-  return (
-    <ThemedText type="small">
-      press <ThemedText type="code">{shortcut}</ThemedText>
-    </ThemedText>
-  );
-}
+import { useRouter } from 'expo-router';
+import { StyleSheet, Text, View } from 'react-native';
+import { CharacterArt } from '@/components/CharacterArt';
+import { GameButton } from '@/components/GameButton';
+import { GameScreen } from '@/components/GameScreen';
+import { useGame } from '@/game/GameContext';
+import { colors } from '@/theme';
 
 export default function HomeScreen() {
+  const router = useRouter();
+  const { dispatch } = useGame();
   return (
-    <ThemedView style={styles.container}>
-      <SafeAreaView style={styles.safeArea}>
-        <ThemedView style={styles.heroSection}>
-          <AnimatedIcon />
-          <ThemedText type="title" style={styles.title}>
-            Welcome to&nbsp;Expo
-          </ThemedText>
-        </ThemedView>
+    <GameScreen>
+      <View style={styles.header}>
+        <Text style={styles.eyebrow}>✦  A PYTHON RPG  ✦</Text>
+        <Text style={styles.logo}>DEV<Text style={styles.logoAccent}>QUEST</Text></Text>
+        <Text style={styles.subtitle}>Your Code Is Your Weapon</Text>
+      </View>
 
-        <ThemedText type="code" style={styles.code}>
-          get started
-        </ThemedText>
+      <View style={styles.heroCard}>
+        <View style={styles.cardTop}><Text style={styles.tag}>YOUR HERO</Text><Text style={styles.level}>LVL 01</Text></View>
+        <CharacterArt kind="hero" />
+        <Text style={styles.heroName}>Python Pyromancer</Text>
+        <Text style={styles.heroClass}>Apprentice of the Arcane Syntax</Text>
+        <View style={styles.xpRow}><Text style={styles.xpLabel}>EXPERIENCE</Text><Text style={styles.xpValue}>0 / 100 XP</Text></View>
+        <View style={styles.xpTrack}><View style={styles.xpFill} /></View>
+      </View>
 
-        <ThemedView type="backgroundElement" style={styles.stepContainer}>
-          <HintRow
-            title="Try editing"
-            hint={<ThemedText type="code">src/app/index.tsx</ThemedText>}
-          />
-          <HintRow title="Dev tools" hint={getDevMenuHint()} />
-          <HintRow
-            title="Fresh start"
-            hint={<ThemedText type="code">npm run reset-project</ThemedText>}
-          />
-        </ThemedView>
-
-        {Platform.OS === 'web' && <WebBadge />}
-      </SafeAreaView>
-    </ThemedView>
+      <View style={styles.intro}><Text style={styles.introIcon}>✧</Text><Text style={styles.introText}>A Bug Goblin blocks your path. Complete three tiny Python spells to defeat it and claim your first victory.</Text></View>
+      <View style={styles.bottom}><GameButton label="Start Adventure" onPress={() => { dispatch({ type: 'reset' }); router.push('/battle'); }} /><Text style={styles.footer}>THREE SPELLS  ·  ONE EPIC BATTLE</Text></View>
+    </GameScreen>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    flexDirection: 'row',
-  },
-  safeArea: {
-    flex: 1,
-    paddingHorizontal: Spacing.four,
-    alignItems: 'center',
-    gap: Spacing.three,
-    paddingBottom: BottomTabInset + Spacing.three,
-    maxWidth: MaxContentWidth,
-  },
-  heroSection: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    flex: 1,
-    paddingHorizontal: Spacing.four,
-    gap: Spacing.four,
-  },
-  title: {
-    textAlign: 'center',
-  },
-  code: {
-    textTransform: 'uppercase',
-  },
-  stepContainer: {
-    gap: Spacing.three,
-    alignSelf: 'stretch',
-    paddingHorizontal: Spacing.three,
-    paddingVertical: Spacing.four,
-    borderRadius: Spacing.four,
-  },
+  header: { alignItems: 'center', paddingTop: 10, paddingBottom: 25 },
+  eyebrow: { color: colors.violet, fontSize: 11, fontWeight: '800', letterSpacing: 3 },
+  logo: { marginTop: 10, color: colors.text, fontSize: 40, fontWeight: '900', letterSpacing: 1.2 },
+  logoAccent: { color: colors.gold }, subtitle: { color: colors.muted, fontSize: 15, marginTop: 3, letterSpacing: 0.5 },
+  heroCard: { backgroundColor: colors.panel, borderRadius: 24, borderWidth: 1, borderColor: colors.border, paddingHorizontal: 22, paddingTop: 17, paddingBottom: 21, alignItems: 'center' },
+  cardTop: { flexDirection: 'row', alignSelf: 'stretch', justifyContent: 'space-between', alignItems: 'center' },
+  tag: { color: colors.violet, fontSize: 11, fontWeight: '900', letterSpacing: 2 },
+  level: { color: colors.gold, fontSize: 12, fontWeight: '900', backgroundColor: '#39314B', borderRadius: 8, overflow: 'hidden', paddingHorizontal: 10, paddingVertical: 5 },
+  heroName: { color: colors.text, fontSize: 23, fontWeight: '900', marginTop: 2 },
+  heroClass: { color: colors.muted, fontSize: 12, marginTop: 5 },
+  xpRow: { alignSelf: 'stretch', flexDirection: 'row', justifyContent: 'space-between', marginTop: 22 },
+  xpLabel: { color: colors.muted, fontSize: 10, fontWeight: '800', letterSpacing: 1.7 },
+  xpValue: { color: colors.gold, fontSize: 11, fontWeight: '800' },
+  xpTrack: { alignSelf: 'stretch', height: 9, borderRadius: 8, backgroundColor: '#11152C', marginTop: 8, overflow: 'hidden' },
+  xpFill: { width: '2%', height: '100%', borderRadius: 8, backgroundColor: colors.gold },
+  intro: { flexDirection: 'row', alignItems: 'center', marginTop: 20, backgroundColor: '#171B36', borderRadius: 16, padding: 17, gap: 12, borderWidth: 1, borderColor: '#35385C' },
+  introIcon: { color: colors.gold, fontSize: 28 }, introText: { flex: 1, color: colors.muted, lineHeight: 20, fontSize: 13 },
+  bottom: { marginTop: 'auto', paddingTop: 25 }, footer: { color: '#747797', textAlign: 'center', fontSize: 10, fontWeight: '800', letterSpacing: 1.8, marginTop: 15 },
 });
