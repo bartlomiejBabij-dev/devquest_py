@@ -1,6 +1,6 @@
-# DevQuest — Stage 3C.1 world missions
+# DevQuest — Stage 3C.2B world missions
 
-A local, playable Expo prototype of a fantasy RPG that teaches beginner Python concepts. The Forest of Variables map leads to six playable missions using the in-memory progression model. The original three-spell Goblin battle remains playable from Home.
+A local, playable Expo prototype of a fantasy RPG that teaches beginner Python concepts. The Forest of Variables map leads to six five-exercise missions using the in-memory progression model. The original three-spell Goblin battle remains playable from Home.
 
 ## Run in Expo Go
 
@@ -10,7 +10,7 @@ A local, playable Expo prototype of a fantasy RPG that teaches beginner Python c
 
 ## Checks
 
-Run `npx tsc --noEmit` for strict TypeScript checking, `npm run lint` for the Expo lint check, and `npm test` for progression and existing battle logic.
+Run `npx tsc --noEmit` for strict TypeScript checking, `npm run lint` for the Expo lint check, and `npm test` for mission, progression, content, and battle logic.
 
 ## Structure
 
@@ -19,6 +19,6 @@ Run `npx tsc --noEmit` for strict TypeScript checking, `npm run lint` for the Ex
 - `src/game`: battle data and reducer, world content, pure exercise validation, mission submissions, progression logic, and in-memory game context.
 - `src/theme.ts`: visual theme colors.
 
-Answers are checked against local challenge data; no Python code is executed. World progression is held in memory and resets on relaunch. Correct world mission answers award configured XP once and unlock later chapters. Replays remain available without awarding XP again. The Goblin prototype has its own battle and Victory flow; its decorative reward is separate from world mission XP.
+Answers are checked against local challenge data; no Python code is executed. World progression is held in memory and resets on relaunch. All five mission spells must be solved before the configured XP is awarded and the next chapter unlocks. An unfinished attempt restarts from its first spell. Replays remain available without awarding XP again. The Goblin prototype has its own battle and Victory flow; its decorative reward is separate from world mission XP.
 
 The battle screen scrolls on shorter phones. With the keyboard open, the answer and Cast Spell button should remain reachable; the keyboard's Done action also submits the answer.

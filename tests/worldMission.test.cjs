@@ -9,67 +9,135 @@ require.extensions['.ts'] = (module, filename) => {
   module._compile(compiled.outputText, filename);
 };
 
-const { getPlayableMission, submitWorldMission } = require('../src/game/worldMission.ts');
+const { continueMissionAttempt, getPlayableMission, startMissionAttempt, submitMissionAnswer } = require('../src/game/worldMission.ts');
 const { initialProgressionState, getChapterProgress, getTotalEarnedXp, getWorldProgress, isChapterUnlocked } = require('../src/game/progression.ts');
 const { chapters, exercises, forestOfVariables, missions } = require('../src/game/worldContent.ts');
 const { battleReducer, initialBattleState } = require('../src/game/battle.ts');
 const { challenges } = require('../src/game/challenges.ts');
 
-test('Available mission opens with its linked exercise; locked and invalid routes do not', () => {
-  assert.equal(getPlayableMission(initialProgressionState, missions[0].id).exercise.id, missions[0].exerciseIds[0]);
-  assert.equal(getPlayableMission(initialProgressionState, missions[1].id), null);
-  assert.equal(getPlayableMission(initialProgressionState, 'not-a-mission'), null);
-});
+function answerCurrent(progress, attempt) {
+  const playable = getPlayableMission(progress, attempt.missionId);
+  const exercise = playable.exercises[attempt.exerciseIndex];
+  return submitMissionAnswer(progress, attempt, exercise.validation.acceptedAnswers[0]);
+}
 
-test('Wrong, locked, and invalid submissions cannot change XP or progress', () => {
-  for (const [id, answer, status] of [
-    [missions[0].id, 'wrong', 'incorrect'],
-    [missions[1].id, exercises[1].validation.acceptedAnswers[0], 'unavailable'],
-    ['not-a-mission', 'print', 'unavailable'],
-  ]) {
-    const result = submitWorldMission(initialProgressionState, id, answer);
-    assert.equal(result.status, status);
-    assert.equal(result.xpAwarded, 0);
-    assert.strictEqual(result.progress, initialProgressionState);
-    assert.equal(getTotalEarnedXp(result.progress), 0);
+test('All six missions load five playable exercises in their defined order', () => {
+  let progress = initialProgressionState;
+  for (const mission of missions) {
+    const playable = getPlayableMission(progress, mission.id);
+    assert.ok(playable);
+    assert.equal(playable.exercises.length, 5);
+    assert.deepEqual(playable.exercises.map((exercise) => exercise.id), mission.exerciseIds);
+    progress = { completedMissionIds: [...progress.completedMissionIds, mission.id] };
   }
 });
 
-test('Correct answer awards configured XP once, updates progress, and unlocks the next chapter', () => {
-  const first = submitWorldMission(initialProgressionState, missions[0].id, exercises[0].validation.acceptedAnswers[0]);
-  assert.equal(first.status, 'correct');
-  assert.equal(first.xpAwarded, missions[0].xpReward);
-  assert.equal(first.totalXp, missions[0].xpReward);
-  assert.deepEqual(first.newlyUnlockedChapterIds, [chapters[1].id]);
-  assert.equal(isChapterUnlocked(first.progress, chapters[1].id), true);
-  assert.deepEqual(getChapterProgress(first.progress, chapters[0].id), { completed: 1, total: 1, percent: 100 });
-  assert.deepEqual(getWorldProgress(first.progress, forestOfVariables.id), { completed: 1, total: 6, percent: 17 });
-
-  const duplicate = submitWorldMission(first.progress, missions[0].id, exercises[0].validation.acceptedAnswers[0]);
-  assert.equal(getPlayableMission(first.progress, missions[0].id)?.mission.id, missions[0].id);
-  assert.equal(duplicate.status, 'correct');
-  assert.equal(duplicate.xpAwarded, 0);
-  assert.equal(duplicate.totalXp, first.totalXp);
-  assert.deepEqual(duplicate.newlyUnlockedChapterIds, []);
-  assert.strictEqual(duplicate.progress, first.progress);
+test('Locked and invalid missions cannot start or accept a forged attempt', () => {
+  for (const id of [missions[1].id, 'not-a-mission']) {
+    assert.equal(startMissionAttempt(initialProgressionState, id), null);
+    assert.equal(getPlayableMission(initialProgressionState, id), null);
+    const forged = { missionId: id, exerciseIndex: 0, phase: 'answering', solvedExerciseIds: [], result: null };
+    const submission = submitMissionAnswer(initialProgressionState, forged, 'print');
+    assert.equal(submission.status, 'unavailable');
+    assert.strictEqual(submission.progress, initialProgressionState);
+    assert.equal(submission.xpAwarded, 0);
+  }
 });
 
-test('All six existing exercises can complete missions in sequence with expected XP', () => {
+test('A fabricated jump to the fifth exercise cannot award XP', () => {
+  const skipped = { missionId: missions[0].id, exerciseIndex: 4, phase: 'answering', solvedExerciseIds: [], result: null };
+  const finalAnswer = exercises.find((exercise) => exercise.id === missions[0].exerciseIds[4]).validation.acceptedAnswers[0];
+  const submission = submitMissionAnswer(initialProgressionState, skipped, finalAnswer);
+  assert.equal(submission.status, 'unavailable');
+  assert.equal(submission.xpAwarded, 0);
+  assert.strictEqual(submission.progress, initialProgressionState);
+});
+
+test('Wrong answers and duplicate submissions cannot advance or award XP', () => {
+  const attempt = startMissionAttempt(initialProgressionState, missions[0].id);
+  const wrong = submitMissionAnswer(initialProgressionState, attempt, 'definitely wrong');
+  assert.equal(wrong.status, 'incorrect');
+  assert.strictEqual(wrong.attempt, attempt);
+  assert.strictEqual(wrong.progress, initialProgressionState);
+  const correct = answerCurrent(initialProgressionState, attempt);
+  assert.equal(correct.status, 'correct');
+  assert.equal(correct.attempt.phase, 'solved');
+  assert.equal(correct.attempt.exerciseIndex, 0);
+  assert.equal(correct.xpAwarded, 0);
+  const duplicate = answerCurrent(initialProgressionState, correct.attempt);
+  assert.equal(duplicate.status, 'ignored');
+  assert.strictEqual(duplicate.attempt, correct.attempt);
+  assert.strictEqual(continueMissionAttempt(attempt, 5), attempt);
+  const next = continueMissionAttempt(correct.attempt, 5);
+  assert.equal(next.phase, 'answering');
+  assert.equal(next.exerciseIndex, 1);
+  assert.equal(next.result, null);
+});
+
+test('Exercises 1–4 award no XP; fifth correct answer completes and unlocks the next chapter', () => {
+  let progress = initialProgressionState;
+  let attempt = startMissionAttempt(progress, missions[0].id);
+  for (let index = 0; index < 5; index++) {
+    const submission = answerCurrent(progress, attempt);
+    assert.equal(submission.status, 'correct');
+    assert.equal(submission.attempt.exerciseIndex, index);
+    assert.equal(submission.attempt.phase, 'solved');
+    assert.equal(submission.xpAwarded, index === 4 ? missions[0].xpReward : 0);
+    progress = submission.progress;
+    assert.equal(getTotalEarnedXp(progress), index === 4 ? missions[0].xpReward : 0);
+    if (index < 4) assert.equal(isChapterUnlocked(progress, chapters[1].id), false);
+    attempt = continueMissionAttempt(submission.attempt, 5);
+    assert.equal(attempt.phase, index === 4 ? 'complete' : 'answering');
+  }
+  assert.equal(attempt.result.totalXp, missions[0].xpReward);
+  assert.deepEqual(attempt.result.newlyUnlockedChapterIds, [chapters[1].id]);
+  assert.equal(isChapterUnlocked(progress, chapters[1].id), true);
+  assert.deepEqual(getChapterProgress(progress, chapters[0].id), { completed: 1, total: 1, percent: 100 });
+  assert.deepEqual(getWorldProgress(progress, forestOfVariables.id), { completed: 1, total: 6, percent: 17 });
+});
+
+test('Exiting after four spells restarts from one and cannot award XP', () => {
+  let attempt = startMissionAttempt(initialProgressionState, missions[0].id);
+  for (let index = 0; index < 4; index++) {
+    const submission = answerCurrent(initialProgressionState, attempt);
+    assert.equal(submission.xpAwarded, 0);
+    assert.strictEqual(submission.progress, initialProgressionState);
+    attempt = continueMissionAttempt(submission.attempt, 5);
+  }
+  assert.equal(attempt.exerciseIndex, 4);
+  const restarted = startMissionAttempt(initialProgressionState, missions[0].id);
+  assert.equal(restarted.exerciseIndex, 0);
+  assert.equal(restarted.result, null);
+  assert.equal(getTotalEarnedXp(initialProgressionState), 0);
+});
+
+test('All 30 exercises complete in order; each mission pays once and replay pays zero', () => {
   assert.deepEqual(new Set(exercises.map((exercise) => exercise.type)), new Set(['fill-blank', 'choose-operator', 'predict-output', 'fix-mistake']));
   let progress = initialProgressionState;
   let earned = 0;
   for (const mission of missions) {
-    const exercise = exercises.find((item) => item.id === mission.exerciseIds[0]);
-    assert.equal(getPlayableMission(progress, mission.id)?.exercise.id, exercise.id);
-    const wrong = submitWorldMission(progress, mission.id, 'definitely wrong');
-    assert.equal(wrong.status, 'incorrect');
-    assert.strictEqual(wrong.progress, progress);
-    const result = submitWorldMission(progress, mission.id, exercise.validation.acceptedAnswers[0]);
-    assert.equal(result.status, 'correct');
-    assert.equal(result.xpAwarded, mission.xpReward);
+    let attempt = startMissionAttempt(progress, mission.id);
+    assert.ok(attempt);
+    for (let index = 0; index < 5; index++) {
+      const submission = answerCurrent(progress, attempt);
+      assert.equal(submission.status, 'correct');
+      assert.equal(submission.xpAwarded, index === 4 ? mission.xpReward : 0);
+      progress = submission.progress;
+      attempt = continueMissionAttempt(submission.attempt, 5);
+    }
+    assert.equal(attempt.phase, 'complete');
     earned += mission.xpReward;
-    assert.equal(result.totalXp, earned);
-    progress = result.progress;
+    assert.equal(attempt.result.totalXp, earned);
+    let replay = startMissionAttempt(progress, mission.id);
+    for (let index = 0; index < 5; index++) {
+      const submission = answerCurrent(progress, replay);
+      assert.equal(submission.xpAwarded, 0);
+      assert.strictEqual(submission.progress, progress);
+      replay = continueMissionAttempt(submission.attempt, 5);
+    }
+    assert.equal(replay.result.xpAwarded, 0);
+    assert.equal(replay.result.totalXp, earned);
+    assert.deepEqual(replay.result.newlyUnlockedChapterIds, []);
   }
   assert.equal(earned, forestOfVariables.xpReward);
   assert.deepEqual(getWorldProgress(progress, forestOfVariables.id), { completed: 6, total: 6, percent: 100 });

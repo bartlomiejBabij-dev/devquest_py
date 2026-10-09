@@ -11,7 +11,7 @@ require.extensions['.ts'] = (module, filename) => {
 
 const { chapters, exercises, missions } = require('../src/game/worldContent.ts');
 const { isExerciseAnswerCorrect } = require('../src/game/exerciseValidation.ts');
-const { getPlayableMission, submitWorldMission } = require('../src/game/worldMission.ts');
+const { continueMissionAttempt, getPlayableMission, startMissionAttempt, submitMissionAnswer } = require('../src/game/worldMission.ts');
 const { getTotalEarnedXp, initialProgressionState } = require('../src/game/progression.ts');
 
 const expectedSequenceIds = [
@@ -94,24 +94,22 @@ test('Explicit equivalent quotes are accepted without ignoring meaningful case o
   assert.equal(isExerciseAnswerCorrect(output, 'Hello,  Pyromancer'), false);
 });
 
-test('Stage 3C.1 still plays only the original first exercise and XP remains mission based', () => {
+test('Every authored exercise is playable in order and XP remains mission based', () => {
   let progress = initialProgressionState;
   for (let index = 0; index < missions.length; index++) {
     const mission = missions[index];
     const playable = getPlayableMission(progress, mission.id);
-    assert.equal(playable.exercise.id, expectedSequenceIds[index][0]);
-    const newExercise = exercises.find((exercise) => exercise.id === expectedSequenceIds[index][1]);
-    const incorrectForCurrent = submitWorldMission(progress, mission.id, newExercise.validation.acceptedAnswers[0]);
-    if (!isExerciseAnswerCorrect(playable.exercise, newExercise.validation.acceptedAnswers[0])) {
-      assert.equal(incorrectForCurrent.status, 'incorrect');
-      assert.strictEqual(incorrectForCurrent.progress, progress);
+    assert.deepEqual(playable.exercises.map((exercise) => exercise.id), expectedSequenceIds[index]);
+    let attempt = startMissionAttempt(progress, mission.id);
+    for (let exerciseIndex = 0; exerciseIndex < 5; exerciseIndex++) {
+      const exercise = playable.exercises[exerciseIndex];
+      const submission = submitMissionAnswer(progress, attempt, reviewedAnswers[index][exerciseIndex]);
+      assert.equal(submission.status, 'correct');
+      assert.equal(submission.xpAwarded, exerciseIndex === 4 ? mission.xpReward : 0);
+      progress = submission.progress;
+      attempt = continueMissionAttempt(submission.attempt, 5);
     }
-    const result = submitWorldMission(progress, mission.id, playable.exercise.validation.acceptedAnswers[0]);
-    assert.equal(result.status, 'correct');
-    assert.equal(result.xpAwarded, mission.xpReward);
-    progress = result.progress;
-    const replay = submitWorldMission(progress, mission.id, playable.exercise.validation.acceptedAnswers[0]);
-    assert.equal(replay.xpAwarded, 0);
+    assert.equal(attempt.phase, 'complete');
   }
   assert.equal(getTotalEarnedXp(progress), 300);
 });
