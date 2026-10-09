@@ -1,5 +1,5 @@
 import { useRouter } from 'expo-router';
-import { StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { CharacterArt } from '@/components/CharacterArt';
 import { GameButton } from '@/components/GameButton';
 import { GameScreen } from '@/components/GameScreen';
@@ -27,7 +27,14 @@ export default function HomeScreen() {
       </View>
 
       <View style={styles.intro}><Text style={styles.introIcon}>✧</Text><Text style={styles.introText}>A Bug Goblin blocks your path. Complete three tiny Python spells to defeat it and claim your first victory.</Text></View>
-      <View style={styles.bottom}><GameButton label="Start Adventure" onPress={() => { dispatch({ type: 'reset' }); router.push('/battle'); }} /><Text style={styles.footer}>THREE SPELLS  ·  ONE EPIC BATTLE</Text></View>
+      <View style={styles.bottom}>
+        <Pressable accessibilityRole="button" accessibilityLabel="Explore World Map" onPress={() => router.push('/world-map')}
+          style={({ pressed }) => [styles.mapButton, pressed && styles.mapButtonPressed]}>
+          <Text style={styles.mapButtonIcon}>✦</Text><Text style={styles.mapButtonLabel}>Explore World Map</Text><Text style={styles.mapButtonArrow}>›</Text>
+        </Pressable>
+        <GameButton label="Start Adventure" onPress={() => { dispatch({ type: 'reset' }); router.push('/battle'); }} />
+        <Text style={styles.footer}>THREE SPELLS  ·  ONE EPIC BATTLE</Text>
+      </View>
     </GameScreen>
   );
 }
@@ -51,4 +58,9 @@ const styles = StyleSheet.create({
   intro: { flexDirection: 'row', alignItems: 'center', marginTop: 20, backgroundColor: '#171B36', borderRadius: 16, padding: 17, gap: 12, borderWidth: 1, borderColor: '#35385C' },
   introIcon: { color: colors.gold, fontSize: 28 }, introText: { flex: 1, color: colors.muted, lineHeight: 20, fontSize: 13 },
   bottom: { marginTop: 'auto', paddingTop: 25 }, footer: { color: '#747797', textAlign: 'center', fontSize: 10, fontWeight: '800', letterSpacing: 1.8, marginTop: 15 },
+  mapButton: { minHeight: 58, borderRadius: 16, borderWidth: 1.5, borderColor: colors.green, backgroundColor: '#1D393A', flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 9, marginBottom: 12, paddingHorizontal: 22 },
+  mapButtonPressed: { transform: [{ scale: 0.98 }], opacity: 0.85 },
+  mapButtonIcon: { color: colors.green, fontSize: 19 },
+  mapButtonLabel: { color: colors.text, fontSize: 16, fontWeight: '900' },
+  mapButtonArrow: { color: colors.green, fontSize: 27, position: 'absolute', right: 18, top: 10 },
 });

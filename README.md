@@ -1,6 +1,6 @@
-# DevQuest — Stage 3A foundation
+# DevQuest — Stage 3B world map
 
-A local, playable Expo prototype of a fantasy RPG that teaches beginner Python concepts through a three-spell battle. Stage 3A adds a data-only six-chapter Python world and serializable, in-memory progression logic. The existing battle and screens are unchanged.
+A local, playable Expo prototype of a fantasy RPG that teaches beginner Python concepts through a three-spell battle. The World Map previews all six chapters of Forest of Variables using the in-memory Stage 3A progression model. The original Goblin battle remains playable from Home.
 
 ## Run in Expo Go
 
@@ -14,11 +14,11 @@ Run `npx tsc --noEmit` for strict TypeScript checking, `npm run lint` for the Ex
 
 ## Structure
 
-- `src/app`: three Expo Router screens.
+- `src/app`: Home, World Map, Battle, and Victory routes.
 - `src/components`: reusable game UI and original shapes-based character art.
 - `src/game`: battle data and reducer, world content, pure exercise validation and progression logic, and in-memory game context.
 - `src/theme.ts`: visual theme colors.
 
-Answers are checked against local challenge data; no Python code is executed. World progression is held in memory and resets on relaunch. The new missions are not connected to the current battle or Victory screen.
+Answers are checked against local challenge data; no Python code is executed. World progression is held in memory and resets on relaunch. Chapter panels are read-only previews; the new missions are not connected to the current battle or Victory screen and viewing a chapter does not award XP.
 
 The battle screen scrolls on shorter phones. With the keyboard open, the answer and Cast Spell button should remain reachable; the keyboard's Done action also submits the answer.
