@@ -1,6 +1,6 @@
-# DevQuest — Stage 3B world map
+# DevQuest — Stage 3C.1 world missions
 
-A local, playable Expo prototype of a fantasy RPG that teaches beginner Python concepts through a three-spell battle. The World Map previews all six chapters of Forest of Variables using the in-memory Stage 3A progression model. The original Goblin battle remains playable from Home.
+A local, playable Expo prototype of a fantasy RPG that teaches beginner Python concepts. The Forest of Variables map leads to six playable missions using the in-memory progression model. The original three-spell Goblin battle remains playable from Home.
 
 ## Run in Expo Go
 
@@ -14,11 +14,11 @@ Run `npx tsc --noEmit` for strict TypeScript checking, `npm run lint` for the Ex
 
 ## Structure
 
-- `src/app`: Home, World Map, Battle, and Victory routes.
+- `src/app`: Home, World Map, world mission, Battle, and Victory routes.
 - `src/components`: reusable game UI and original shapes-based character art.
-- `src/game`: battle data and reducer, world content, pure exercise validation and progression logic, and in-memory game context.
+- `src/game`: battle data and reducer, world content, pure exercise validation, mission submissions, progression logic, and in-memory game context.
 - `src/theme.ts`: visual theme colors.
 
-Answers are checked against local challenge data; no Python code is executed. World progression is held in memory and resets on relaunch. Chapter panels are read-only previews; the new missions are not connected to the current battle or Victory screen and viewing a chapter does not award XP.
+Answers are checked against local challenge data; no Python code is executed. World progression is held in memory and resets on relaunch. Correct world mission answers award configured XP once and unlock later chapters. Replays remain available without awarding XP again. The Goblin prototype has its own battle and Victory flow; its decorative reward is separate from world mission XP.
 
 The battle screen scrolls on shorter phones. With the keyboard open, the answer and Cast Spell button should remain reachable; the keyboard's Done action also submits the answer.

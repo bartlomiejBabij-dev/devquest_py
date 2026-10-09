@@ -5,7 +5,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useReducedMotion } from 'react-native-reanimated';
 import { GameScreen } from '@/components/GameScreen';
 import { useGame } from '@/game/GameContext';
-import { getChapterProgress, getTotalEarnedXp, getWorldProgress, isChapterCompleted, isChapterUnlocked, isMissionCompleted } from '@/game/progression';
+import { getChapterProgress, getTotalEarnedXp, getWorldProgress, isChapterCompleted, isChapterUnlocked, isMissionCompleted, isMissionUnlocked } from '@/game/progression';
 import { chapters, forestOfVariables, missions } from '@/game/worldContent';
 import type { Chapter, ProgressionState } from '@/game/worldTypes';
 import { colors } from '@/theme';
@@ -54,8 +54,8 @@ function ChapterNode({ chapter, index, state, onPress, pulse }: {
   );
 }
 
-function ChapterDetails({ chapter, index, progress, onClose }: {
-  chapter: Chapter; index: number; progress: ProgressionState; onClose: () => void;
+function ChapterDetails({ chapter, index, progress, onClose, onOpenMission }: {
+  chapter: Chapter; index: number; progress: ProgressionState; onClose: () => void; onOpenMission: (missionId: string) => void;
 }) {
   const state = getChapterState(progress, chapter);
   const completion = getChapterProgress(progress, chapter.id);
@@ -103,15 +103,20 @@ function ChapterDetails({ chapter, index, progress, onClose }: {
             </View>
           ) : (
             <View style={styles.missionsSection}>
-              <Text style={styles.detailLabel}>MISSION PREVIEW</Text>
+              <Text style={styles.detailLabel}>MISSIONS</Text>
               {chapterMissions.map((mission) => (
                 <View key={mission.id} style={styles.missionPreview}>
                   <View style={styles.missionPreviewTop}><Text style={styles.missionTitle}>{mission.title}</Text><Text style={styles.missionXp}>+{mission.xpReward} XP</Text></View>
                   <Text style={styles.missionDescription}>{mission.description}</Text>
                   {isMissionCompleted(progress, mission.id) ? <Text style={styles.missionComplete}>✓  COMPLETED</Text> : null}
+                  {isMissionUnlocked(progress, mission.id) ? (
+                    <Pressable onPress={() => onOpenMission(mission.id)} accessibilityRole="button" accessibilityLabel={`${isMissionCompleted(progress, mission.id) ? 'Replay' : 'Start'} ${mission.title}`}
+                      style={({ pressed }) => [styles.missionAction, pressed && styles.pressed]}>
+                      <Text style={styles.missionActionText}>{isMissionCompleted(progress, mission.id) ? 'REPLAY MISSION' : 'START MISSION'}  ›</Text>
+                    </Pressable>
+                  ) : <Text style={styles.missionComplete}>LOCKED</Text>}
                 </View>
               ))}
-              <Text style={styles.previewNote}>Mission gameplay will be connected in Stage 3C.</Text>
             </View>
           )}
         </ScrollView>
@@ -197,7 +202,11 @@ export default function WorldMapScreen() {
 
       <Modal transparent visible={!!selectedChapter} animationType="fade" onRequestClose={() => setSelectedId(null)} statusBarTranslucent>
         <SafeAreaView style={styles.modalSafe} edges={['top', 'bottom']}>
-          {selectedChapter ? <ChapterDetails chapter={selectedChapter} index={chapterList.indexOf(selectedChapter)} progress={progression} onClose={() => setSelectedId(null)} /> : null}
+          {selectedChapter ? <ChapterDetails chapter={selectedChapter} index={chapterList.indexOf(selectedChapter)} progress={progression} onClose={() => setSelectedId(null)} onOpenMission={(missionId) => {
+            if (!isMissionUnlocked(progression, missionId)) return;
+            setSelectedId(null);
+            router.push({ pathname: '/mission/[missionId]', params: { missionId } });
+          }} /> : null}
         </SafeAreaView>
       </Modal>
     </>
@@ -303,5 +312,6 @@ const styles = StyleSheet.create({
   missionXp: { color: colors.gold, fontSize: 10, fontWeight: '900' },
   missionDescription: { color: colors.muted, fontSize: 12, lineHeight: 18, marginTop: 6 },
   missionComplete: { color: colors.green, fontSize: 10, fontWeight: '900', marginTop: 9 },
-  previewNote: { color: '#B8B4C9', fontSize: 12, lineHeight: 18, textAlign: 'center', marginTop: 18 },
+  missionAction: { alignSelf: 'flex-start', minHeight: 44, minWidth: 145, borderRadius: 11, backgroundColor: '#315147', borderWidth: 1, borderColor: colors.green, justifyContent: 'center', paddingHorizontal: 13, marginTop: 12 },
+  missionActionText: { color: colors.text, fontSize: 11, fontWeight: '900', letterSpacing: 0.6 },
 });
