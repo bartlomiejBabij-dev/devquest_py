@@ -32,7 +32,9 @@ export interface Mission {
 
 interface ExerciseBase {
   id: string;
+  chapterId: string;
   languageId: string;
+  difficulty: 'intro' | 'practice' | 'challenge';
   concept: string;
   prompt: string;
   code: string;

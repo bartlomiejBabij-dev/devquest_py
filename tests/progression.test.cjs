@@ -19,10 +19,10 @@ const {
 const { battleReducer, initialBattleState } = require('../src/game/battle.ts');
 const { challenges } = require('../src/game/challenges.ts');
 
-test('World 1 content has six linked chapters, missions, and exercises with stable unique IDs', () => {
+test('World 1 content has six linked chapters and missions with 30 unique exercises', () => {
   assert.equal(chapters.length, 6);
   assert.equal(missions.length, 6);
-  assert.equal(exercises.length, 6);
+  assert.equal(exercises.length, 30);
   for (const items of [chapters, missions, exercises]) assert.equal(new Set(items.map((item) => item.id)).size, items.length);
   assert.deepEqual(forestOfVariables.chapterIds, chapters.map((chapter) => chapter.id));
   for (const chapter of chapters) {
