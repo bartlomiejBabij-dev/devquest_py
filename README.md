@@ -1,6 +1,6 @@
-# DevQuest — Stage 2 prototype
+# DevQuest — Stage 3A foundation
 
-A local, playable Expo prototype of a fantasy RPG that teaches beginner Python concepts through a three-spell battle. Stage 2 adds responsive battle layout, keyboard-aware scrolling, combat effects, and a victory reward reveal.
+A local, playable Expo prototype of a fantasy RPG that teaches beginner Python concepts through a three-spell battle. Stage 3A adds a data-only six-chapter Python world and serializable, in-memory progression logic. The existing battle and screens are unchanged.
 
 ## Run in Expo Go
 
@@ -10,15 +10,15 @@ A local, playable Expo prototype of a fantasy RPG that teaches beginner Python c
 
 ## Checks
 
-Run `npx tsc --noEmit` for strict TypeScript checking and `npm run lint` for the Expo lint check.
+Run `npx tsc --noEmit` for strict TypeScript checking, `npm run lint` for the Expo lint check, and `npm test` for progression and existing battle logic.
 
 ## Structure
 
 - `src/app`: three Expo Router screens.
 - `src/components`: reusable game UI and original shapes-based character art.
-- `src/game`: challenge data, pure battle reducer, and in-memory game context.
+- `src/game`: battle data and reducer, world content, pure exercise validation and progression logic, and in-memory game context.
 - `src/theme.ts`: visual theme colors.
 
-Answers are checked against local challenge data; no Python code is executed. Progress is kept only in memory and resets on relaunch.
+Answers are checked against local challenge data; no Python code is executed. World progression is held in memory and resets on relaunch. The new missions are not connected to the current battle or Victory screen.
 
 The battle screen scrolls on shorter phones. With the keyboard open, the answer and Cast Spell button should remain reachable; the keyboard's Done action also submits the answer.
