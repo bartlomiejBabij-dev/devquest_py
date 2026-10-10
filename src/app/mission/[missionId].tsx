@@ -4,9 +4,11 @@ import { Animated, Keyboard, Pressable, StyleSheet, Text, TextInput, View } from
 import { useReducedMotion } from 'react-native-reanimated';
 import { GameButton } from '@/components/GameButton';
 import { GameScreen } from '@/components/GameScreen';
+import { GoblinKingEncounter } from '@/components/GoblinKingEncounter';
+import { getGoblinKingHp, isGoblinKingMission } from '@/game/boss';
 import { useGame } from '@/game/GameContext';
-import { getTotalEarnedXp } from '@/game/progression';
-import { chapters, missions } from '@/game/worldContent';
+import { getTotalEarnedXp, getWorldProgress } from '@/game/progression';
+import { chapters, forestOfVariables, missions } from '@/game/worldContent';
 import { continueMissionAttempt, getPlayableMission, startMissionAttempt, submitMissionAnswer, type MissionAttempt } from '@/game/worldMission';
 import { colors } from '@/theme';
 
@@ -27,6 +29,7 @@ export default function WorldMissionScreen() {
   const [spellPulse] = useState(() => new Animated.Value(0));
   const playable = getPlayableMission(progression, missionId);
   const knownMission = missions.find((item) => item.id === missionId);
+  const bossMission = isGoblinKingMission(missionId);
 
   useEffect(() => { currentProgress.current = progression; }, [progression]);
   useEffect(() => {
@@ -72,7 +75,8 @@ export default function WorldMissionScreen() {
         Animated.timing(spellPulse, { toValue: 0.55, duration: 370, useNativeDriver: true }),
       ]).start();
     }
-    revealTimer.current = setTimeout(() => setAnimationDone(true), reduceMotion ? 150 : 690);
+    const bossDefeated = bossMission && getGoblinKingHp(submission.attempt) === 0;
+    revealTimer.current = setTimeout(() => setAnimationDone(true), reduceMotion ? 150 : bossDefeated ? 880 : 690);
   }
 
   function continueAfterSpell() {
@@ -121,6 +125,8 @@ export default function WorldMissionScreen() {
   const solved = attempt.phase === 'solved';
   const result = attempt.result;
   const newlyUnlocked = result?.newlyUnlockedChapterIds.map((id) => chapters.find((item) => item.id === id)?.title).filter(Boolean) ?? [];
+  const bossHp = bossMission ? getGoblinKingHp(attempt) : null;
+  const worldCompletion = bossMission ? getWorldProgress(progression, forestOfVariables.id) : null;
 
   return (
     <GameScreen compact scrollToEndOnKeyboard>
@@ -130,15 +136,17 @@ export default function WorldMissionScreen() {
       </View>
 
       {attempt.phase === 'complete' && result ? (
-        <View style={styles.resultCard}>
-          <Text style={styles.resultGlyph}>✦</Text>
+        <View style={[styles.resultCard, bossMission && styles.bossResultCard]}>
+          <Text style={styles.resultGlyph}>{bossMission ? '♛' : '✦'}</Text>
           <Text style={styles.overline}>FIVE SPELLS CAST</Text>
-          <Text style={styles.resultTitle}>MISSION COMPLETE!</Text>
+          <Text style={[styles.resultTitle, bossMission && styles.bossResultTitle]}>{bossMission ? 'GOBLIN KING DEFEATED!' : 'MISSION COMPLETE!'}</Text>
+          {bossMission ? <Text style={styles.worldClear}>WORLD 1 CLEARED!</Text> : null}
           <Text style={styles.body}>{mission.title}</Text>
           <View style={styles.rewardRow}>
             <View style={styles.rewardStat}><Text style={styles.rewardValue}>+{result.xpAwarded}</Text><Text style={styles.rewardLabel}>XP EARNED</Text></View>
             <View style={styles.rewardStat}><Text style={styles.rewardValue}>{result.totalXp}</Text><Text style={styles.rewardLabel}>TOTAL WORLD XP</Text></View>
           </View>
+          {bossMission ? <Text style={styles.worldCompletion}>WORLD 1 COMPLETION  ·  {worldCompletion?.percent ?? 0}%</Text> : null}
           {result.xpAwarded === 0 ? <Text style={styles.replayNote}>Replay complete. XP was already earned.</Text> : null}
           {newlyUnlocked.length ? <Text style={styles.unlockText}>✦  New chapter unlocked: {newlyUnlocked.join(', ')}</Text> : null}
           <GameButton label="Return to World Map" onPress={returnToMap} style={styles.resultButton} />
@@ -146,7 +154,8 @@ export default function WorldMissionScreen() {
         </View>
       ) : (
         <>
-          <View style={styles.headerCard}>
+          {bossMission && bossHp !== null ? <GoblinKingEncounter hp={bossHp} hitCount={attempt.solvedExerciseIds.length} showDamage={solved} reducedMotion={!!reduceMotion} /> : null}
+          <View style={[styles.headerCard, bossMission && styles.bossHeaderCard]}>
             <Text style={styles.overline}>{chapter.title.toUpperCase()}  ·  PYTHON MISSION</Text>
             <Text style={styles.title}>{mission.title}</Text>
             <Text style={styles.body}>{mission.description}</Text>
@@ -202,6 +211,7 @@ const styles = StyleSheet.create({
   backText: { color: colors.muted, fontSize: 11, fontWeight: '900', letterSpacing: 1 },
   worldLabel: { color: colors.green, fontSize: 9, fontWeight: '900', letterSpacing: 1, flexShrink: 1, textAlign: 'right' },
   headerCard: { borderRadius: 21, backgroundColor: '#17332F', borderWidth: 1, borderColor: '#3F7767', padding: 20 },
+  bossHeaderCard: { backgroundColor: '#2A2038', borderColor: '#765D87', paddingVertical: 12, marginTop: 10 },
   overline: { color: colors.green, fontSize: 10, fontWeight: '900', letterSpacing: 1.5 },
   title: { color: colors.text, fontSize: 27, fontWeight: '900', marginTop: 7 },
   body: { color: colors.muted, fontSize: 14, lineHeight: 21, marginTop: 8 },
@@ -239,8 +249,12 @@ const styles = StyleSheet.create({
   continueButton: { marginTop: 19 },
   unavailableCard: { backgroundColor: colors.panel, borderWidth: 1, borderColor: colors.border, borderRadius: 20, padding: 22, marginVertical: 20 },
   resultCard: { backgroundColor: colors.panel, borderWidth: 1, borderColor: '#6D627B', borderRadius: 23, padding: 22, alignItems: 'center', marginTop: 32 },
+  bossResultCard: { borderColor: colors.gold, backgroundColor: '#282037' },
   resultGlyph: { color: colors.gold, fontSize: 59, marginBottom: 7 },
   resultTitle: { color: colors.gold, fontSize: 29, fontWeight: '900', textAlign: 'center', marginTop: 7 },
+  bossResultTitle: { fontSize: 25 },
+  worldClear: { color: colors.green, fontSize: 17, fontWeight: '900', letterSpacing: 1.3, marginTop: 10, textAlign: 'center' },
+  worldCompletion: { color: colors.green, fontSize: 11, fontWeight: '900', letterSpacing: 0.8, marginTop: 17, textAlign: 'center' },
   rewardRow: { alignSelf: 'stretch', flexDirection: 'row', gap: 10, marginTop: 22 },
   rewardStat: { flex: 1, backgroundColor: '#302941', borderRadius: 14, padding: 13, alignItems: 'center' },
   rewardValue: { color: colors.gold, fontSize: 24, fontWeight: '900' },

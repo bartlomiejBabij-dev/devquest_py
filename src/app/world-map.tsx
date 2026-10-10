@@ -4,6 +4,7 @@ import { Animated, Modal, Pressable, ScrollView, StyleSheet, Text, View } from '
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useReducedMotion } from 'react-native-reanimated';
 import { GameScreen } from '@/components/GameScreen';
+import { isGoblinKingMission } from '@/game/boss';
 import { useGame } from '@/game/GameContext';
 import { getChapterProgress, getTotalEarnedXp, getWorldProgress, isChapterCompleted, isChapterUnlocked, isMissionCompleted, isMissionUnlocked } from '@/game/progression';
 import { chapters, forestOfVariables, missions } from '@/game/worldContent';
@@ -31,13 +32,14 @@ function ChapterNode({ chapter, index, state, onPress, pulse }: {
     <View style={[styles.stopRow, index % 2 === 1 && styles.stopRowRight]}>
       <Pressable onPress={onPress} accessibilityRole="button" accessibilityLabel={`Chapter ${index + 1}: ${chapter.title}, ${state}`}
         accessibilityHint="Opens chapter details" style={({ pressed }) => [styles.chapterCard, state === 'available' && styles.chapterCardAvailable,
-          state === 'completed' && styles.chapterCardCompleted, boss && styles.bossCard, pressed && styles.pressed]}>
-        <View style={[styles.glyphFrame, state === 'available' && styles.glyphFrameAvailable, state === 'completed' && styles.glyphFrameCompleted, boss && styles.bossGlyphFrame]}>
+          state === 'completed' && styles.chapterCardCompleted, boss && styles.bossCard, boss && state === 'available' && styles.bossCardAvailable,
+          boss && state === 'completed' && styles.bossCardCompleted, pressed && styles.pressed]}>
+        <View style={[styles.glyphFrame, state === 'available' && styles.glyphFrameAvailable, state === 'completed' && styles.glyphFrameCompleted, boss && styles.bossGlyphFrame, boss && state === 'completed' && styles.bossGlyphFrameCompleted]}>
           <Text style={[styles.glyph, state === 'locked' && styles.glyphLocked]}>{state === 'completed' ? '✓' : chapterGlyphs[index]}</Text>
         </View>
         <View style={styles.chapterCopy}>
           <View style={styles.chapterTopLine}>
-            <Text style={[styles.chapterNumber, state === 'locked' && styles.lockedText]}>{boss ? 'FINAL CHAPTER' : `CHAPTER ${String(index + 1).padStart(2, '0')}`}</Text>
+            <Text style={[styles.chapterNumber, state === 'locked' && styles.lockedText]}>{boss ? 'FINAL BOSS' : `CHAPTER ${String(index + 1).padStart(2, '0')}`}</Text>
             {state === 'available' ? <Animated.Text style={[styles.availableSparkle, { opacity: pulse }]}>✦</Animated.Text> : null}
           </View>
           <Text style={[styles.chapterTitle, state === 'locked' && styles.lockedTitle]} numberOfLines={2}>{chapter.title}</Text>
@@ -45,7 +47,7 @@ function ChapterNode({ chapter, index, state, onPress, pulse }: {
           <View style={styles.statusRow}>
             {state === 'locked' ? <LockMark /> : null}
             <Text style={[styles.statusText, state === 'available' && styles.availableText, state === 'completed' && styles.completedText]}>
-              {state === 'completed' ? '✓  COMPLETED' : state === 'available' ? '●  AVAILABLE' : 'LOCKED'}
+              {state === 'completed' ? boss ? '♛  KING DEFEATED' : '✓  COMPLETED' : state === 'available' ? boss ? '♛  FACE THE KING' : '●  AVAILABLE' : 'LOCKED'}
             </Text>
           </View>
         </View>
@@ -71,7 +73,7 @@ function ChapterDetails({ chapter, index, progress, onClose, onOpenMission }: {
       <View style={styles.sheet}>
         <View style={styles.sheetHandle} />
         <View style={styles.sheetHeading}>
-          <Text style={styles.sheetEyebrow}>{index === forestOfVariables.chapterIds.length - 1 ? 'FINAL ENCOUNTER' : `CHAPTER ${String(index + 1).padStart(2, '0')}`}</Text>
+          <Text style={styles.sheetEyebrow}>{index === forestOfVariables.chapterIds.length - 1 ? 'GOBLIN KING · FINAL BOSS' : `CHAPTER ${String(index + 1).padStart(2, '0')}`}</Text>
           <Pressable accessibilityRole="button" accessibilityLabel="Close chapter details" onPress={onClose} style={styles.closeButton}><Text style={styles.closeText}>×</Text></Pressable>
         </View>
         <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.sheetScroll}>
@@ -107,12 +109,12 @@ function ChapterDetails({ chapter, index, progress, onClose, onOpenMission }: {
               {chapterMissions.map((mission) => (
                 <View key={mission.id} style={styles.missionPreview}>
                   <View style={styles.missionPreviewTop}><Text style={styles.missionTitle}>{mission.title}</Text><Text style={styles.missionXp}>+{mission.xpReward} XP</Text></View>
-                  <Text style={styles.missionDescription}>{mission.description}</Text>
+                  <Text style={styles.missionDescription}>{isGoblinKingMission(mission.id) ? 'Defeat the Goblin King with five Python spells. ' : ''}{mission.description}</Text>
                   {isMissionCompleted(progress, mission.id) ? <Text style={styles.missionComplete}>✓  COMPLETED</Text> : null}
                   {isMissionUnlocked(progress, mission.id) ? (
                     <Pressable onPress={() => onOpenMission(mission.id)} accessibilityRole="button" accessibilityLabel={`${isMissionCompleted(progress, mission.id) ? 'Replay' : 'Start'} ${mission.title}`}
                       style={({ pressed }) => [styles.missionAction, pressed && styles.pressed]}>
-                      <Text style={styles.missionActionText}>{isMissionCompleted(progress, mission.id) ? 'REPLAY MISSION' : 'START MISSION'}  ›</Text>
+                      <Text style={styles.missionActionText}>{isGoblinKingMission(mission.id) ? isMissionCompleted(progress, mission.id) ? 'REPLAY BOSS' : 'FACE GOBLIN KING' : isMissionCompleted(progress, mission.id) ? 'REPLAY MISSION' : 'START MISSION'}  ›</Text>
                     </Pressable>
                   ) : <Text style={styles.missionComplete}>LOCKED</Text>}
                 </View>
@@ -196,7 +198,7 @@ export default function WorldMapScreen() {
               ) : null}
             </View>
           ))}
-          <Text style={styles.mapFooter}>MORE OF THE FOREST AWAITS</Text>
+          <Text style={styles.mapFooter}>{worldProgress.percent === 100 ? 'FOREST OF VARIABLES CLEARED' : 'MORE OF THE FOREST AWAITS'}</Text>
         </View>
       </GameScreen>
 
@@ -253,11 +255,14 @@ const styles = StyleSheet.create({
   chapterCardAvailable: { borderColor: colors.green, backgroundColor: '#1D3A3C', shadowColor: colors.green, shadowOpacity: 0.2, shadowRadius: 11, elevation: 4 },
   chapterCardCompleted: { borderColor: colors.gold, backgroundColor: '#302F3F' },
   bossCard: { borderColor: '#765B75', backgroundColor: '#33273F' },
+  bossCardAvailable: { borderColor: colors.gold, backgroundColor: '#3B2C49', shadowColor: colors.gold, shadowOpacity: 0.25, shadowRadius: 12, elevation: 5 },
+  bossCardCompleted: { borderColor: colors.gold, backgroundColor: '#3B3341' },
   pressed: { transform: [{ scale: 0.98 }], opacity: 0.9 },
   glyphFrame: { width: 54, height: 54, borderRadius: 16, borderWidth: 2, borderColor: '#536275', backgroundColor: '#29364A', justifyContent: 'center', alignItems: 'center' },
   glyphFrameAvailable: { borderColor: colors.green, backgroundColor: '#296451' },
   glyphFrameCompleted: { borderColor: colors.gold, backgroundColor: '#594A59' },
   bossGlyphFrame: { borderColor: '#BB8DBB', backgroundColor: '#604568' },
+  bossGlyphFrameCompleted: { borderColor: colors.gold, backgroundColor: '#675044' },
   glyph: { color: colors.gold, fontSize: 30, fontWeight: '900' },
   glyphLocked: { color: '#8993A7' },
   chapterCopy: { flex: 1 },
