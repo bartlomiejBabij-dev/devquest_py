@@ -1,13 +1,16 @@
 import { useEffect, useRef, useState } from 'react';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { Animated, Keyboard, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
+import { Animated, Keyboard, Modal, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useReducedMotion } from 'react-native-reanimated';
 import { GameButton } from '@/components/GameButton';
 import { GameScreen } from '@/components/GameScreen';
 import { GoblinKingEncounter } from '@/components/GoblinKingEncounter';
+import { SpellbookEntryView, type SpellbookEntryHandle } from '@/components/SpellbookEntryView';
 import { getGoblinKingHp, isGoblinKingMission } from '@/game/boss';
 import { useGame } from '@/game/GameContext';
 import { getTotalEarnedXp, getWorldProgress } from '@/game/progression';
+import { getSpellbookEntryForExercise } from '@/game/spellbookContent';
 import { chapters, forestOfVariables, missions } from '@/game/worldContent';
 import { continueMissionAttempt, getPlayableMission, startMissionAttempt, submitMissionAnswer, type MissionAttempt } from '@/game/worldMission';
 import { colors } from '@/theme';
@@ -22,10 +25,12 @@ export default function WorldMissionScreen() {
   const attemptRef = useRef(attempt);
   const submitting = useRef(false);
   const revealTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const spellbookViewRef = useRef<SpellbookEntryHandle>(null);
   const reduceMotion = useReducedMotion();
   const [answer, setAnswer] = useState('');
   const [incorrect, setIncorrect] = useState(false);
   const [animationDone, setAnimationDone] = useState(false);
+  const [spellbookOpen, setSpellbookOpen] = useState(false);
   const [spellPulse] = useState(() => new Animated.Value(0));
   const playable = getPlayableMission(progression, missionId);
   const knownMission = missions.find((item) => item.id === missionId);
@@ -121,6 +126,7 @@ export default function WorldMissionScreen() {
 
   const { chapter, mission } = playable;
   const exercise = playable.exercises[attempt.exerciseIndex];
+  const spellbookEntry = getSpellbookEntryForExercise(exercise.id);
   const multiline = exercise.type === 'predict-output' && exercise.validation.acceptedAnswers.some((item) => item.includes('\n'));
   const solved = attempt.phase === 'solved';
   const result = attempt.result;
@@ -167,7 +173,13 @@ export default function WorldMissionScreen() {
             <View style={styles.segments} accessibilityLabel={`${attempt.exerciseIndex + (solved ? 1 : 0)} of ${playable.exercises.length} spells solved`}>
               {playable.exercises.map((item, index) => <View key={item.id} style={[styles.segment, index < attempt.exerciseIndex && styles.segmentComplete, index === attempt.exerciseIndex && (solved ? styles.segmentComplete : styles.segmentCurrent)]} />)}
             </View>
-            <Text style={styles.concept}>{exercise.concept.toUpperCase()}</Text>
+            <View style={styles.conceptRow}>
+              <Text style={styles.concept}>{exercise.concept.toUpperCase()}</Text>
+              {spellbookEntry ? <Pressable accessibilityRole="button" accessibilityLabel="Open Spellbook for this exercise"
+                onPress={() => { Keyboard.dismiss(); setSpellbookOpen(true); }} style={styles.spellbookButton}>
+                <Text style={styles.spellbookButtonText}>✦  SPELLBOOK</Text>
+              </Pressable> : null}
+            </View>
             <Text style={styles.prompt}>{exercise.prompt}</Text>
             <View style={styles.codeBox}><Text style={styles.codeLabel}>PYTHON SPELL</Text><Text selectable style={styles.code}>{exercise.code}</Text></View>
 
@@ -201,6 +213,14 @@ export default function WorldMissionScreen() {
           </View>
         </>
       )}
+      {spellbookEntry ? <Modal visible={spellbookOpen} animationType="slide" presentationStyle="fullScreen" onRequestClose={() => {
+        if (spellbookViewRef.current) spellbookViewRef.current.requestClose();
+        else setSpellbookOpen(false);
+      }}>
+        <SafeAreaView style={styles.spellbookModal} edges={['top', 'bottom']}>
+          <SpellbookEntryView ref={spellbookViewRef} key={exercise.id} entry={spellbookEntry} exerciseId={exercise.id} onClose={() => setSpellbookOpen(false)} />
+        </SafeAreaView>
+      </Modal> : null}
     </GameScreen>
   );
 }
@@ -225,7 +245,11 @@ const styles = StyleSheet.create({
   segmentCurrent: { backgroundColor: colors.violet, borderWidth: 1, borderColor: '#D7C6FF' },
   segmentComplete: { backgroundColor: colors.green },
   smallLabel: { color: colors.violet, fontSize: 10, fontWeight: '900', letterSpacing: 1.3 },
-  concept: { color: colors.violet, fontSize: 10, fontWeight: '900', letterSpacing: 1.3 },
+  concept: { flex: 1, color: colors.violet, fontSize: 10, fontWeight: '900', letterSpacing: 1.3 },
+  conceptRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 8 },
+  spellbookButton: { minHeight: 44, minWidth: 105, borderRadius: 11, borderWidth: 1, borderColor: colors.gold, backgroundColor: '#3B3151', alignItems: 'center', justifyContent: 'center', paddingHorizontal: 9 },
+  spellbookButtonText: { color: colors.gold, fontSize: 9, fontWeight: '900', letterSpacing: 0.5 },
+  spellbookModal: { flex: 1, backgroundColor: colors.background },
   prompt: { color: colors.text, fontSize: 18, fontWeight: '800', lineHeight: 25, marginTop: 10 },
   codeBox: { backgroundColor: '#10142C', borderRadius: 14, borderWidth: 1, borderColor: '#373C62', padding: 15, marginTop: 17 },
   codeLabel: { color: '#9EA3C8', fontSize: 9, fontWeight: '900', letterSpacing: 1.5, marginBottom: 8 },

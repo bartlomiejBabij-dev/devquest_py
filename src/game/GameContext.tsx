@@ -1,7 +1,8 @@
-import { createContext, useContext, useEffect, useReducer, useState, type ReactNode, type Dispatch } from 'react';
+import { createContext, useContext, useEffect, useReducer, useRef, useState, type ReactNode, type Dispatch } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
 import { battleReducer, initialBattleState, type BattleAction } from './battle';
+import { createNotesStore, deleteExerciseNote as removeNote, isValidExerciseId, setExerciseNote as updateNote, type NotesState } from './notesStorage';
 import { createOnboardingStore, shouldShowOnboarding } from './onboardingStorage';
 import { type ProgressionAction } from './progression';
 import { initialProgressionSession, progressionSessionReducer, shouldPersistProgression } from './progressionSession';
@@ -18,10 +19,15 @@ interface GameContextValue {
   onboardingReady: boolean;
   needsOnboarding: boolean;
   completeOnboarding: () => Promise<void>;
+  notes: NotesState;
+  notesStatus: 'loading' | 'ready' | 'unavailable';
+  saveExerciseNote: (exerciseId: string, text: string) => Promise<boolean>;
+  deleteExerciseNote: (exerciseId: string) => Promise<boolean>;
 }
 const GameContext = createContext<GameContextValue | null>(null);
 const progressionStore = createProgressionStore(AsyncStorage);
 const onboardingStore = createOnboardingStore(AsyncStorage);
+const notesStore = createNotesStore(AsyncStorage);
 
 export function GameProvider({ children }: { children: ReactNode }) {
   const [battle, dispatch] = useReducer(battleReducer, initialBattleState);
@@ -29,6 +35,11 @@ export function GameProvider({ children }: { children: ReactNode }) {
   const [saveFailed, setSaveFailed] = useState(false);
   const [onboardingStatus, setOnboardingStatus] = useState<'loading' | 'complete' | 'incomplete' | 'unavailable'>('loading');
   const [onboardingSaveFailed, setOnboardingSaveFailed] = useState(false);
+  const [notes, setNotes] = useState<NotesState>({});
+  const [notesStatus, setNotesStatus] = useState<'loading' | 'ready' | 'unavailable'>('loading');
+  const notesRef = useRef<NotesState>({});
+  const savedNotesRef = useRef<NotesState>({});
+  const noteRevisionRef = useRef(0);
 
   useEffect(() => {
     let active = true;
@@ -39,6 +50,18 @@ export function GameProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     let active = true;
     onboardingStore.load().then((status) => { if (active) setOnboardingStatus(status); });
+    return () => { active = false; };
+  }, []);
+
+  useEffect(() => {
+    let active = true;
+    notesStore.load().then((result) => {
+      if (!active) return;
+      notesRef.current = result.notes;
+      savedNotesRef.current = result.notes;
+      setNotes(result.notes);
+      setNotesStatus(result.status);
+    });
     return () => { active = false; };
   }, []);
 
@@ -58,6 +81,31 @@ export function GameProvider({ children }: { children: ReactNode }) {
     setOnboardingSaveFailed(!(await onboardingStore.complete()));
   }
 
+  async function persistNotes(next: NotesState): Promise<boolean> {
+    const revision = ++noteRevisionRef.current;
+    if (next !== notesRef.current) {
+      notesRef.current = next;
+      setNotes(next);
+    }
+    const saved = await notesStore.save(next);
+    if (saved) savedNotesRef.current = next;
+    else if (revision === noteRevisionRef.current) {
+      notesRef.current = savedNotesRef.current;
+      setNotes(savedNotesRef.current);
+    }
+    return saved;
+  }
+
+  async function saveExerciseNote(exerciseId: string, text: string): Promise<boolean> {
+    if (notesStatus !== 'ready' || !isValidExerciseId(exerciseId)) return false;
+    return persistNotes(updateNote(notesRef.current, exerciseId, text));
+  }
+
+  async function deleteExerciseNote(exerciseId: string): Promise<boolean> {
+    if (notesStatus !== 'ready' || !isValidExerciseId(exerciseId)) return false;
+    return persistNotes(removeNote(notesRef.current, exerciseId));
+  }
+
   const warning = session.loadIssue === 'unsupported-version'
     ? 'This save was created by a newer version. Progress will not be saved in this session.'
     : session.loadIssue
@@ -65,7 +113,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
       : saveFailed ? 'Progress could not be saved. Keep playing to try again.'
         : onboardingSaveFailed ? 'The introduction could not be saved. It may appear again next time.' : null;
 
-  return <GameContext.Provider value={{ battle, dispatch, progression: session.progression, dispatchProgression, onboardingReady, needsOnboarding, completeOnboarding }}>
+  return <GameContext.Provider value={{ battle, dispatch, progression: session.progression, dispatchProgression, onboardingReady, needsOnboarding, completeOnboarding, notes, notesStatus, saveExerciseNote, deleteExerciseNote }}>
     <View style={styles.app}>
       {warning ? <Text accessibilityRole="alert" style={styles.warning}>{warning}</Text> : null}
       {children}

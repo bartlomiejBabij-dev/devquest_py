@@ -22,10 +22,16 @@ export default function HomeScreen() {
         <Text style={styles.eyebrow}>✦  A PYTHON RPG  ✦</Text>
         <Text style={styles.logo}>DEV<Text style={styles.logoAccent}>QUEST</Text></Text>
         <Text style={styles.subtitle}>Your Code Is Your Weapon</Text>
-        <Pressable accessibilityRole="button" accessibilityLabel="Learn Python" onPress={() => router.push({ pathname: '/tutorial', params: { from: 'home' } })}
-          style={({ pressed }) => [styles.learnButton, pressed && styles.mapButtonPressed]}>
-          <Text style={styles.learnButtonText}>✦  Learn Python</Text>
-        </Pressable>
+        <View style={styles.quickLinks}>
+          <Pressable accessibilityRole="button" accessibilityLabel="Learn Python" onPress={() => router.push({ pathname: '/tutorial', params: { from: 'home' } })}
+            style={({ pressed }) => [styles.learnButton, pressed && styles.mapButtonPressed]}>
+            <Text style={styles.learnButtonText}>✦  Learn Python</Text>
+          </Pressable>
+          <Pressable accessibilityRole="button" accessibilityLabel="Open Python Spellbook" onPress={() => router.push('/spellbook')}
+            style={({ pressed }) => [styles.learnButton, pressed && styles.mapButtonPressed]}>
+            <Text style={styles.learnButtonText}>◆  Spellbook</Text>
+          </Pressable>
+        </View>
       </View>
 
       <View style={styles.heroCard}>
@@ -74,6 +80,7 @@ const styles = StyleSheet.create({
   mapButtonIcon: { color: colors.green, fontSize: 19 },
   mapButtonLabel: { color: colors.text, fontSize: 16, fontWeight: '900' },
   mapButtonArrow: { color: colors.green, fontSize: 27, position: 'absolute', right: 18, top: 10 },
-  learnButton: { minHeight: 44, alignItems: 'center', justifyContent: 'center', marginTop: 10 },
+  quickLinks: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 12, marginTop: 10, flexWrap: 'wrap' },
+  learnButton: { minHeight: 44, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 8 },
   learnButtonText: { color: colors.gold, fontSize: 13, fontWeight: '800', letterSpacing: 0.6 },
 });
