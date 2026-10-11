@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { useRouter } from 'expo-router';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { CharacterArt } from '@/components/CharacterArt';
@@ -8,13 +9,23 @@ import { colors } from '@/theme';
 
 export default function HomeScreen() {
   const router = useRouter();
-  const { dispatch } = useGame();
+  const { dispatch, onboardingReady, needsOnboarding } = useGame();
+  useEffect(() => {
+    if (onboardingReady && needsOnboarding) router.replace('/tutorial');
+  }, [onboardingReady, needsOnboarding, router]);
+
+  if (needsOnboarding) return null;
+
   return (
     <GameScreen>
       <View style={styles.header}>
         <Text style={styles.eyebrow}>✦  A PYTHON RPG  ✦</Text>
         <Text style={styles.logo}>DEV<Text style={styles.logoAccent}>QUEST</Text></Text>
         <Text style={styles.subtitle}>Your Code Is Your Weapon</Text>
+        <Pressable accessibilityRole="button" accessibilityLabel="Learn Python" onPress={() => router.push({ pathname: '/tutorial', params: { from: 'home' } })}
+          style={({ pressed }) => [styles.learnButton, pressed && styles.mapButtonPressed]}>
+          <Text style={styles.learnButtonText}>✦  Learn Python</Text>
+        </Pressable>
       </View>
 
       <View style={styles.heroCard}>
@@ -63,4 +74,6 @@ const styles = StyleSheet.create({
   mapButtonIcon: { color: colors.green, fontSize: 19 },
   mapButtonLabel: { color: colors.text, fontSize: 16, fontWeight: '900' },
   mapButtonArrow: { color: colors.green, fontSize: 27, position: 'absolute', right: 18, top: 10 },
+  learnButton: { minHeight: 44, alignItems: 'center', justifyContent: 'center', marginTop: 10 },
+  learnButtonText: { color: colors.gold, fontSize: 13, fontWeight: '800', letterSpacing: 0.6 },
 });
