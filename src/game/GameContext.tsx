@@ -59,7 +59,7 @@ export function useGame() {
 
 const styles = StyleSheet.create({
   app: { flex: 1, backgroundColor: colors.background },
-  loading: { ...StyleSheet.absoluteFillObject, zIndex: 2, alignItems: 'center', justifyContent: 'center', backgroundColor: colors.background, gap: 12 },
+  loading: { ...StyleSheet.absoluteFill, zIndex: 2, alignItems: 'center', justifyContent: 'center', backgroundColor: colors.background, gap: 12 },
   loadingText: { color: colors.text, fontSize: 14, fontWeight: '700' },
   warning: { backgroundColor: '#49352F', color: colors.text, paddingHorizontal: 16, paddingVertical: 9, fontSize: 12, textAlign: 'center' },
 });

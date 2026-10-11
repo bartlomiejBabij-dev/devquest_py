@@ -19,7 +19,7 @@ Run `npx tsc --noEmit` for strict TypeScript checking, `npm run lint` for the Ex
 - `src/game`: battle data and reducer, world content, pure exercise validation, mission submissions, progression logic, and in-memory game context.
 - `src/theme.ts`: visual theme colors.
 
-Answers are checked against local challenge data; no Python code is executed. World progression is held in memory and resets on relaunch. All five mission spells must be solved before the configured XP is awarded and the next chapter unlocks. An unfinished attempt restarts from its first spell. Replays remain available without awarding XP again. The Goblin prototype has its own battle and Victory flow; its decorative reward is separate from world mission XP.
+Answers are checked against local challenge data; no Python code is executed. Completed world missions are saved locally, so earned XP and chapter unlocks survive relaunch. All five mission spells must be solved before the configured XP is awarded and the next chapter unlocks. An unfinished attempt restarts from its first spell. Replays remain available without awarding XP again. The Goblin prototype has its own battle and Victory flow; its decorative reward is separate from world mission XP.
 
 The final Forest mission is a Goblin King encounter. Its HP starts at 100 and falls by 20 for each correctly solved exercise. Boss HP is derived from the mission attempt; XP and World 1 completion still use the existing progression system. Replaying the boss earns no additional XP.
 
