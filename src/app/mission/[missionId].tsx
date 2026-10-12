@@ -1,11 +1,13 @@
 import { useEffect, useRef, useState } from 'react';
-import { useLocalSearchParams, useRouter } from 'expo-router';
-import { Animated, Keyboard, Modal, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
+import { useLocalSearchParams, useNavigation } from 'expo-router';
+import { usePreventRemove } from 'expo-router/react-navigation';
+import { Alert, Animated, Keyboard, Modal, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useReducedMotion } from 'react-native-reanimated';
 import { GameButton } from '@/components/GameButton';
 import { GameScreen } from '@/components/GameScreen';
 import { GoblinKingEncounter } from '@/components/GoblinKingEncounter';
+import { NavigationButton } from '@/components/NavigationButton';
 import { SpellbookEntryView, type SpellbookEntryHandle } from '@/components/SpellbookEntryView';
 import { getGoblinKingHp, isGoblinKingMission } from '@/game/boss';
 import { useGame } from '@/game/GameContext';
@@ -13,12 +15,15 @@ import { getTotalEarnedXp, getWorldProgress } from '@/game/progression';
 import { getSpellbookEntryForExercise } from '@/game/spellbookContent';
 import { chapters, forestOfVariables, missions } from '@/game/worldContent';
 import { continueMissionAttempt, getPlayableMission, startMissionAttempt, submitMissionAnswer, type MissionAttempt } from '@/game/worldMission';
+import { hasUnfinishedMissionProgress } from '@/navigation/navigationActions';
+import { useScreenBack, useScreenNavigation } from '@/navigation/useScreenNavigation';
 import { colors } from '@/theme';
 
 export default function WorldMissionScreen() {
   const { missionId: rawMissionId } = useLocalSearchParams<{ missionId: string }>();
   const missionId = typeof rawMissionId === 'string' ? rawMissionId : '';
-  const router = useRouter();
+  const stackNavigation = useNavigation();
+  const navigation = useScreenNavigation();
   const { progression, dispatchProgression } = useGame();
   const currentProgress = useRef(progression);
   const [attempt, setAttempt] = useState<MissionAttempt | null>(() => startMissionAttempt(progression, missionId));
@@ -26,6 +31,7 @@ export default function WorldMissionScreen() {
   const submitting = useRef(false);
   const revealTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const spellbookViewRef = useRef<SpellbookEntryHandle>(null);
+  const exitPromptOpen = useRef(false);
   const reduceMotion = useReducedMotion();
   const [answer, setAnswer] = useState('');
   const [incorrect, setIncorrect] = useState(false);
@@ -50,9 +56,23 @@ export default function WorldMissionScreen() {
   useEffect(() => () => { if (revealTimer.current) clearTimeout(revealTimer.current); }, []);
 
   function returnToMap() {
-    Keyboard.dismiss();
-    router.replace('/world-map');
+    navigation.returnTo('/world-map');
   }
+
+  usePreventRemove(hasUnfinishedMissionProgress(attempt, answer), ({ data }) => {
+    if (exitPromptOpen.current) return;
+    exitPromptOpen.current = true;
+    const cancel = () => { exitPromptOpen.current = false; navigation.reset(); };
+    Alert.alert('Leave this mission?', 'This unfinished attempt will restart at spell 1. Your saved XP and notes will stay.', [
+      { text: 'Keep Playing', style: 'cancel', onPress: cancel },
+      { text: 'Leave Mission', style: 'destructive', onPress: () => { exitPromptOpen.current = false; stackNavigation.dispatch(data.action); } },
+    ], { cancelable: true, onDismiss: cancel });
+  });
+
+  useScreenBack(() => {
+    if (spellbookOpen) spellbookViewRef.current?.requestClose();
+    else returnToMap();
+  });
 
   function submitAnswer(expectedExerciseId: string, submittedAnswer = answer) {
     const current = attemptRef.current;
@@ -112,8 +132,7 @@ export default function WorldMissionScreen() {
   if (!playable || !attempt || attempt.missionId !== missionId) {
     const chapter = knownMission && chapters.find((item) => item.id === knownMission.chapterId);
     return (
-      <GameScreen compact>
-        <Pressable onPress={returnToMap} accessibilityRole="button" accessibilityLabel="Back to World Map" style={styles.backButton}><Text style={styles.backText}>‹  WORLD MAP</Text></Pressable>
+      <GameScreen compact header={<NavigationButton label="World Map" accessibilityLabel="Back to World Map" onPress={returnToMap} />}>
         <View style={styles.unavailableCard}>
           <Text style={styles.overline}>THE PATH IS SEALED</Text>
           <Text style={styles.title}>{knownMission ? 'Mission locked' : 'Mission not found'}</Text>
@@ -135,12 +154,12 @@ export default function WorldMissionScreen() {
   const worldCompletion = bossMission ? getWorldProgress(progression, forestOfVariables.id) : null;
 
   return (
-    <GameScreen compact scrollToEndOnKeyboard>
+    <GameScreen compact scrollToEndOnKeyboard header={
       <View style={styles.topRow}>
-        <Pressable onPress={returnToMap} accessibilityRole="button" accessibilityLabel="Back to World Map" style={styles.backButton}><Text style={styles.backText}>‹  WORLD MAP</Text></Pressable>
+        <NavigationButton label="World Map" accessibilityLabel="Exit mission to World Map" onPress={returnToMap} />
         <Text style={styles.worldLabel}>FOREST OF VARIABLES</Text>
       </View>
-
+    }>
       {attempt.phase === 'complete' && result ? (
         <View style={[styles.resultCard, bossMission && styles.bossResultCard]}>
           <Text style={styles.resultGlyph}>{bossMission ? '♛' : '✦'}</Text>
@@ -213,7 +232,7 @@ export default function WorldMissionScreen() {
           </View>
         </>
       )}
-      {spellbookEntry ? <Modal visible={spellbookOpen} animationType="slide" presentationStyle="fullScreen" onRequestClose={() => {
+      {spellbookOpen && spellbookEntry ? <Modal visible animationType={reduceMotion ? 'none' : 'slide'} presentationStyle="fullScreen" onRequestClose={() => {
         if (spellbookViewRef.current) spellbookViewRef.current.requestClose();
         else setSpellbookOpen(false);
       }}>
@@ -226,9 +245,7 @@ export default function WorldMissionScreen() {
 }
 
 const styles = StyleSheet.create({
-  topRow: { minHeight: 48, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 8, marginBottom: 12 },
-  backButton: { minHeight: 44, justifyContent: 'center', minWidth: 95 },
-  backText: { color: colors.muted, fontSize: 11, fontWeight: '900', letterSpacing: 1 },
+  topRow: { minHeight: 48, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 8 },
   worldLabel: { color: colors.green, fontSize: 9, fontWeight: '900', letterSpacing: 1, flexShrink: 1, textAlign: 'right' },
   headerCard: { borderRadius: 21, backgroundColor: '#17332F', borderWidth: 1, borderColor: '#3F7767', padding: 20 },
   bossHeaderCard: { backgroundColor: '#2A2038', borderColor: '#765D87', paddingVertical: 12, marginTop: 10 },

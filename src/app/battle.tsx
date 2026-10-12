@@ -1,18 +1,23 @@
 import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'expo-router';
-import { Keyboard, Pressable, StyleSheet, Text, TextInput, useWindowDimensions, View } from 'react-native';
+import { Keyboard, StyleSheet, Text, TextInput, useWindowDimensions, View } from 'react-native';
 import Animated from 'react-native-reanimated';
 import { CharacterArt } from '@/components/CharacterArt';
 import { GameButton } from '@/components/GameButton';
 import { GameScreen } from '@/components/GameScreen';
+import { NavigationButton } from '@/components/NavigationButton';
 import { useCombatAnimations } from '@/components/useCombatAnimations';
 import { useGame } from '@/game/GameContext';
 import { challenges } from '@/game/challenges';
 import { ENEMY_MAX_HP } from '@/game/battle';
+import { useScreenBack, useScreenNavigation } from '@/navigation/useScreenNavigation';
 import { colors } from '@/theme';
 
 export default function BattleScreen() {
   const router = useRouter();
+  const navigation = useScreenNavigation();
+  function goHome() { navigation.returnTo('/'); }
+  useScreenBack(goHome);
   const { height, width } = useWindowDimensions();
   const compact = height < 960 || width < 360;
   const { battle, dispatch } = useGame();
@@ -46,14 +51,12 @@ export default function BattleScreen() {
   }
 
   return (
-    <GameScreen compact={compact} scrollToEndOnKeyboard>
+    <GameScreen compact={compact} scrollToEndOnKeyboard header={
       <View style={styles.topBar}>
-        <Pressable onPress={() => { Keyboard.dismiss(); router.replace('/'); }} accessibilityRole="button" accessibilityLabel="Exit battle" hitSlop={6} style={styles.exitButton}>
-          <Text style={styles.back}>‹  EXIT BATTLE</Text>
-        </Pressable>
+        <NavigationButton label="Exit Battle" accessibilityLabel="Exit battle to Home" onPress={goHome} />
         <Text style={styles.room}>THE FIRST ENCOUNTER</Text>
       </View>
-
+    }>
       <View style={[styles.enemyCard, compact && styles.enemyCardCompact]}>
         <Text style={styles.enemyTag}>✦  WILD ENEMY  ✦</Text>
         <View style={[styles.artArea, compact && styles.artAreaCompact]}>
@@ -96,9 +99,7 @@ export default function BattleScreen() {
 }
 
 const styles = StyleSheet.create({
-  topBar: { minHeight: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 },
-  exitButton: { minHeight: 44, justifyContent: 'center' },
-  back: { color: colors.muted, fontSize: 11, fontWeight: '900', letterSpacing: 1 },
+  topBar: { minHeight: 48, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', gap: 12 },
   room: { color: colors.violet, fontSize: 10, fontWeight: '900', letterSpacing: 1.2, flexShrink: 1, textAlign: 'right' },
   enemyCard: { backgroundColor: '#1B1B35', borderWidth: 1, borderColor: '#4A375B', borderRadius: 23, paddingHorizontal: 20, paddingTop: 14, paddingBottom: 17, alignItems: 'center' },
   enemyCardCompact: { paddingTop: 9, paddingBottom: 13 },

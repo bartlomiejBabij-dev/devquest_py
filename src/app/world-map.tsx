@@ -1,14 +1,15 @@
 import { useEffect, useState } from 'react';
-import { useRouter } from 'expo-router';
 import { Animated, Modal, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useReducedMotion } from 'react-native-reanimated';
 import { GameScreen } from '@/components/GameScreen';
+import { NavigationButton } from '@/components/NavigationButton';
 import { isGoblinKingMission } from '@/game/boss';
 import { useGame } from '@/game/GameContext';
 import { getChapterProgress, getTotalEarnedXp, getWorldProgress, isChapterCompleted, isChapterUnlocked, isMissionCompleted, isMissionUnlocked } from '@/game/progression';
 import { chapters, forestOfVariables, missions } from '@/game/worldContent';
 import type { Chapter, ProgressionState } from '@/game/worldTypes';
+import { useScreenBack, useScreenNavigation } from '@/navigation/useScreenNavigation';
 import { colors } from '@/theme';
 
 type ChapterState = 'completed' | 'available' | 'locked';
@@ -73,8 +74,8 @@ function ChapterDetails({ chapter, index, progress, onClose, onOpenMission }: {
       <View style={styles.sheet}>
         <View style={styles.sheetHandle} />
         <View style={styles.sheetHeading}>
+          <NavigationButton label="Close" icon="close" accessibilityLabel="Close chapter details" onPress={onClose} />
           <Text style={styles.sheetEyebrow}>{index === forestOfVariables.chapterIds.length - 1 ? 'GOBLIN KING · FINAL BOSS' : `CHAPTER ${String(index + 1).padStart(2, '0')}`}</Text>
-          <Pressable accessibilityRole="button" accessibilityLabel="Close chapter details" onPress={onClose} style={styles.closeButton}><Text style={styles.closeText}>×</Text></Pressable>
         </View>
         <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.sheetScroll}>
           <Text style={styles.sheetTitle}>{chapter.title}</Text>
@@ -128,7 +129,7 @@ function ChapterDetails({ chapter, index, progress, onClose, onOpenMission }: {
 }
 
 export default function WorldMapScreen() {
-  const router = useRouter();
+  const navigation = useScreenNavigation();
   const { progression } = useGame();
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const reduceMotion = useReducedMotion();
@@ -153,19 +154,17 @@ export default function WorldMapScreen() {
     return () => animation.stop();
   }, [pulse, reduceMotion]);
 
-  function goBack() {
-    if (router.canGoBack()) router.back();
-    else router.replace('/');
-  }
+  function goHome() { navigation.returnTo('/'); }
+  useScreenBack(() => { if (selectedId) setSelectedId(null); else goHome(); });
 
   return (
     <>
-      <GameScreen compact>
+      <GameScreen compact header={
         <View style={styles.navRow}>
-          <Pressable onPress={goBack} accessibilityRole="button" accessibilityLabel="Back to Home" style={styles.backButton}><Text style={styles.backText}>‹  HOME</Text></Pressable>
+          <NavigationButton label="Exit to Home" accessibilityLabel="Exit World Map to Home" onPress={goHome} />
           <Text style={styles.worldNumber}>WORLD 01  /  PYTHON</Text>
         </View>
-
+      }>
         <View style={styles.banner}>
           <Text style={styles.bannerStars}>✦  ·  ✧  ·  ✦</Text>
           <Text style={styles.bannerEyebrow}>THE ADVENTURE BEGINS</Text>
@@ -206,8 +205,7 @@ export default function WorldMapScreen() {
         <SafeAreaView style={styles.modalSafe} edges={['top', 'bottom']}>
           {selectedChapter ? <ChapterDetails chapter={selectedChapter} index={chapterList.indexOf(selectedChapter)} progress={progression} onClose={() => setSelectedId(null)} onOpenMission={(missionId) => {
             if (!isMissionUnlocked(progression, missionId)) return;
-            setSelectedId(null);
-            router.push({ pathname: '/mission/[missionId]', params: { missionId } });
+            if (navigation.open({ pathname: '/mission/[missionId]', params: { missionId } })) setSelectedId(null);
           }} /> : null}
         </SafeAreaView>
       </Modal>
@@ -216,10 +214,8 @@ export default function WorldMapScreen() {
 }
 
 const styles = StyleSheet.create({
-  navRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', minHeight: 48, marginBottom: 10 },
-  backButton: { minHeight: 44, minWidth: 72, justifyContent: 'center' },
-  backText: { color: colors.muted, fontSize: 12, fontWeight: '900', letterSpacing: 1 },
-  worldNumber: { color: colors.green, fontSize: 10, fontWeight: '900', letterSpacing: 1.5 },
+  navRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', minHeight: 48, gap: 12 },
+  worldNumber: { color: colors.green, fontSize: 10, fontWeight: '900', letterSpacing: 1.5, flexShrink: 1, textAlign: 'right' },
   banner: { overflow: 'hidden', borderRadius: 24, backgroundColor: '#17332F', borderWidth: 1, borderColor: '#3F7767', paddingHorizontal: 24, paddingTop: 17, paddingBottom: 20, alignItems: 'center' },
   bannerStars: { color: colors.gold, fontSize: 17, letterSpacing: 7, marginBottom: 5 },
   bannerEyebrow: { color: '#A7EDCA', fontSize: 10, fontWeight: '900', letterSpacing: 2.5 },
@@ -290,10 +286,8 @@ const styles = StyleSheet.create({
   modalOverlay: { flex: 1, justifyContent: 'flex-end' },
   sheet: { backgroundColor: '#1B203C', borderTopLeftRadius: 28, borderTopRightRadius: 28, borderWidth: 1, borderBottomWidth: 0, borderColor: '#5E5B80', maxHeight: '88%', paddingHorizontal: 21, paddingTop: 11 },
   sheetHandle: { width: 46, height: 4, borderRadius: 3, backgroundColor: '#747591', alignSelf: 'center', marginBottom: 14 },
-  sheetHeading: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
-  sheetEyebrow: { color: colors.violet, fontSize: 10, fontWeight: '900', letterSpacing: 2 },
-  closeButton: { width: 44, height: 44, alignItems: 'center', justifyContent: 'center', borderRadius: 14, backgroundColor: '#303654' },
-  closeText: { color: colors.text, fontSize: 27, lineHeight: 29 },
+  sheetHeading: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 12 },
+  sheetEyebrow: { color: colors.violet, fontSize: 10, fontWeight: '900', letterSpacing: 1.5, flexShrink: 1, textAlign: 'right' },
   sheetScroll: { paddingBottom: 28 },
   sheetTitle: { color: colors.text, fontSize: 27, fontWeight: '900', marginTop: 1 },
   sheetStatus: { color: '#9AA1B8', fontSize: 12, fontWeight: '900', marginTop: 8 },

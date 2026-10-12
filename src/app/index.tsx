@@ -5,10 +5,12 @@ import { CharacterArt } from '@/components/CharacterArt';
 import { GameButton } from '@/components/GameButton';
 import { GameScreen } from '@/components/GameScreen';
 import { useGame } from '@/game/GameContext';
+import { useScreenNavigation } from '@/navigation/useScreenNavigation';
 import { colors } from '@/theme';
 
 export default function HomeScreen() {
   const router = useRouter();
+  const navigation = useScreenNavigation();
   const { dispatch, onboardingReady, needsOnboarding } = useGame();
   useEffect(() => {
     if (onboardingReady && needsOnboarding) router.replace('/tutorial');
@@ -23,11 +25,11 @@ export default function HomeScreen() {
         <Text style={styles.logo}>DEV<Text style={styles.logoAccent}>QUEST</Text></Text>
         <Text style={styles.subtitle}>Your Code Is Your Weapon</Text>
         <View style={styles.quickLinks}>
-          <Pressable accessibilityRole="button" accessibilityLabel="Learn Python" onPress={() => router.push({ pathname: '/tutorial', params: { from: 'home' } })}
+          <Pressable accessibilityRole="button" accessibilityLabel="Learn Python" onPress={() => navigation.open({ pathname: '/tutorial', params: { from: 'home' } })}
             style={({ pressed }) => [styles.learnButton, pressed && styles.mapButtonPressed]}>
             <Text style={styles.learnButtonText}>✦  Learn Python</Text>
           </Pressable>
-          <Pressable accessibilityRole="button" accessibilityLabel="Open Python Spellbook" onPress={() => router.push('/spellbook')}
+          <Pressable accessibilityRole="button" accessibilityLabel="Open Python Spellbook" onPress={() => navigation.open('/spellbook')}
             style={({ pressed }) => [styles.learnButton, pressed && styles.mapButtonPressed]}>
             <Text style={styles.learnButtonText}>◆  Spellbook</Text>
           </Pressable>
@@ -45,11 +47,11 @@ export default function HomeScreen() {
 
       <View style={styles.intro}><Text style={styles.introIcon}>✧</Text><Text style={styles.introText}>A Bug Goblin blocks your path. Complete three tiny Python spells to defeat it and claim your first victory.</Text></View>
       <View style={styles.bottom}>
-        <Pressable accessibilityRole="button" accessibilityLabel="Explore World Map" onPress={() => router.push('/world-map')}
+        <Pressable accessibilityRole="button" accessibilityLabel="Explore World Map" onPress={() => navigation.open('/world-map')}
           style={({ pressed }) => [styles.mapButton, pressed && styles.mapButtonPressed]}>
           <Text style={styles.mapButtonIcon}>✦</Text><Text style={styles.mapButtonLabel}>Explore World Map</Text><Text style={styles.mapButtonArrow}>›</Text>
         </Pressable>
-        <GameButton label="Start Adventure" onPress={() => { dispatch({ type: 'reset' }); router.push('/battle'); }} />
+        <GameButton label="Start Adventure" onPress={() => navigation.run(() => { dispatch({ type: 'reset' }); router.navigate('/battle'); })} />
         <Text style={styles.footer}>THREE SPELLS  ·  ONE EPIC BATTLE</Text>
       </View>
     </GameScreen>

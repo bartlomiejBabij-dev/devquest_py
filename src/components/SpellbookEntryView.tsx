@@ -1,5 +1,6 @@
 import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react';
-import { Alert, BackHandler, Keyboard, KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
+import { Alert, Keyboard, KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
+import { NavigationButton } from '@/components/NavigationButton';
 import { useGame } from '@/game/GameContext';
 import { MAX_NOTE_LENGTH } from '@/game/notesStorage';
 import type { SpellbookEntry } from '@/game/spellbookContent';
@@ -23,7 +24,10 @@ export const SpellbookEntryView = forwardRef<SpellbookEntryHandle, Props>(functi
   const [saving, setSaving] = useState(false);
   const [saveFailed, setSaveFailed] = useState(false);
   const [feedback, setFeedback] = useState('');
+  const [feedbackError, setFeedbackError] = useState(false);
   const dirty = useRef(false);
+  const operationInFlight = useRef(false);
+  const dialogOpen = useRef(false);
   const previousExerciseId = useRef(exerciseId);
   const scrollRef = useRef<ScrollView>(null);
   const scrollTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -34,6 +38,7 @@ export const SpellbookEntryView = forwardRef<SpellbookEntryHandle, Props>(functi
       previousExerciseId.current = exerciseId;
       dirty.current = false;
       setFeedback('');
+      setFeedbackError(false);
       setSaveFailed(false);
       setDraft(savedNote);
     } else if (!dirty.current) {
@@ -53,22 +58,17 @@ export const SpellbookEntryView = forwardRef<SpellbookEntryHandle, Props>(functi
     };
   }, [exerciseId]);
 
-  useEffect(() => {
-    if (!onClose) return;
-    const listener = BackHandler.addEventListener('hardwareBackPress', () => {
-      close();
-      return true;
-    });
-    return () => listener.remove();
-  });
-
   function close() {
-    if (!onClose) return;
+    if (!onClose || operationInFlight.current || dialogOpen.current) return;
     if (exerciseId && (draft !== savedNote || saveFailed)) {
+      dialogOpen.current = true;
       Alert.alert('Discard unsaved changes?', 'Save your personal note before leaving the Spellbook.', [
-        { text: 'Keep Editing', style: 'cancel' },
-        { text: 'Discard', style: 'destructive', onPress: () => { Keyboard.dismiss(); onClose(); } },
-      ]);
+        { text: 'Keep Editing', style: 'cancel', onPress: () => { dialogOpen.current = false; } },
+        { text: 'Discard', style: 'destructive', onPress: () => { dialogOpen.current = false; Keyboard.dismiss(); onClose(); } },
+      ], {
+        cancelable: true,
+        onDismiss: () => { dialogOpen.current = false; },
+      });
       return;
     }
     Keyboard.dismiss();
@@ -78,59 +78,74 @@ export const SpellbookEntryView = forwardRef<SpellbookEntryHandle, Props>(functi
   useImperativeHandle(ref, () => ({ requestClose: close }));
 
   async function saveNote() {
-    if (!exerciseId || notesStatus !== 'ready' || saving || !draft.trim()) return;
+    if (!exerciseId || notesStatus !== 'ready' || operationInFlight.current || !draft.trim()) return;
+    operationInFlight.current = true;
     setSaving(true);
-    const saved = await saveExerciseNote(exerciseId, draft);
+    let saved = false;
+    try { saved = await saveExerciseNote(exerciseId, draft); } catch { saved = false; }
+    operationInFlight.current = false;
     setSaving(false);
     if (saved) {
       dirty.current = false;
       setSaveFailed(false);
+      setFeedbackError(false);
       setFeedback('Saved on this device.');
       Keyboard.dismiss();
     } else {
       setSaveFailed(true);
+      setFeedbackError(true);
       setFeedback('Could not save your note. Please try again.');
     }
   }
 
   async function deleteNote() {
-    if (!exerciseId || notesStatus !== 'ready' || saving || !savedNote) return;
+    if (!exerciseId || notesStatus !== 'ready' || operationInFlight.current || !savedNote) return;
+    operationInFlight.current = true;
     setSaving(true);
-    const deleted = await deleteExerciseNote(exerciseId);
+    let deleted = false;
+    try { deleted = await deleteExerciseNote(exerciseId); } catch { deleted = false; }
+    operationInFlight.current = false;
     setSaving(false);
     if (deleted) {
       dirty.current = false;
       setSaveFailed(false);
+      setFeedbackError(false);
       setDraft('');
       setFeedback('Note deleted.');
       Keyboard.dismiss();
     } else {
-      setSaveFailed(true);
+      setFeedbackError(true);
       setFeedback('Could not delete your note. Please try again.');
     }
   }
 
   function confirmDelete() {
-    Alert.alert('Delete this note?', 'This removes your personal note for this exercise.', [
-      { text: 'Keep Note', style: 'cancel' },
-      { text: 'Delete', style: 'destructive', onPress: () => { void deleteNote(); } },
-    ]);
+    if (dialogOpen.current || operationInFlight.current) return;
+    dialogOpen.current = true;
+    Alert.alert('Delete this note?', 'This removes the saved note and any edits in this field.', [
+      { text: 'Keep Note', style: 'cancel', onPress: () => { dialogOpen.current = false; } },
+      { text: 'Delete', style: 'destructive', onPress: () => { dialogOpen.current = false; void deleteNote(); } },
+    ], {
+      cancelable: true,
+      onDismiss: () => { dialogOpen.current = false; },
+    });
   }
 
   const canSave = !!exerciseId && notesStatus === 'ready' && !saving && !!draft.trim() && (draft !== savedNote || saveFailed);
   const canDelete = !!exerciseId && notesStatus === 'ready' && !saving && !!savedNote;
+  const isSaved = !!savedNote && draft === savedNote && !saving && !saveFailed && notesStatus === 'ready';
+  const isEdited = (draft !== savedNote || saveFailed) && !saving && notesStatus === 'ready';
 
   return (
     <KeyboardAvoidingView style={styles.root} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+      <View style={styles.navShell}>
+        <View style={styles.navRow}>
+          {onClose ? <NavigationButton label={exerciseId ? 'Close' : 'Back'} accessibilityLabel={exerciseId ? 'Close Spellbook' : 'Back to Spellbook'} icon={exerciseId ? 'close' : 'back'} onPress={close} disabled={saving} /> : null}
+          <Text style={styles.navLabel}>✦  PYTHON SPELLBOOK</Text>
+        </View>
+      </View>
       <ScrollView ref={scrollRef} keyboardShouldPersistTaps="always" keyboardDismissMode="on-drag" showsVerticalScrollIndicator={false} contentContainerStyle={styles.scroll}>
         <View style={styles.content}>
-          <View style={styles.navRow}>
-            <Text style={styles.navLabel}>✦  PYTHON SPELLBOOK</Text>
-            {onClose ? <Pressable onPress={close} accessibilityRole="button" accessibilityLabel="Close Spellbook" style={({ pressed }) => [styles.closeButton, pressed && styles.pressed]}>
-              <Text style={styles.closeText}>✕  CLOSE</Text>
-            </Pressable> : null}
-          </View>
-
           <View style={styles.heroCard}>
             <View style={styles.heroGlyph}><Text style={styles.heroGlyphText}>✧</Text></View>
             <Text style={styles.eyebrow}>ARCANE KNOWLEDGE</Text>
@@ -168,13 +183,15 @@ export const SpellbookEntryView = forwardRef<SpellbookEntryHandle, Props>(functi
               <Text style={styles.counter}>{draft.length}/{MAX_NOTE_LENGTH}</Text>
             </View>
             <Text style={styles.notesHelp}>Keep a reminder for this exercise. Notes stay on this device.</Text>
+            {isSaved ? <Text accessibilityLiveRegion="polite" style={styles.savedStatus}>✓  Saved</Text> : null}
+            {isEdited ? <Text accessibilityLiveRegion="polite" style={styles.unsavedStatus}>✦  Unsaved changes</Text> : null}
             {notesStatus === 'loading' ? <Text style={styles.notesStatus}>Opening your notes…</Text> : null}
             {notesStatus === 'unavailable' ? <Text accessibilityRole="alert" style={styles.notesError}>Notes could not be opened. Existing saved notes will not be replaced.</Text> : null}
             <TextInput
               accessibilityLabel="Personal exercise note"
               accessibilityHint="Write a note about this exercise, then tap Save Note"
               value={draft}
-              onChangeText={(value) => { dirty.current = true; setDraft(value); setSaveFailed(false); setFeedback(''); }}
+              onChangeText={(value) => { dirty.current = true; setDraft(value); setSaveFailed(false); setFeedback(''); setFeedbackError(false); }}
               maxLength={MAX_NOTE_LENGTH}
               editable={notesStatus === 'ready' && !saving}
               multiline
@@ -185,15 +202,15 @@ export const SpellbookEntryView = forwardRef<SpellbookEntryHandle, Props>(functi
               style={styles.noteInput}
             />
             <View style={styles.noteActions}>
-              <Pressable onPress={() => { void saveNote(); }} disabled={!canSave} accessibilityRole="button" accessibilityLabel="Save Note" accessibilityState={{ disabled: !canSave }}
-                style={({ pressed }) => [styles.saveButton, !canSave && styles.disabledButton, pressed && canSave && styles.pressed]}>
-                <Text style={styles.saveButtonText}>{saving ? 'SAVING…' : 'SAVE NOTE'}</Text>
+              <Pressable onPress={() => { void saveNote(); }} disabled={!canSave} accessibilityRole="button" accessibilityLabel={isSaved ? 'Note saved' : savedNote ? 'Save Changes' : 'Save Note'} accessibilityState={{ disabled: !canSave }}
+                style={({ pressed }) => [styles.saveButton, !canSave && styles.disabledButton, isSaved && styles.savedButton, pressed && canSave && styles.pressed]}>
+                <Text style={[styles.saveButtonText, !canSave && styles.disabledButtonText, isSaved && styles.savedButtonText]}>{saving ? 'SAVING…' : isSaved ? '✓  SAVED' : savedNote ? 'SAVE CHANGES' : 'SAVE NOTE'}</Text>
               </Pressable>
               {canDelete ? <Pressable onPress={confirmDelete} accessibilityRole="button" accessibilityLabel="Delete Note" style={({ pressed }) => [styles.deleteButton, pressed && styles.pressed]}>
-                <Text style={styles.deleteText}>DELETE</Text>
+                <Text style={styles.deleteText}>DELETE NOTE</Text>
               </Pressable> : null}
             </View>
-            {feedback ? <Text accessibilityLiveRegion="polite" style={[styles.feedback, saveFailed && styles.errorFeedback]}>{feedback}</Text> : null}
+            {feedback ? <Text accessibilityLiveRegion="polite" style={[styles.feedback, feedbackError && styles.errorFeedback]}>{feedback}</Text> : null}
           </View> : null}
         </View>
       </ScrollView>
@@ -203,12 +220,11 @@ export const SpellbookEntryView = forwardRef<SpellbookEntryHandle, Props>(functi
 
 const styles = StyleSheet.create({
   root: { flex: 1, backgroundColor: colors.background },
-  scroll: { flexGrow: 1, paddingHorizontal: 16, paddingTop: 8, paddingBottom: 32 },
+  navShell: { backgroundColor: colors.background, borderBottomWidth: 1, borderBottomColor: '#393858' },
+  navRow: { width: '100%', maxWidth: 500, alignSelf: 'center', minHeight: 60, paddingHorizontal: 16, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 8 },
+  navLabel: { color: colors.violet, fontSize: 10, fontWeight: '900', letterSpacing: 1.4, flexShrink: 1, textAlign: 'right' },
+  scroll: { flexGrow: 1, paddingHorizontal: 16, paddingTop: 14, paddingBottom: 32 },
   content: { width: '100%', maxWidth: 500, alignSelf: 'center' },
-  navRow: { minHeight: 48, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 8, marginBottom: 12 },
-  navLabel: { color: colors.violet, fontSize: 10, fontWeight: '900', letterSpacing: 1.6, flexShrink: 1 },
-  closeButton: { minHeight: 44, minWidth: 80, justifyContent: 'center', alignItems: 'flex-end' },
-  closeText: { color: colors.muted, fontSize: 12, fontWeight: '900', letterSpacing: 0.6 },
   pressed: { opacity: 0.75, transform: [{ scale: 0.98 }] },
   heroCard: { alignItems: 'center', backgroundColor: '#211D43', borderColor: '#6E5CA6', borderWidth: 1, borderRadius: 22, paddingHorizontal: 18, paddingTop: 19, paddingBottom: 22 },
   heroGlyph: { width: 64, height: 64, borderRadius: 20, backgroundColor: '#3B315D', borderWidth: 1, borderColor: colors.gold, alignItems: 'center', justifyContent: 'center', marginBottom: 9 },
@@ -237,15 +253,20 @@ const styles = StyleSheet.create({
   notesTitleRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', gap: 8 },
   counter: { color: colors.muted, fontSize: 11, fontWeight: '700' },
   notesHelp: { color: colors.muted, fontSize: 12, lineHeight: 18, marginTop: 7 },
+  savedStatus: { alignSelf: 'flex-start', color: colors.green, backgroundColor: '#1D3B3D', borderColor: '#39796E', borderWidth: 1, borderRadius: 9, overflow: 'hidden', fontSize: 12, fontWeight: '900', marginTop: 11, paddingHorizontal: 10, paddingVertical: 5 },
+  unsavedStatus: { alignSelf: 'flex-start', color: colors.gold, fontSize: 12, fontWeight: '800', marginTop: 11 },
   notesStatus: { color: colors.gold, fontSize: 12, marginTop: 10 },
   notesError: { color: colors.red, fontSize: 12, lineHeight: 18, marginTop: 10 },
   noteInput: { minHeight: 118, maxHeight: 220, borderColor: colors.border, borderWidth: 1, borderRadius: 13, backgroundColor: '#11162E', color: colors.text, fontSize: 14, lineHeight: 21, paddingHorizontal: 13, paddingVertical: 12, marginTop: 12 },
-  noteActions: { flexDirection: 'row', gap: 10, alignItems: 'center', marginTop: 12 },
-  saveButton: { minHeight: 48, minWidth: 135, backgroundColor: colors.gold, borderRadius: 12, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 18 },
+  noteActions: { flexDirection: 'row', flexWrap: 'wrap', gap: 10, alignItems: 'stretch', marginTop: 12 },
+  saveButton: { flexGrow: 1, flexBasis: 135, minHeight: 50, minWidth: 135, backgroundColor: colors.gold, borderColor: '#FFE4AB', borderWidth: 1, borderRadius: 12, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 10 },
   saveButtonText: { color: '#29203C', fontSize: 12, fontWeight: '900', letterSpacing: 0.7 },
-  disabledButton: { opacity: 0.48 },
-  deleteButton: { minHeight: 48, minWidth: 80, alignItems: 'center', justifyContent: 'center' },
-  deleteText: { color: colors.red, fontSize: 12, fontWeight: '900', letterSpacing: 0.7 },
+  disabledButton: { backgroundColor: '#323654', borderColor: '#636585' },
+  disabledButtonText: { color: '#ADB0C8' },
+  savedButton: { backgroundColor: '#1B3A3B', borderColor: colors.green },
+  savedButtonText: { color: colors.green },
+  deleteButton: { flexGrow: 1, minHeight: 50, minWidth: 106, borderColor: '#A9687A', borderWidth: 1, borderRadius: 12, backgroundColor: '#362639', alignItems: 'center', justifyContent: 'center', paddingHorizontal: 9 },
+  deleteText: { color: '#FFC1CB', fontSize: 11, fontWeight: '900', letterSpacing: 0.5 },
   feedback: { color: colors.green, fontSize: 12, marginTop: 9 },
   errorFeedback: { color: colors.red },
 });

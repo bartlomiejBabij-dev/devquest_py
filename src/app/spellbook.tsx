@@ -1,24 +1,23 @@
 import { useState } from 'react';
-import { useRouter } from 'expo-router';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { GameScreen } from '@/components/GameScreen';
+import { NavigationButton } from '@/components/NavigationButton';
 import { SpellbookEntryView } from '@/components/SpellbookEntryView';
 import { spellbookEntries } from '@/game/spellbookContent';
 import { chapters } from '@/game/worldContent';
+import { useScreenBack, useScreenNavigation } from '@/navigation/useScreenNavigation';
 import { colors } from '@/theme';
 
 const glyphs = ['✦', '◆', '◈', '✧', '✣', '◇', '❖', '✥', '✦'];
 
 export default function SpellbookScreen() {
-  const router = useRouter();
+  const navigation = useScreenNavigation();
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const selected = spellbookEntries.find((entry) => entry.id === selectedId);
 
-  function goHome() {
-    if (router.canGoBack()) router.back();
-    else router.replace('/');
-  }
+  function goHome() { navigation.returnTo('/'); }
+  useScreenBack(() => { if (selectedId) setSelectedId(null); else goHome(); });
 
   if (selected) {
     return <SafeAreaView style={styles.detailSafe} edges={['top', 'bottom']}>
@@ -26,14 +25,12 @@ export default function SpellbookScreen() {
     </SafeAreaView>;
   }
 
-  return <GameScreen compact>
+  return <GameScreen compact header={
     <View style={styles.navRow}>
-      <Pressable onPress={goHome} accessibilityRole="button" accessibilityLabel="Back to Home" style={({ pressed }) => [styles.backButton, pressed && styles.pressed]}>
-        <Text style={styles.backText}>‹  HOME</Text>
-      </Pressable>
+      <NavigationButton label="Home" accessibilityLabel="Exit Spellbook to Home" onPress={goHome} />
       <Text style={styles.navLabel}>FOREST OF VARIABLES</Text>
     </View>
-
+  }>
     <View style={styles.banner}>
       <View style={styles.bookSymbol}><Text style={styles.bookSymbolText}>✧</Text></View>
       <Text style={styles.bannerEyebrow}>THE PYTHON ARCHIVE</Text>
@@ -67,9 +64,7 @@ export default function SpellbookScreen() {
 
 const styles = StyleSheet.create({
   detailSafe: { flex: 1, backgroundColor: colors.background },
-  navRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', minHeight: 48, marginBottom: 12, gap: 8 },
-  backButton: { minHeight: 44, minWidth: 72, justifyContent: 'center' },
-  backText: { color: colors.muted, fontSize: 12, fontWeight: '900', letterSpacing: 1 },
+  navRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', minHeight: 48, gap: 8 },
   navLabel: { color: colors.violet, fontSize: 10, fontWeight: '900', letterSpacing: 1.3, flexShrink: 1 },
   pressed: { opacity: 0.78, transform: [{ scale: 0.98 }] },
   banner: { alignItems: 'center', backgroundColor: '#211D43', borderColor: '#6E5CA6', borderWidth: 1, borderRadius: 24, paddingHorizontal: 23, paddingTop: 22, paddingBottom: 22 },
