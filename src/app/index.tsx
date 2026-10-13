@@ -1,88 +1,82 @@
 import { useEffect } from 'react';
 import { useRouter } from 'expo-router';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
-import { CharacterArt } from '@/components/CharacterArt';
-import { GameButton } from '@/components/GameButton';
+import { AvatarArt } from '@/components/AvatarArt';
 import { GameScreen } from '@/components/GameScreen';
+import { HomeNavigationCard } from '@/components/HomeNavigationCard';
+import { HydrationPlaceholder } from '@/components/Skeleton';
+import { XpProgress } from '@/components/XpProgress';
 import { useGame } from '@/game/GameContext';
+import { isHydrating } from '@/game/hydration';
+import { getPlayerStatistics } from '@/game/profile';
 import { useScreenNavigation } from '@/navigation/useScreenNavigation';
 import { colors } from '@/theme';
 
 export default function HomeScreen() {
   const router = useRouter();
   const navigation = useScreenNavigation();
-  const { dispatch, onboardingReady, needsOnboarding } = useGame();
+  const { dispatch, onboardingReady, needsOnboarding, profile, profileStatus, progression, progressionStatus } = useGame();
   useEffect(() => {
     if (onboardingReady && needsOnboarding) router.replace('/tutorial');
   }, [onboardingReady, needsOnboarding, router]);
-
   if (needsOnboarding) return null;
+  const pending = isHydrating(profileStatus, progressionStatus);
+  const stats = progressionStatus === 'ready' ? getPlayerStatistics(progression) : null;
 
-  return (
-    <GameScreen>
-      <View style={styles.header}>
-        <Text style={styles.eyebrow}>✦  A PYTHON RPG  ✦</Text>
-        <Text style={styles.logo}>DEV<Text style={styles.logoAccent}>QUEST</Text></Text>
-        <Text style={styles.subtitle}>Your Code Is Your Weapon</Text>
-        <View style={styles.quickLinks}>
-          <Pressable accessibilityRole="button" accessibilityLabel="Learn Python" onPress={() => navigation.open({ pathname: '/tutorial', params: { from: 'home' } })}
-            style={({ pressed }) => [styles.learnButton, pressed && styles.mapButtonPressed]}>
-            <Text style={styles.learnButtonText}>✦  Learn Python</Text>
-          </Pressable>
-          <Pressable accessibilityRole="button" accessibilityLabel="Open Python Spellbook" onPress={() => navigation.open('/spellbook')}
-            style={({ pressed }) => [styles.learnButton, pressed && styles.mapButtonPressed]}>
-            <Text style={styles.learnButtonText}>◆  Spellbook</Text>
-          </Pressable>
-        </View>
-      </View>
+  return <GameScreen>
+    <View style={styles.header}>
+      <Text style={styles.eyebrow}>✦  A PYTHON RPG  ✦</Text>
+      <Text style={styles.logo}>DEV<Text style={styles.logoAccent}>QUEST</Text></Text>
+      <Text style={styles.subtitle}>Your Code Is Your Weapon</Text>
+    </View>
+    {pending ? <HydrationPlaceholder pending compact label="Loading your adventurer…" /> : <View style={styles.heroCard}>
+      <View style={styles.heroRow}><AvatarArt avatarId={profile.avatarId} /><View style={styles.heroCopy}><Text style={styles.tag}>YOUR ADVENTURER</Text><Text style={styles.heroName}>{profile.nickname}</Text><Text style={styles.heroClass}>Python · Forest of Variables</Text></View></View>
+      {stats ? <XpProgress totalXp={stats.totalXp} /> : <Text style={styles.subtitle}>Saved statistics are unavailable.</Text>}
+    </View>}
 
-      <View style={styles.heroCard}>
-        <View style={styles.cardTop}><Text style={styles.tag}>YOUR HERO</Text><Text style={styles.level}>LVL 01</Text></View>
-        <CharacterArt kind="hero" />
-        <Text style={styles.heroName}>Python Pyromancer</Text>
-        <Text style={styles.heroClass}>Apprentice of the Arcane Syntax</Text>
-        <View style={styles.xpRow}><Text style={styles.xpLabel}>EXPERIENCE</Text><Text style={styles.xpValue}>0 / 100 XP</Text></View>
-        <View style={styles.xpTrack}><View style={styles.xpFill} /></View>
-      </View>
+    <Pressable accessibilityRole="button" accessibilityLabel="Explore World Map" accessibilityHint="Open the Forest of Variables and choose a mission" onPress={() => navigation.open('/world-map')}
+      style={({ pressed }) => [styles.mapButton, pressed && styles.pressed]}>
+      <Text accessible={false} style={styles.mapIcon}>✦</Text><View style={styles.mapCopy}><Text style={styles.mapTitle}>Explore World Map</Text><Text style={styles.mapSubtitle}>Your next Python spell awaits</Text></View><Text accessible={false} style={styles.mapArrow}>›</Text>
+    </Pressable>
 
-      <View style={styles.intro}><Text style={styles.introIcon}>✧</Text><Text style={styles.introText}>A Bug Goblin blocks your path. Complete three tiny Python spells to defeat it and claim your first victory.</Text></View>
-      <View style={styles.bottom}>
-        <Pressable accessibilityRole="button" accessibilityLabel="Explore World Map" onPress={() => navigation.open('/world-map')}
-          style={({ pressed }) => [styles.mapButton, pressed && styles.mapButtonPressed]}>
-          <Text style={styles.mapButtonIcon}>✦</Text><Text style={styles.mapButtonLabel}>Explore World Map</Text><Text style={styles.mapButtonArrow}>›</Text>
-        </Pressable>
-        <GameButton label="Start Adventure" onPress={() => navigation.run(() => { dispatch({ type: 'reset' }); router.navigate('/battle'); })} />
-        <Text style={styles.footer}>THREE SPELLS  ·  ONE EPIC BATTLE</Text>
-      </View>
-    </GameScreen>
-  );
+    <Text style={styles.sectionLabel}>PREPARE FOR THE JOURNEY</Text>
+    <HomeNavigationCard kind="tutorial" title="Learn Python" subtitle="New to coding? Start with the basics." action="Open Tutorial"
+      onPress={() => navigation.open({ pathname: '/tutorial', params: { from: 'home' } })} />
+    <HomeNavigationCard kind="spellbook" title="Python Spellbook" subtitle="Explore Python concepts and examples. Add personal notes during missions." action="Browse Spellbook"
+      onPress={() => navigation.open('/spellbook')} />
+    <HomeNavigationCard kind="profile" title="My Profile" subtitle="Your avatar, nickname, and adventure milestones." action="View Character Sheet"
+      onPress={() => navigation.open('/profile')} />
+
+    <Pressable accessibilityRole="button" accessibilityLabel="Play the original Bug Goblin battle" onPress={() => navigation.run(() => { dispatch({ type: 'reset' }); router.navigate('/battle'); })}
+      style={({ pressed }) => [styles.practice, pressed && styles.pressed]}>
+      <View style={styles.mapCopy}><Text style={styles.practiceTitle}>Bug Goblin Practice</Text><Text style={styles.practiceSubtitle}>The original three-spell encounter</Text></View><Text accessible={false} style={styles.mapArrow}>›</Text>
+    </Pressable>
+    <Text style={styles.footer}>LEARN A LITTLE. CAST SOMETHING GREAT.</Text>
+  </GameScreen>;
 }
 
 const styles = StyleSheet.create({
-  header: { alignItems: 'center', paddingTop: 10, paddingBottom: 25 },
-  eyebrow: { color: colors.violet, fontSize: 11, fontWeight: '800', letterSpacing: 3 },
-  logo: { marginTop: 10, color: colors.text, fontSize: 40, fontWeight: '900', letterSpacing: 1.2 },
-  logoAccent: { color: colors.gold }, subtitle: { color: colors.muted, fontSize: 15, marginTop: 3, letterSpacing: 0.5 },
-  heroCard: { backgroundColor: colors.panel, borderRadius: 24, borderWidth: 1, borderColor: colors.border, paddingHorizontal: 22, paddingTop: 17, paddingBottom: 21, alignItems: 'center' },
-  cardTop: { flexDirection: 'row', alignSelf: 'stretch', justifyContent: 'space-between', alignItems: 'center' },
-  tag: { color: colors.violet, fontSize: 11, fontWeight: '900', letterSpacing: 2 },
-  level: { color: colors.gold, fontSize: 12, fontWeight: '900', backgroundColor: '#39314B', borderRadius: 8, overflow: 'hidden', paddingHorizontal: 10, paddingVertical: 5 },
-  heroName: { color: colors.text, fontSize: 23, fontWeight: '900', marginTop: 2 },
-  heroClass: { color: colors.muted, fontSize: 12, marginTop: 5 },
-  xpRow: { alignSelf: 'stretch', flexDirection: 'row', justifyContent: 'space-between', marginTop: 22 },
-  xpLabel: { color: colors.muted, fontSize: 10, fontWeight: '800', letterSpacing: 1.7 },
-  xpValue: { color: colors.gold, fontSize: 11, fontWeight: '800' },
-  xpTrack: { alignSelf: 'stretch', height: 9, borderRadius: 8, backgroundColor: '#11152C', marginTop: 8, overflow: 'hidden' },
-  xpFill: { width: '2%', height: '100%', borderRadius: 8, backgroundColor: colors.gold },
-  intro: { flexDirection: 'row', alignItems: 'center', marginTop: 20, backgroundColor: '#171B36', borderRadius: 16, padding: 17, gap: 12, borderWidth: 1, borderColor: '#35385C' },
-  introIcon: { color: colors.gold, fontSize: 28 }, introText: { flex: 1, color: colors.muted, lineHeight: 20, fontSize: 13 },
-  bottom: { marginTop: 'auto', paddingTop: 25 }, footer: { color: '#747797', textAlign: 'center', fontSize: 10, fontWeight: '800', letterSpacing: 1.8, marginTop: 15 },
-  mapButton: { minHeight: 58, borderRadius: 16, borderWidth: 1.5, borderColor: colors.green, backgroundColor: '#1D393A', flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 9, marginBottom: 12, paddingHorizontal: 22 },
-  mapButtonPressed: { transform: [{ scale: 0.98 }], opacity: 0.85 },
-  mapButtonIcon: { color: colors.green, fontSize: 19 },
-  mapButtonLabel: { color: colors.text, fontSize: 16, fontWeight: '900' },
-  mapButtonArrow: { color: colors.green, fontSize: 27, position: 'absolute', right: 18, top: 10 },
-  quickLinks: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 12, marginTop: 10, flexWrap: 'wrap' },
-  learnButton: { minHeight: 44, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 8 },
-  learnButtonText: { color: colors.gold, fontSize: 13, fontWeight: '800', letterSpacing: 0.6 },
+  header: { alignItems: 'center', paddingTop: 4, paddingBottom: 20 },
+  eyebrow: { color: colors.violet, fontSize: 10, fontWeight: '800', letterSpacing: 3 },
+  logo: { marginTop: 7, color: colors.text, fontSize: 36, fontWeight: '900', letterSpacing: 1.2 },
+  logoAccent: { color: colors.gold },
+  subtitle: { color: colors.muted, fontSize: 13, marginTop: 3, letterSpacing: 0.3 },
+  heroCard: { backgroundColor: colors.panel, borderRadius: 21, borderWidth: 1, borderColor: colors.border, padding: 17, gap: 17 },
+  heroRow: { flexDirection: 'row', gap: 13, alignItems: 'center' },
+  heroCopy: { flex: 1, gap: 6 },
+  tag: { color: colors.violet, fontSize: 9, fontWeight: '900', letterSpacing: 1.6 },
+  heroName: { color: colors.text, fontSize: 19, fontWeight: '900' },
+  heroClass: { color: colors.muted, fontSize: 11, lineHeight: 17 },
+  mapButton: { minHeight: 76, borderRadius: 17, borderWidth: 1.5, borderColor: colors.green, backgroundColor: '#20443E', flexDirection: 'row', alignItems: 'center', gap: 12, padding: 16, marginTop: 15 },
+  pressed: { transform: [{ scale: 0.98 }], opacity: 0.85 },
+  mapIcon: { color: colors.green, fontSize: 27 },
+  mapCopy: { flex: 1, gap: 5 },
+  mapTitle: { color: colors.text, fontSize: 18, fontWeight: '900' },
+  mapSubtitle: { color: '#B6DECC', fontSize: 12 },
+  mapArrow: { color: colors.gold, fontSize: 27 },
+  sectionLabel: { color: colors.violet, fontSize: 10, fontWeight: '900', letterSpacing: 1.4, marginTop: 25, marginBottom: 12 },
+  practice: { flexDirection: 'row', alignItems: 'center', gap: 12, minHeight: 70, borderWidth: 1, borderColor: colors.border, borderRadius: 16, padding: 15, backgroundColor: '#161B32', marginTop: 5 },
+  practiceTitle: { color: colors.text, fontSize: 14, fontWeight: '800' },
+  practiceSubtitle: { color: colors.muted, fontSize: 11 },
+  footer: { color: '#9A94B0', fontSize: 9, textAlign: 'center', fontWeight: '800', letterSpacing: 1, marginTop: 22 },
 });

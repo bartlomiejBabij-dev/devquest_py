@@ -1,6 +1,11 @@
 import { createContext, useContext, useEffect, useReducer, useRef, useState, type ReactNode, type Dispatch } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { HydrationPlaceholder } from '@/components/Skeleton';
+import { isHydrating, type HydrationStatus } from './hydration';
+import { defaultProfile, isAvatarId, validateNickname, type PlayerProfile } from './profile';
+import { createProfileStore, type ProfileLoadIssue } from './profileStorage';
 import { battleReducer, initialBattleState, type BattleAction } from './battle';
 import { createNotesStore, deleteExerciseNote as removeNote, isValidExerciseId, setExerciseNote as updateNote, type NotesState } from './notesStorage';
 import { createOnboardingStore, shouldShowOnboarding } from './onboardingStorage';
@@ -15,6 +20,7 @@ interface GameContextValue {
   battle: BattleState;
   dispatch: Dispatch<BattleAction>;
   progression: ProgressionState;
+  progressionStatus: HydrationStatus;
   dispatchProgression: Dispatch<ProgressionAction>;
   onboardingReady: boolean;
   needsOnboarding: boolean;
@@ -23,11 +29,16 @@ interface GameContextValue {
   notesStatus: 'loading' | 'ready' | 'unavailable';
   saveExerciseNote: (exerciseId: string, text: string) => Promise<boolean>;
   deleteExerciseNote: (exerciseId: string) => Promise<boolean>;
+  profile: PlayerProfile;
+  profileStatus: HydrationStatus;
+  profileIssue: ProfileLoadIssue;
+  saveProfile: (profile: PlayerProfile) => Promise<boolean>;
 }
 const GameContext = createContext<GameContextValue | null>(null);
 const progressionStore = createProgressionStore(AsyncStorage);
 const onboardingStore = createOnboardingStore(AsyncStorage);
 const notesStore = createNotesStore(AsyncStorage);
+const profileStore = createProfileStore(AsyncStorage);
 
 export function GameProvider({ children }: { children: ReactNode }) {
   const [battle, dispatch] = useReducer(battleReducer, initialBattleState);
@@ -40,6 +51,20 @@ export function GameProvider({ children }: { children: ReactNode }) {
   const notesRef = useRef<NotesState>({});
   const savedNotesRef = useRef<NotesState>({});
   const noteRevisionRef = useRef(0);
+  const [profile, setProfile] = useState<PlayerProfile>({ ...defaultProfile });
+  const [profileStatus, setProfileStatus] = useState<HydrationStatus>('loading');
+  const [profileIssue, setProfileIssue] = useState<ProfileLoadIssue>(null);
+
+  useEffect(() => {
+    let active = true;
+    profileStore.load().then((result) => {
+      if (!active) return;
+      setProfile(result.profile);
+      setProfileIssue(result.issue);
+      setProfileStatus(result.status);
+    });
+    return () => { active = false; };
+  }, []);
 
   useEffect(() => {
     let active = true;
@@ -72,7 +97,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
     return () => { active = false; };
   }, [session]);
 
-  const onboardingReady = session.hydration !== 'loading' && onboardingStatus !== 'loading';
+  const onboardingReady = !isHydrating(session.hydration, onboardingStatus);
   const needsOnboarding = session.hydration === 'ready' && onboardingStatus !== 'loading'
     && shouldShowOnboarding(onboardingStatus, session.progression.completedMissionIds);
 
@@ -106,6 +131,15 @@ export function GameProvider({ children }: { children: ReactNode }) {
     return persistNotes(removeNote(notesRef.current, exerciseId));
   }
 
+  async function saveProfile(next: PlayerProfile): Promise<boolean> {
+    const name = validateNickname(next.nickname);
+    if (profileStatus !== 'ready' || name.error || !isAvatarId(next.avatarId)) return false;
+    const snapshot = { nickname: name.nickname, avatarId: next.avatarId };
+    const saved = await profileStore.save(snapshot);
+    if (saved) { setProfile(snapshot); setProfileIssue(null); }
+    return saved;
+  }
+
   const warning = session.loadIssue === 'unsupported-version'
     ? 'This save was created by a newer version. Progress will not be saved in this session.'
     : session.loadIssue
@@ -113,11 +147,11 @@ export function GameProvider({ children }: { children: ReactNode }) {
       : saveFailed ? 'Progress could not be saved. Keep playing to try again.'
         : onboardingSaveFailed ? 'The introduction could not be saved. It may appear again next time.' : null;
 
-  return <GameContext.Provider value={{ battle, dispatch, progression: session.progression, dispatchProgression, onboardingReady, needsOnboarding, completeOnboarding, notes, notesStatus, saveExerciseNote, deleteExerciseNote }}>
+  return <GameContext.Provider value={{ battle, dispatch, progression: session.progression, progressionStatus: session.hydration, dispatchProgression, onboardingReady, needsOnboarding, completeOnboarding, notes, notesStatus, saveExerciseNote, deleteExerciseNote, profile, profileStatus, profileIssue, saveProfile }}>
     <View style={styles.app}>
       {warning ? <Text accessibilityRole="alert" style={styles.warning}>{warning}</Text> : null}
-      {children}
-      {!onboardingReady ? <View style={styles.loading}><ActivityIndicator color={colors.green} /><Text style={styles.loadingText}>Loading your adventure…</Text></View> : null}
+      <View style={styles.app} pointerEvents={onboardingReady ? 'auto' : 'none'} accessibilityElementsHidden={!onboardingReady} importantForAccessibility={onboardingReady ? 'auto' : 'no-hide-descendants'}>{children}</View>
+      {!onboardingReady ? <SafeAreaView style={styles.loading}><HydrationPlaceholder pending /></SafeAreaView> : null}
     </View>
   </GameContext.Provider>;
 }
@@ -130,7 +164,6 @@ export function useGame() {
 
 const styles = StyleSheet.create({
   app: { flex: 1, backgroundColor: colors.background },
-  loading: { ...StyleSheet.absoluteFill, zIndex: 2, alignItems: 'center', justifyContent: 'center', backgroundColor: colors.background, gap: 12 },
-  loadingText: { color: colors.text, fontSize: 14, fontWeight: '700' },
+  loading: { ...StyleSheet.absoluteFill, zIndex: 2, backgroundColor: colors.background },
   warning: { backgroundColor: '#49352F', color: colors.text, paddingHorizontal: 16, paddingVertical: 9, fontSize: 12, textAlign: 'center' },
 });

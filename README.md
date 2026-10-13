@@ -14,7 +14,7 @@ Run `npx tsc --noEmit` for strict TypeScript checking, `npm run lint` for the Ex
 
 ## Structure
 
-- `src/app`: Home, Python tutorial, Spellbook, World Map, world mission, Battle, and Victory routes.
+- `src/app`: Home, Adventurer Profile, Python tutorial, Spellbook, World Map, world mission, Battle, and Victory routes.
 - `src/components`: reusable game UI and original shapes-based character art.
 - `src/game`: battle data and reducer, world content, Spellbook lessons, pure exercise validation, mission submissions, progression logic, and separate local progression, onboarding, and notes storage.
 - `src/theme.ts`: visual theme colors.
@@ -24,6 +24,12 @@ Answers are checked against local challenge data; no Python code is executed. Co
 New players see a three-screen Python introduction. Skip and Start Adventure save its completion under a separate local key; players with completed missions bypass it. Learn Python on Home reopens it.
 
 The Spellbook on Home contains nine short Python references. Each world mission can open the relevant entry without leaving the current exercise. Personal notes are tied to exercise IDs and saved locally with an explicit Save Note action; they can be edited or deleted and do not affect XP or progression.
+
+My Profile saves only a trimmed 3–20 character nickname and one of five local avatars under `devquest.profile.v1`. Saves are explicit and queued. Missing or damaged profiles fall back to Python Apprentice/Mage; unreadable or future-version saves are protected from replacement. Profile editing never writes to progression, notes, or onboarding.
+
+Profile and Home XP come from completed mission IDs using the existing XP selector. Completed exercises count unique exercises belonging to completed missions; unfinished attempts and prototype battles do not count. Boss victories count the completed Goblin King mission. Display-only level is `1 + floor(total XP / 100)`, with progress toward the next 100 XP. Achievements require completing the first mission, three Forest chapters, Broken Spells, and the Goblin King respectively; they grant no rewards.
+
+Initial adventure hydration and profile hydration use reusable, reduced-motion-aware skeletons. The placeholder shapes appear only if loading is still unresolved after 120 ms, and disappear as soon as data arrives. Data is never delayed; navigation and background saves do not trigger new skeletons.
 
 The final Forest mission is a Goblin King encounter. Its HP starts at 100 and falls by 20 for each correctly solved exercise. Boss HP is derived from the mission attempt; XP and World 1 completion still use the existing progression system. Replaying the boss earns no additional XP.
 

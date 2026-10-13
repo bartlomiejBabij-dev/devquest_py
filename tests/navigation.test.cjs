@@ -15,7 +15,7 @@ const { initialProgressionState } = require('../src/game/progression.ts');
 const { startMissionAttempt, submitMissionAnswer } = require('../src/game/worldMission.ts');
 const { getPlayableMission } = require('../src/game/worldMission.ts');
 
-const routeNames = ['index', 'world-map', 'mission/[missionId]', 'spellbook'];
+const routeNames = ['index', 'world-map', 'mission/[missionId]', 'spellbook', 'profile'];
 const routeParamList = Object.fromEntries(routeNames.map((name) => [name, undefined]));
 const stackRouter = StackRouter({ initialRouteName: 'index' });
 const actionOptions = { routeParamList, routeGetIdList: {} };
@@ -77,6 +77,20 @@ test('A rapid route guard runs one navigation until reset', () => {
   gate.reset();
   assert.equal(gate.run(() => events.push('next')), true);
   assert.deepEqual(events, ['first', 'next']);
+});
+
+test('Profile round trips and rapid repeated taps leave a single Home route', () => {
+  let state = startStack();
+  const gate = createNavigationGate();
+  for (let visit = 0; visit < 3; visit++) {
+    gate.reset();
+    const open = () => { state = apply(state, { type: 'NAVIGATE', payload: { name: 'profile' } }); };
+    assert.equal(gate.run(open), true);
+    assert.equal(gate.run(open), false);
+    assert.deepEqual(names(state), ['index', 'profile']);
+    state = apply(state, StackActions.popTo('index'));
+    assert.deepEqual(names(state), ['index']);
+  }
 });
 
 test('Only an unfinished mission attempt with progress or a typed answer needs confirmation', () => {
