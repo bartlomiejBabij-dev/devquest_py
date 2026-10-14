@@ -34,3 +34,22 @@ Initial adventure hydration and profile hydration use reusable, reduced-motion-a
 The final Forest mission is a Goblin King encounter. Its HP starts at 100 and falls by 20 for each correctly solved exercise. Boss HP is derived from the mission attempt; XP and World 1 completion still use the existing progression system. Replaying the boss earns no additional XP.
 
 The battle screen scrolls on shorter phones. With the keyboard open, the answer and Cast Spell button should remain reachable; the keyboard's Done action also submits the answer.
+
+## Audio
+
+Home's Audio button opens local settings: music and effects toggles, independent volume steps, and Mute All. Music defaults OFF at 20%; effects default ON at 45%. Changes apply immediately and save independently under `devquest.audio.v1`; writes are queued and invalid values are validated/clamped. Failed or future-version loads never overwrite an existing save automatically.
+
+One root `AudioProvider` owns one looping music player and four reusable effect players. Home, Map, Profile, Tutorial, Spellbook, and prototype Victory use Forest Ambience; missions and prototype Battle use RPG Battle Theme II. Staying within the same theme does not restart it. Switching pauses the previous source before replacing it (no crossfade or overlapping music). Correct/incorrect effects follow validated submissions; completion fanfares follow the transition to mission results, after the explanation, or the prototype's victory transition. Reopening a completed mission does not play a fanfare; completing a fresh replay may celebrate without changing XP.
+
+Playback pauses when the app becomes inactive/backgrounded or Android loses window focus, and resumes music when active. Pending effect seeks are invalidated when muted/backgrounded; old effects are not replayed. In-app audio controls are independent of the ringer silent/vibrate setting; native audio interruptions are respected. No microphone permissions or background playback are enabled. Plugin permission settings apply to native builds; Expo Go uses its own host permissions. Audio is optional and never controls gameplay or visible educational feedback.
+
+Bundled music licensing and exact sources are in `assets/audio/CREDITS.md`. Four original effects are reproducible with `python scripts/create_audio.py`. Manual listening on Android/iOS hardware is still required to judge mix, loop seams, Bluetooth/headphone interruption behavior, and device-specific latency.
+
+
+### Physical-device audio diagnostics (Stage 3F.4.1)
+
+SDK 57 can suppress play() when `playsInSilentMode` is false and Android is in silent/vibrate ringer mode. Game audio now uses `playsInSilentMode: true`, activates the native session explicitly, and defers play until native loading completes. This does not bypass media volume, Android Do Not Disturb media restrictions, or Bluetooth routing. DND is not assumed to be the cause of a particular phone's silence.
+
+Development builds/Expo Go expose **Test Sound (development)** in Audio Settings. Enable effects and set a nonzero effects volume, then tap it. It uses the same bundled correct-spell asset and native session but bypasses the gameplay controller. The status below the button and `[DevQuest audio]` console messages distinguish preferences/lifecycle suppression, source location (bundled/cache/Metro Tunnel), loading, buffering, native errors, play calls, and advancing playback position. Logs omit source URLs and player information; status changes are logged rather than every position update. The control and logs are excluded from production behavior by `__DEV__`.
+
+For the physical Android check: reload this code in Expo Go through the existing Tunnel, enable music and effects, test the sound, enter a mission, and try mute plus background/foreground. If silent, report the displayed diagnostic and relevant audio console lines. Compare DND on/off without clearing app data. A native 'playing' status alone does not prove audible output; listening on the affected phone remains the acceptance check.

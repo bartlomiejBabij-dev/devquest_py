@@ -9,11 +9,15 @@ import { NavigationButton } from '@/components/NavigationButton';
 import { useCombatAnimations } from '@/components/useCombatAnimations';
 import { useGame } from '@/game/GameContext';
 import { challenges } from '@/game/challenges';
-import { ENEMY_MAX_HP } from '@/game/battle';
+import { battleReducer, ENEMY_MAX_HP } from '@/game/battle';
+import { useGameAudio } from '@/audio/AudioProvider';
 import { useScreenBack, useScreenNavigation } from '@/navigation/useScreenNavigation';
 import { colors } from '@/theme';
 
 export default function BattleScreen() {
+  const audio = useGameAudio();
+  const audioRef = useRef(audio);
+  useEffect(() => { audioRef.current = audio; }, [audio]);
   const router = useRouter();
   const navigation = useScreenNavigation();
   function goHome() { navigation.returnTo('/'); }
@@ -34,18 +38,20 @@ export default function BattleScreen() {
   useEffect(() => {
     if (!casting) return;
     const timer = setTimeout(() => {
-      if (battle.enemyHp === 0) router.replace('/victory');
+      if (battle.enemyHp === 0) { audioRef.current.playEffect('victory', battle); router.replace('/victory'); }
       else {
         setAnswer('');
         dispatch({ type: 'advance' });
       }
     }, 930);
     return () => clearTimeout(timer);
-  }, [casting, battle.enemyHp, dispatch, router]);
+  }, [casting, battle, dispatch, router]);
 
   function castSpell() {
     if (casting || submitting.current) return;
     submitting.current = true;
+    const outcome = battleReducer(battle, { type: 'submit', answer });
+    if (outcome !== battle) audio.playEffect(outcome.result === 'correct' ? 'correct' : 'incorrect', outcome);
     dispatch({ type: 'submit', answer });
     Keyboard.dismiss();
   }

@@ -18,8 +18,10 @@ import { continueMissionAttempt, getPlayableMission, startMissionAttempt, submit
 import { hasUnfinishedMissionProgress } from '@/navigation/navigationActions';
 import { useScreenBack, useScreenNavigation } from '@/navigation/useScreenNavigation';
 import { colors } from '@/theme';
+import { useGameAudio } from '@/audio/AudioProvider';
 
 export default function WorldMissionScreen() {
+  const audio = useGameAudio();
   const { missionId: rawMissionId } = useLocalSearchParams<{ missionId: string }>();
   const missionId = typeof rawMissionId === 'string' ? rawMissionId : '';
   const stackNavigation = useNavigation();
@@ -81,12 +83,14 @@ export default function WorldMissionScreen() {
     submitting.current = true;
     const submission = submitMissionAnswer(currentProgress.current, current, submittedAnswer);
     if (submission.status !== 'correct') {
+      if (submission.status === 'incorrect') audio.playEffect('incorrect', submission);
       setIncorrect(submission.status === 'incorrect');
       submitting.current = false;
       return;
     }
 
     attemptRef.current = submission.attempt;
+    audio.playEffect('correct', submission.attempt);
     setAttempt(submission.attempt);
     currentProgress.current = submission.progress;
     setIncorrect(false);
@@ -109,6 +113,7 @@ export default function WorldMissionScreen() {
     if (!current || !playable || !animationDone) return;
     const next = continueMissionAttempt(current, playable.exercises.length);
     if (next === current) return;
+    if (next.phase === 'complete') audio.playEffect(bossMission ? 'bossVictory' : 'victory', next);
     attemptRef.current = next;
     setAttempt(next);
     setAnswer('');

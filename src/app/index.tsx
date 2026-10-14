@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { useRouter } from 'expo-router';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { AvatarArt } from '@/components/AvatarArt';
+import { AudioSettingsButton } from '@/components/AudioSettings';
 import { GameScreen } from '@/components/GameScreen';
 import { HomeNavigationCard } from '@/components/HomeNavigationCard';
 import { HydrationPlaceholder } from '@/components/Skeleton';
@@ -24,6 +25,7 @@ export default function HomeScreen() {
   const stats = progressionStatus === 'ready' ? getPlayerStatistics(progression) : null;
 
   return <GameScreen>
+    <AudioSettingsButton />
     <View style={styles.header}>
       <Text style={styles.eyebrow}>✦  A PYTHON RPG  ✦</Text>
       <Text style={styles.logo}>DEV<Text style={styles.logoAccent}>QUEST</Text></Text>
