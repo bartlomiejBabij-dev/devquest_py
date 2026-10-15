@@ -1,3 +1,4 @@
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { Animated, Modal, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -6,10 +7,11 @@ import { GameScreen } from '@/components/GameScreen';
 import { NavigationButton } from '@/components/NavigationButton';
 import { isGoblinKingMission } from '@/game/boss';
 import { useGame } from '@/game/GameContext';
-import { getChapterProgress, getTotalEarnedXp, getWorldProgress, isChapterCompleted, isChapterUnlocked, isMissionCompleted, isMissionUnlocked } from '@/game/progression';
-import { chapters, forestOfVariables, missions } from '@/game/worldContent';
+import { getChapterProgress, getTotalEarnedXp, getWorldProgress, isChapterCompleted, isChapterUnlocked, isMissionCompleted, isMissionUnlocked, isWorldUnlocked } from '@/game/progression';
+import { chapters, forestOfVariables, missions, worlds } from '@/game/worldContent';
 import type { Chapter, ProgressionState } from '@/game/worldTypes';
 import { useScreenBack, useScreenNavigation } from '@/navigation/useScreenNavigation';
+import { resolveMapWorld } from '@/navigation/worldRoutes';
 import { colors } from '@/theme';
 
 type ChapterState = 'completed' | 'available' | 'locked';
@@ -28,7 +30,7 @@ function getChapterState(progress: ProgressionState, chapter: Chapter): ChapterS
 function ChapterNode({ chapter, index, state, onPress, pulse }: {
   chapter: Chapter; index: number; state: ChapterState; onPress: () => void; pulse: Animated.Value;
 }) {
-  const boss = index === forestOfVariables.chapterIds.length - 1;
+  const boss = chapter.missionIds.some(isGoblinKingMission);
   return (
     <View style={[styles.stopRow, index % 2 === 1 && styles.stopRowRight]}>
       <Pressable onPress={onPress} accessibilityRole="button" accessibilityLabel={`Chapter ${index + 1}: ${chapter.title}, ${state}`}
@@ -61,6 +63,7 @@ function ChapterDetails({ chapter, index, progress, onClose, onOpenMission }: {
   chapter: Chapter; index: number; progress: ProgressionState; onClose: () => void; onOpenMission: (missionId: string) => void;
 }) {
   const state = getChapterState(progress, chapter);
+  const world = resolveMapWorld(chapter.worldId);
   const completion = getChapterProgress(progress, chapter.id);
   const unmetPrerequisites = chapter.prerequisiteMissionIds.filter((id) => !isMissionCompleted(progress, id));
   const chapterMissions = chapter.missionIds.flatMap((id) => {
@@ -75,7 +78,7 @@ function ChapterDetails({ chapter, index, progress, onClose, onOpenMission }: {
         <View style={styles.sheetHandle} />
         <View style={styles.sheetHeading}>
           <NavigationButton label="Close" icon="close" accessibilityLabel="Close chapter details" onPress={onClose} />
-          <Text style={styles.sheetEyebrow}>{index === forestOfVariables.chapterIds.length - 1 ? 'GOBLIN KING · FINAL BOSS' : `CHAPTER ${String(index + 1).padStart(2, '0')}`}</Text>
+          <Text style={styles.sheetEyebrow}>{chapter.missionIds.some(isGoblinKingMission) ? 'GOBLIN KING · FINAL BOSS' : `CHAPTER ${String(index + 1).padStart(2, '0')}`}</Text>
         </View>
         <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.sheetScroll}>
           <Text style={styles.sheetTitle}>{chapter.title}</Text>
@@ -99,6 +102,7 @@ function ChapterDetails({ chapter, index, progress, onClose, onOpenMission }: {
           {state === 'locked' ? (
             <View style={styles.noticeCard}>
               <Text style={styles.noticeTitle}>THE PATH IS SEALED</Text>
+              {!isWorldUnlocked(progress, world.id) ? <Text style={styles.noticeText}>{world.unlockRequirement}</Text> : null}
               {unmetPrerequisites.map((id) => {
                 const mission = missions.find((item) => item.id === id);
                 return <Text key={id} style={styles.noticeText}>Complete “{mission?.title ?? 'the previous mission'}” to unlock this chapter.</Text>;
@@ -130,15 +134,21 @@ function ChapterDetails({ chapter, index, progress, onClose, onOpenMission }: {
 
 export default function WorldMapScreen() {
   const navigation = useScreenNavigation();
+  const router = useRouter();
+  const { worldId } = useLocalSearchParams<{ worldId?: string }>();
+  const world = resolveMapWorld(worldId);
+  const valley = world.id !== forestOfVariables.id;
   const { progression } = useGame();
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const reduceMotion = useReducedMotion();
   const [pulse] = useState(() => new Animated.Value(0.55));
-  const worldProgress = getWorldProgress(progression, forestOfVariables.id);
-  const chapterList = forestOfVariables.chapterIds.flatMap((id) => {
+  const worldProgress = getWorldProgress(progression, world.id);
+  const chapterList = world.chapterIds.flatMap((id) => {
     const chapter = chapters.find((item) => item.id === id);
     return chapter ? [chapter] : [];
   });
+  const exerciseCount = missions.filter((mission) => world.chapterIds.includes(mission.chapterId))
+    .reduce((count, mission) => count + mission.exerciseIds.length, 0);
   const selectedChapter = chapterList.find((chapter) => chapter.id === selectedId);
 
   useEffect(() => {
@@ -159,32 +169,49 @@ export default function WorldMapScreen() {
 
   return (
     <>
-      <GameScreen compact header={
+      <GameScreen key={world.id} compact header={
         <View style={styles.navRow}>
           <NavigationButton label="Exit to Home" accessibilityLabel="Exit World Map to Home" onPress={goHome} />
-          <Text style={styles.worldNumber}>WORLD 01  /  PYTHON</Text>
+          <Text style={styles.worldNumber}>WORLD {String(worlds.indexOf(world) + 1).padStart(2, '0')}  /  PYTHON</Text>
         </View>
       }>
-        <View style={styles.banner}>
+        <View style={styles.worldPicker} accessibilityRole="tablist">
+          {worlds.map((item, index) => {
+            const unlocked = isWorldUnlocked(progression, item.id);
+            const completed = getWorldProgress(progression, item.id).percent === 100;
+            return <Pressable key={item.id} accessibilityRole="tab" accessibilityState={{ selected: item.id === world.id }}
+              accessibilityLabel={`World ${index + 1}: ${item.title}, ${completed ? 'available chapters completed' : unlocked ? 'unlocked' : 'locked'}`}
+              onPress={() => { setSelectedId(null); router.setParams({ worldId: item.id }); }}
+              style={({ pressed }) => [styles.worldChoice, item.id === world.id && styles.worldChoiceSelected, pressed && styles.pressed]}>
+              <Text style={styles.worldChoiceLabel}>WORLD {index + 1} · {completed ? '✓ COMPLETE' : unlocked ? 'AVAILABLE' : 'LOCKED'}</Text>
+              <Text style={styles.worldChoiceTitle}>{item.title}</Text>
+            </Pressable>;
+          })}
+        </View>
+        <View style={[styles.banner, valley && styles.valleyBanner]}>
           <Text style={styles.bannerStars}>✦  ·  ✧  ·  ✦</Text>
-          <Text style={styles.bannerEyebrow}>THE ADVENTURE BEGINS</Text>
-          <Text style={styles.bannerTitle}>Forest of{'\n'}<Text style={styles.bannerAccent}>Variables</Text></Text>
-          <Text style={styles.bannerDescription}>{forestOfVariables.description}</Text>
-          <View style={styles.treeLine}><Text style={styles.treeGlyph}>♠</Text><Text style={styles.treeGlyphSmall}>♠</Text><Text style={styles.treeGlyph}>♠</Text><Text style={styles.treeGlyphSmall}>♠</Text><Text style={styles.treeGlyph}>♠</Text></View>
+          <Text style={styles.bannerEyebrow}>{valley ? 'EVERY CHOICE IS A SPELL' : 'THE ADVENTURE BEGINS'}</Text>
+          <Text style={styles.bannerTitle}>{valley ? 'Valley of' : 'Forest of'}{'\n'}<Text style={styles.bannerAccent}>{valley ? 'Decisions' : 'Variables'}</Text></Text>
+          <Text style={styles.bannerDescription}>{world.description}</Text>
+          {valley ? <Text style={styles.valleyPeaks} accessible={false}>◇  △  ◈  △  ◇</Text> : <View style={styles.treeLine}><Text style={styles.treeGlyph}>♠</Text><Text style={styles.treeGlyphSmall}>♠</Text><Text style={styles.treeGlyph}>♠</Text><Text style={styles.treeGlyphSmall}>♠</Text><Text style={styles.treeGlyph}>♠</Text></View>}
         </View>
 
+        {!isWorldUnlocked(progression, world.id) ? <View style={styles.noticeCard}>
+          <Text style={styles.noticeTitle}>WORLD LOCKED</Text><Text style={styles.noticeText}>{world.unlockRequirement}</Text>
+        </View> : null}
+        {valley ? <Text style={styles.availableChapters}>{chapterList.length} CHAPTERS AVAILABLE · {exerciseCount} PYTHON SPELLS</Text> : null}
         <View style={styles.playerPanel}>
           <View style={styles.playerIcon}><Text style={styles.playerIconText}>✦</Text></View>
           <View style={styles.playerInfo}><Text style={styles.playerLabel}>YOUR HERO</Text><Text style={styles.playerName}>Python Pyromancer</Text></View>
-          <View style={styles.playerXp}><Text style={styles.playerXpValue}>{getTotalEarnedXp(progression)}</Text><Text style={styles.playerXpLabel}>WORLD XP</Text></View>
+          <View style={styles.playerXp}><Text style={styles.playerXpValue}>{getTotalEarnedXp(progression)}</Text><Text style={styles.playerXpLabel}>TOTAL XP</Text></View>
         </View>
-        <View style={styles.worldProgressRow}><Text style={styles.progressLabel}>WORLD COMPLETION</Text><Text style={styles.progressPercent}>{worldProgress.percent}%</Text></View>
+        <View style={styles.worldProgressRow}><Text style={styles.progressLabel}>{valley ? 'AVAILABLE CHAPTERS' : 'WORLD COMPLETION'}</Text><Text style={styles.progressPercent}>{worldProgress.percent}%</Text></View>
         <View style={styles.progressTrack} accessibilityRole="progressbar" accessibilityValue={{ min: 0, max: 100, now: worldProgress.percent }}>
           <View style={[styles.progressFill, { width: `${worldProgress.percent}%` }]} />
         </View>
 
-        <View style={styles.sectionHeading}><Text style={styles.sectionTitle}>THE ENCHANTED PATH</Text><Text style={styles.sectionHint}>{worldProgress.completed} / {worldProgress.total} CLEARED</Text></View>
-        <View style={styles.mapSurface}>
+        <View style={styles.sectionHeading}><Text style={styles.sectionTitle}>{valley ? 'THE DIVIDED PATH' : 'THE ENCHANTED PATH'}</Text><Text style={styles.sectionHint}>{worldProgress.completed} / {worldProgress.total} CLEARED</Text></View>
+        <View style={[styles.mapSurface, valley && styles.valleyMap]}>
           <View style={styles.mapCaption}><Text style={styles.mapCaptionText}>✧  FOLLOW THE RUNES  ✧</Text></View>
           {chapterList.map((chapter, index) => (
             <View key={chapter.id}>
@@ -197,7 +224,7 @@ export default function WorldMapScreen() {
               ) : null}
             </View>
           ))}
-          <Text style={styles.mapFooter}>{worldProgress.percent === 100 ? 'FOREST OF VARIABLES CLEARED' : 'MORE OF THE FOREST AWAITS'}</Text>
+          <Text style={styles.mapFooter}>{worldProgress.percent === 100 ? valley ? 'AVAILABLE CHAPTERS COMPLETE' : 'FOREST OF VARIABLES CLEARED' : valley ? 'CHOOSE YOUR PATH THROUGH THE VALLEY' : 'MORE OF THE FOREST AWAITS'}</Text>
         </View>
       </GameScreen>
 
@@ -214,6 +241,15 @@ export default function WorldMapScreen() {
 }
 
 const styles = StyleSheet.create({
+  worldPicker: { flexDirection: 'row', gap: 8, marginBottom: 12 },
+  worldChoice: { flex: 1, minHeight: 72, padding: 11, borderRadius: 14, borderWidth: 1, borderColor: colors.border, backgroundColor: colors.panel, justifyContent: 'center' },
+  worldChoiceSelected: { borderColor: colors.gold, backgroundColor: '#352C4B' },
+  worldChoiceLabel: { color: colors.gold, fontSize: 9, fontWeight: '800' },
+  worldChoiceTitle: { color: colors.text, fontSize: 13, fontWeight: '800', marginTop: 5 },
+  valleyBanner: { backgroundColor: '#2A2346', borderColor: '#8472AE' },
+  valleyMap: { backgroundColor: '#201C34', borderColor: '#6A5685' },
+  valleyPeaks: { color: colors.violet, fontSize: 32, marginTop: 12, letterSpacing: 5 },
+  availableChapters: { color: colors.violet, fontSize: 10, fontWeight: '800', textAlign: 'center', marginTop: 13 },
   navRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', minHeight: 48, gap: 12 },
   worldNumber: { color: colors.green, fontSize: 10, fontWeight: '900', letterSpacing: 1.5, flexShrink: 1, textAlign: 'right' },
   banner: { overflow: 'hidden', borderRadius: 24, backgroundColor: '#17332F', borderWidth: 1, borderColor: '#3F7767', paddingHorizontal: 24, paddingTop: 17, paddingBottom: 20, alignItems: 'center' },

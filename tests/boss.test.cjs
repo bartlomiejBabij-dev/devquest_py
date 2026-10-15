@@ -12,7 +12,7 @@ require.extensions['.ts'] = (module, filename) => {
 const { GOBLIN_KING_DAMAGE, GOBLIN_KING_MAX_HP, getGoblinKingHp, goblinKingMissionId, isGoblinKingMission } = require('../src/game/boss.ts');
 const { continueMissionAttempt, getPlayableMission, startMissionAttempt, submitMissionAnswer } = require('../src/game/worldMission.ts');
 const { completeMission, getTotalEarnedXp, getWorldProgress, initialProgressionState } = require('../src/game/progression.ts');
-const { chapters, forestOfVariables, missions } = require('../src/game/worldContent.ts');
+const { forestChapters: chapters, forestOfVariables, forestMissions: missions } = require('../src/game/worldContent.ts');
 const { battleReducer, initialBattleState } = require('../src/game/battle.ts');
 const { challenges } = require('../src/game/challenges.ts');
 

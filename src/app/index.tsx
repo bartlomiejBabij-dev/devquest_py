@@ -32,11 +32,11 @@ export default function HomeScreen() {
       <Text style={styles.subtitle}>Your Code Is Your Weapon</Text>
     </View>
     {pending ? <HydrationPlaceholder pending compact label="Loading your adventurer…" /> : <View style={styles.heroCard}>
-      <View style={styles.heroRow}><AvatarArt avatarId={profile.avatarId} /><View style={styles.heroCopy}><Text style={styles.tag}>YOUR ADVENTURER</Text><Text style={styles.heroName}>{profile.nickname}</Text><Text style={styles.heroClass}>Python · Forest of Variables</Text></View></View>
+      <View style={styles.heroRow}><AvatarArt avatarId={profile.avatarId} /><View style={styles.heroCopy}><Text style={styles.tag}>YOUR ADVENTURER</Text><Text style={styles.heroName}>{profile.nickname}</Text><Text style={styles.heroClass}>Python · {stats?.currentWorld ?? 'Forest of Variables'}</Text></View></View>
       {stats ? <XpProgress totalXp={stats.totalXp} /> : <Text style={styles.subtitle}>Saved statistics are unavailable.</Text>}
     </View>}
 
-    <Pressable accessibilityRole="button" accessibilityLabel="Explore World Map" accessibilityHint="Open the Forest of Variables and choose a mission" onPress={() => navigation.open('/world-map')}
+    <Pressable accessibilityRole="button" accessibilityLabel="Explore World Map" accessibilityHint="Choose a world and explore its missions" onPress={() => navigation.open('/world-map')}
       style={({ pressed }) => [styles.mapButton, pressed && styles.pressed]}>
       <Text accessible={false} style={styles.mapIcon}>✦</Text><View style={styles.mapCopy}><Text style={styles.mapTitle}>Explore World Map</Text><Text style={styles.mapSubtitle}>Your next Python spell awaits</Text></View><Text accessible={false} style={styles.mapArrow}>›</Text>
     </Pressable>

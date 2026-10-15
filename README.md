@@ -1,6 +1,6 @@
 # DevQuest
 
-A local, playable Expo fantasy RPG that teaches beginner Python concepts. The Forest of Variables map leads to six five-exercise missions with locally saved progression. The original three-spell Goblin battle remains playable from Home.
+A local, playable Expo fantasy RPG that teaches beginner Python concepts. Forest of Variables has six five-exercise missions; completing it unlocks the first two five-exercise missions in Valley of Decisions. Progression is saved locally. The original three-spell Goblin battle remains playable from Home.
 
 ## Run in Expo Go
 
@@ -23,7 +23,7 @@ Answers are checked against local challenge data; no Python code is executed. Co
 
 New players see a three-screen Python introduction. Skip and Start Adventure save its completion under a separate local key; players with completed missions bypass it. Learn Python on Home reopens it.
 
-The Spellbook on Home contains nine short Python references. Each world mission can open the relevant entry without leaving the current exercise. Personal notes are tied to exercise IDs and saved locally with an explicit Save Note action; they can be edited or deleted and do not affect XP or progression.
+The Spellbook on Home contains fourteen short Python references. Each world mission can open the relevant entry without leaving the current exercise. Personal notes are tied to exercise IDs and saved locally with an explicit Save Note action; they can be edited or deleted and do not affect XP or progression.
 
 My Profile saves only a trimmed 3–20 character nickname and one of five local avatars under `devquest.profile.v1`. Saves are explicit and queued. Missing or damaged profiles fall back to Python Apprentice/Mage; unreadable or future-version saves are protected from replacement. Profile editing never writes to progression, notes, or onboarding.
 
@@ -51,3 +51,13 @@ Bundled music licensing and exact sources are in `assets/audio/CREDITS.md`. Four
 The temporary Test Sound control and playback diagnostics have been removed. Development warnings report playback failures using fixed source labels, without native messages, private data, or source URLs. Repeated identical native errors are deduplicated; users still see the audio-unavailable warning.
 
 The physically verified Stage 3F.4.1 fixes remain: `playsInSilentMode: true`, explicit session activation, native readiness checks, cancellation of pending playback, and foreground/background handling. Normal gameplay events still trigger spell effects. Audio preferences and their storage format are unchanged. Physical-device listening must be retested to verify this cleanup on hardware.
+
+## Valley of Decisions (Stage 3G.1)
+
+World 2 opens only after all six Forest missions, including the Goblin King. The Crossroads teaches Booleans and all six comparison operators (70 XP); The Guardian’s Choice teaches if, else, indentation and branching (80 XP). These are the only two Valley chapters currently included. Map percentages describe the currently available missions. World selection updates the existing route; mission exits return to the owning world. No XP is awarded for viewing or replaying a mission.
+
+Legacy progression uses the same `devquest.progression` key and version-1 completed-ID record. Existing mission IDs and rewards are unchanged. Profile statistics include both worlds; the current world is the latest world with a completed mission. Forest achievements and the 100-XP level formula are unchanged.
+
+The new code-repair validator compares complete authored lines and tokens; it does not execute Python. It accepts harmless spacing, blank lines, CRLF, equivalent quotes and consistent indentation of 1–8 spaces (four spaces are taught). It supports only the authored single-depth if/else blocks, identifiers, integer literals and simple strings. Tabs, comments, escape sequences, nested blocks, extra statements and alternative algorithms are intentionally unsupported. Output and single-token exercises retain exact, case-sensitive answers.
+
+See [Stage 3G.1 verification](docs/stage-3g1.md) for changed files, test results and device-testing limitations.

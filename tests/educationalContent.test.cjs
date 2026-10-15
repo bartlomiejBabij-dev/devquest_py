@@ -9,7 +9,7 @@ require.extensions['.ts'] = (module, filename) => {
   module._compile(compiled.outputText, filename);
 };
 
-const { chapters, exercises, missions } = require('../src/game/worldContent.ts');
+const { forestChapters: chapters, forestExercises: exercises, forestMissions: missions } = require('../src/game/worldContent.ts');
 const { isExerciseAnswerCorrect } = require('../src/game/exerciseValidation.ts');
 const { continueMissionAttempt, getPlayableMission, startMissionAttempt, submitMissionAnswer } = require('../src/game/worldMission.ts');
 const { getTotalEarnedXp, initialProgressionState } = require('../src/game/progression.ts');

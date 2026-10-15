@@ -1,3 +1,4 @@
+import { valleyChapters, valleyExercises, valleyMissions, valleyOfDecisions } from './valleyContent';
 import type { Chapter, Exercise, Mission, World } from './worldTypes';
 
 export const forestOfVariables: World = {
@@ -13,12 +14,13 @@ export const forestOfVariables: World = {
     'python-forest-broken-spells',
     'python-forest-goblin-king',
   ],
+  prerequisiteMissionIds: [],
   xpReward: 300,
 };
 
-export const worlds: readonly World[] = [forestOfVariables];
+export const worlds: readonly World[] = [forestOfVariables, valleyOfDecisions];
 
-export const chapters: readonly Chapter[] = [
+export const forestChapters: readonly Chapter[] = [
   { id: 'python-forest-awakening', worldId: forestOfVariables.id, title: 'The Awakening', description: 'Speak your first command aloud.', learningObjective: 'Use print() to display text.', missionIds: ['python-forest-awakening-01'], prerequisiteMissionIds: [], xpReward: 20 },
   { id: 'python-forest-fire-essence', worldId: forestOfVariables.id, title: 'Fire Essence', description: 'Give a name to a spark of power.', learningObjective: 'Assign an integer value to a variable.', missionIds: ['python-forest-fire-essence-01'], prerequisiteMissionIds: ['python-forest-awakening-01'], xpReward: 30 },
   { id: 'python-forest-mana-stones', worldId: forestOfVariables.id, title: 'Mana Stones', description: 'Count the energy left after a spell.', learningObjective: 'Use integer arithmetic and the subtraction operator.', missionIds: ['python-forest-mana-stones-01'], prerequisiteMissionIds: ['python-forest-fire-essence-01'], xpReward: 40 },
@@ -27,7 +29,7 @@ export const chapters: readonly Chapter[] = [
   { id: 'python-forest-goblin-king', worldId: forestOfVariables.id, title: "Goblin King's Lair", description: 'Combine your first Python skills in a final trial.', learningObjective: 'Trace variables, strings, arithmetic, and print() together.', missionIds: ['python-forest-goblin-king-01'], prerequisiteMissionIds: ['python-forest-broken-spells-01'], xpReward: 100 },
 ];
 
-export const missions: readonly Mission[] = [
+export const forestMissions: readonly Mission[] = [
   { id: 'python-forest-awakening-01', chapterId: 'python-forest-awakening', title: 'A Voice in the Forest', description: 'Call out a greeting with print().', exerciseIds: ['python-forest-awakening-print', 'python-forest-awakening-literal', 'python-forest-awakening-number', 'python-forest-awakening-output', 'python-forest-awakening-repair'], prerequisiteMissionIds: [], xpReward: 20 },
   { id: 'python-forest-fire-essence-01', chapterId: 'python-forest-fire-essence', title: 'Bottle the Flame', description: 'Store a value in the mana variable.', exerciseIds: ['python-forest-fire-essence-assignment', 'python-forest-fire-essence-read', 'python-forest-fire-essence-update', 'python-forest-fire-essence-print', 'python-forest-fire-essence-name'], prerequisiteMissionIds: [], xpReward: 30 },
   { id: 'python-forest-mana-stones-01', chapterId: 'python-forest-mana-stones', title: 'Count the Stones', description: 'Choose the operation that spends mana.', exerciseIds: ['python-forest-mana-stones-operator', 'python-forest-mana-stones-addition', 'python-forest-mana-stones-multiplication', 'python-forest-mana-stones-precedence', 'python-forest-mana-stones-damage'], prerequisiteMissionIds: [], xpReward: 40 },
@@ -36,7 +38,7 @@ export const missions: readonly Mission[] = [
   { id: 'python-forest-goblin-king-01', chapterId: 'python-forest-goblin-king', title: "The King's Test", description: 'Trace a short spell from start to finish.', exerciseIds: ['python-forest-goblin-king-output', 'python-forest-goblin-king-variable', 'python-forest-goblin-king-string', 'python-forest-goblin-king-arithmetic', 'python-forest-goblin-king-debug'], prerequisiteMissionIds: [], xpReward: 100 },
 ];
 
-export const exercises: readonly Exercise[] = [
+export const forestExercises: readonly Exercise[] = [
   { id: 'python-forest-awakening-print', chapterId: 'python-forest-awakening', languageId: 'python', difficulty: 'intro', type: 'fill-blank', concept: 'print() and basic output', prompt: 'Fill in the function name that displays the greeting.', code: '____("Welcome to DevQuest")', hint: 'Python uses a four-letter function to display text.', explanation: 'print() displays the value inside its parentheses.', validation: { kind: 'exact', acceptedAnswers: ['print'], caseSensitive: true } },
   { id: 'python-forest-fire-essence-assignment', chapterId: 'python-forest-fire-essence', languageId: 'python', difficulty: 'intro', type: 'fill-blank', concept: 'variables and assignments', prompt: 'Store ten points of mana in the variable.', code: 'mana = ____', hint: 'Enter the integer value shown in the mission.', explanation: 'The = sign assigns the integer 10 to the name mana.', validation: { kind: 'exact', acceptedAnswers: ['10'], caseSensitive: true } },
   { id: 'python-forest-mana-stones-operator', chapterId: 'python-forest-mana-stones', languageId: 'python', difficulty: 'intro', type: 'choose-operator', concept: 'integer subtraction', prompt: 'Which operator leaves 15 mana after spending 5?', code: 'mana = 20\nremaining = mana ____ 5', options: ['+', '-', '*', '/'], hint: 'Spending mana makes the number smaller.', explanation: 'The - operator subtracts 5 from 20, leaving 15.', validation: { kind: 'exact', acceptedAnswers: ['-'], caseSensitive: true } },
@@ -75,3 +77,8 @@ export const exercises: readonly Exercise[] = [
   { id: 'python-forest-goblin-king-arithmetic', chapterId: 'python-forest-goblin-king', languageId: 'python', difficulty: 'challenge', type: 'choose-operator', concept: 'mixed arithmetic', prompt: 'Choose the operator that makes damage equal 12.', code: 'damage = 3 ____ 4\nprint(damage)', options: ['+', '-', '*', '/'], hint: 'Think of three groups of four.', explanation: '* multiplies 3 and 4 to make 12 damage.', validation: { kind: 'exact', acceptedAnswers: ['*'], caseSensitive: true } },
   { id: 'python-forest-goblin-king-debug', chapterId: 'python-forest-goblin-king', languageId: 'python', difficulty: 'challenge', type: 'fix-mistake', concept: 'mixed debugging', prompt: 'Replace powr with the defined name so the spell prints 6.', code: 'power = 3\nprint(powr * 2)', hint: 'The assigned name contains an e before r.', explanation: 'power is defined as 3; using power * 2 prints 6.', validation: { kind: 'exact', acceptedAnswers: ['power'], caseSensitive: true } },
 ];
+
+export { valleyOfDecisions };
+export const chapters: readonly Chapter[] = [...forestChapters, ...valleyChapters];
+export const missions: readonly Mission[] = [...forestMissions, ...valleyMissions];
+export const exercises: readonly Exercise[] = [...forestExercises, ...valleyExercises];

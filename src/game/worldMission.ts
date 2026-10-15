@@ -1,6 +1,6 @@
 import { isExerciseAnswerCorrect } from './exerciseValidation';
 import { completeMission, getTotalEarnedXp, getUnlockedChapterIds, isMissionUnlocked } from './progression';
-import { chapters, exercises, forestOfVariables, missions } from './worldContent';
+import { chapters, exercises, missions, worlds } from './worldContent';
 import type { Chapter, Exercise, Mission, ProgressionState } from './worldTypes';
 
 export interface PlayableMission {
@@ -61,7 +61,7 @@ export function submitMissionAnswer(progress: ProgressionState, attempt: Mission
     return { status: 'correct', attempt: solvedAttempt, progress, xpAwarded: 0 };
   }
 
-  const unlockedBefore = new Set(getUnlockedChapterIds(progress, forestOfVariables.id));
+  const unlockedBefore = new Set(worlds.flatMap((world) => getUnlockedChapterIds(progress, world.id)));
   const completion = completeMission(progress, attempt.missionId);
   return {
     status: 'correct',
@@ -70,7 +70,7 @@ export function submitMissionAnswer(progress: ProgressionState, attempt: Mission
       result: {
         xpAwarded: completion.xpAwarded,
         totalXp: getTotalEarnedXp(completion.progress),
-        newlyUnlockedChapterIds: getUnlockedChapterIds(completion.progress, forestOfVariables.id).filter((id) => !unlockedBefore.has(id)),
+        newlyUnlockedChapterIds: worlds.flatMap((world) => getUnlockedChapterIds(completion.progress, world.id)).filter((id) => !unlockedBefore.has(id)),
       },
     },
     progress: completion.progress,

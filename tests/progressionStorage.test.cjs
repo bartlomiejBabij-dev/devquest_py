@@ -12,7 +12,7 @@ require.extensions['.ts'] = (module, filename) => {
 const { createProgressionStore, parseSavedProgression, PROGRESSION_STORAGE_KEY } = require('../src/game/progressionStorage.ts');
 const { initialProgressionSession, progressionSessionReducer, shouldPersistProgression } = require('../src/game/progressionSession.ts');
 const { completeMission, getTotalEarnedXp, getWorldProgress, isChapterUnlocked } = require('../src/game/progression.ts');
-const { chapters, forestOfVariables, missions } = require('../src/game/worldContent.ts');
+const { forestChapters: chapters, forestOfVariables, forestMissions: missions } = require('../src/game/worldContent.ts');
 const { continueMissionAttempt, startMissionAttempt, submitMissionAnswer, getPlayableMission } = require('../src/game/worldMission.ts');
 
 function memoryStorage(initial = null) {

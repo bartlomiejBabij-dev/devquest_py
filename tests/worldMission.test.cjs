@@ -11,7 +11,7 @@ require.extensions['.ts'] = (module, filename) => {
 
 const { continueMissionAttempt, getPlayableMission, startMissionAttempt, submitMissionAnswer } = require('../src/game/worldMission.ts');
 const { initialProgressionState, getChapterProgress, getTotalEarnedXp, getWorldProgress, isChapterUnlocked } = require('../src/game/progression.ts');
-const { chapters, exercises, forestOfVariables, missions } = require('../src/game/worldContent.ts');
+const { forestChapters: chapters, forestExercises: exercises, forestOfVariables, forestMissions: missions } = require('../src/game/worldContent.ts');
 const { battleReducer, initialBattleState } = require('../src/game/battle.ts');
 const { challenges } = require('../src/game/challenges.ts');
 

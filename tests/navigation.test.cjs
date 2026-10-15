@@ -109,3 +109,26 @@ test('Only an unfinished mission attempt with progress or a typed answer needs c
   assert.equal(hasUnfinishedMissionProgress({ ...submission.attempt, phase: 'complete' }, 'answer'), false);
   assert.equal(hasUnfinishedMissionProgress({ ...submission.attempt, result: { xpAwarded: 20, totalXp: 20, newlyUnlockedChapterIds: [] } }, 'answer'), false);
 });
+
+const { resolveMapWorld, worldMapForMission } = require('../src/navigation/worldRoutes.ts');
+const { valleyOfDecisions, forestOfVariables, missions: allMissions } = require('../src/game/worldContent.ts');
+
+test('World selection changes map params in place; mission returns retain the owning world without duplicate maps', () => {
+  let state = apply(startStack(), StackActions.push('world-map'));
+  for (const worldId of [valleyOfDecisions.id, forestOfVariables.id, valleyOfDecisions.id]) {
+    state = apply(state, { type: 'SET_PARAMS', payload: { params: { worldId } } });
+    assert.deepEqual(names(state), ['index', 'world-map']);
+    assert.equal(state.routes.at(-1).params.worldId, worldId);
+    const mission = allMissions.find(m => worldMapForMission(m.id).params.worldId === worldId);
+    state = apply(state, StackActions.push('mission/[missionId]', { missionId: mission.id }));
+    const destination = worldMapForMission(mission.id);
+    state = apply(state, StackActions.popTo('world-map', destination.params));
+    assert.deepEqual(names(state), ['index', 'world-map']);
+    assert.equal(state.routes.at(-1).params.worldId, worldId);
+  }
+  state = apply(state, StackActions.popTo('index'));
+  assert.deepEqual(names(state), ['index']);
+  assert.equal(resolveMapWorld('missing').id, forestOfVariables.id);
+  assert.equal(resolveMapWorld([valleyOfDecisions.id]).id, forestOfVariables.id);
+  assert.equal(worldMapForMission('missing').params.worldId, forestOfVariables.id);
+});

@@ -7,6 +7,8 @@ import { useReducedMotion } from 'react-native-reanimated';
 import { GameButton } from '@/components/GameButton';
 import { GameScreen } from '@/components/GameScreen';
 import { GoblinKingEncounter } from '@/components/GoblinKingEncounter';
+import { ValleyGuardian } from '@/components/ValleyGuardian';
+import { worldMapForMission, resolveMapWorld } from '@/navigation/worldRoutes';
 import { NavigationButton } from '@/components/NavigationButton';
 import { SpellbookEntryView, type SpellbookEntryHandle } from '@/components/SpellbookEntryView';
 import { getGoblinKingHp, isGoblinKingMission } from '@/game/boss';
@@ -54,11 +56,11 @@ export default function WorldMissionScreen() {
     setIncorrect(false);
     setAnimationDone(false);
     submitting.current = false;
-  }, [missionId]);
+  }, [missionId, progression]);
   useEffect(() => () => { if (revealTimer.current) clearTimeout(revealTimer.current); }, []);
 
   function returnToMap() {
-    navigation.returnTo('/world-map');
+    navigation.returnTo(worldMapForMission(missionId));
   }
 
   usePreventRemove(hasUnfinishedMissionProgress(attempt, answer), ({ data }) => {
@@ -141,7 +143,7 @@ export default function WorldMissionScreen() {
         <View style={styles.unavailableCard}>
           <Text style={styles.overline}>THE PATH IS SEALED</Text>
           <Text style={styles.title}>{knownMission ? 'Mission locked' : 'Mission not found'}</Text>
-          <Text style={styles.body}>{knownMission ? `Complete the earlier missions to enter ${chapter?.title ?? 'this chapter'}.` : 'This mission is not part of the Forest of Variables.'}</Text>
+          <Text style={styles.body}>{knownMission ? `Complete the earlier missions to enter ${chapter?.title ?? 'this chapter'}.` : 'This mission is not part of the available worlds.'}</Text>
         </View>
         <GameButton label="Return to World Map" onPress={returnToMap} />
       </GameScreen>
@@ -151,7 +153,7 @@ export default function WorldMissionScreen() {
   const { chapter, mission } = playable;
   const exercise = playable.exercises[attempt.exerciseIndex];
   const spellbookEntry = getSpellbookEntryForExercise(exercise.id);
-  const multiline = exercise.type === 'predict-output' && exercise.validation.acceptedAnswers.some((item) => item.includes('\n'));
+  const multiline = (exercise.type === 'predict-output' || exercise.validation.kind === 'python-lines') && exercise.validation.acceptedAnswers.some((item) => item.includes('\n'));
   const solved = attempt.phase === 'solved';
   const result = attempt.result;
   const newlyUnlocked = result?.newlyUnlockedChapterIds.map((id) => chapters.find((item) => item.id === id)?.title).filter(Boolean) ?? [];
@@ -162,7 +164,7 @@ export default function WorldMissionScreen() {
     <GameScreen compact scrollToEndOnKeyboard header={
       <View style={styles.topRow}>
         <NavigationButton label="World Map" accessibilityLabel="Exit mission to World Map" onPress={returnToMap} />
-        <Text style={styles.worldLabel}>FOREST OF VARIABLES</Text>
+        <Text style={styles.worldLabel}>{resolveMapWorld(chapter.worldId).title.toUpperCase()}</Text>
       </View>
     }>
       {attempt.phase === 'complete' && result ? (
@@ -174,7 +176,7 @@ export default function WorldMissionScreen() {
           <Text style={styles.body}>{mission.title}</Text>
           <View style={styles.rewardRow}>
             <View style={styles.rewardStat}><Text style={styles.rewardValue}>+{result.xpAwarded}</Text><Text style={styles.rewardLabel}>XP EARNED</Text></View>
-            <View style={styles.rewardStat}><Text style={styles.rewardValue}>{result.totalXp}</Text><Text style={styles.rewardLabel}>TOTAL WORLD XP</Text></View>
+            <View style={styles.rewardStat}><Text style={styles.rewardValue}>{result.totalXp}</Text><Text style={styles.rewardLabel}>TOTAL XP</Text></View>
           </View>
           {bossMission ? <Text style={styles.worldCompletion}>WORLD 1 COMPLETION  ·  {worldCompletion?.percent ?? 0}%</Text> : null}
           {result.xpAwarded === 0 ? <Text style={styles.replayNote}>Replay complete. XP was already earned.</Text> : null}
@@ -185,11 +187,12 @@ export default function WorldMissionScreen() {
       ) : (
         <>
           {bossMission && bossHp !== null ? <GoblinKingEncounter hp={bossHp} hitCount={attempt.solvedExerciseIds.length} showDamage={solved} reducedMotion={!!reduceMotion} /> : null}
+          {mission.encounter === 'guardian' ? <ValleyGuardian solvedCount={attempt.solvedExerciseIds.length} /> : null}
           <View style={[styles.headerCard, bossMission && styles.bossHeaderCard]}>
             <Text style={styles.overline}>{chapter.title.toUpperCase()}  ·  PYTHON MISSION</Text>
             <Text style={styles.title}>{mission.title}</Text>
             <Text style={styles.body}>{mission.description}</Text>
-            <View style={styles.rewardChip}><Text style={styles.rewardChipText}>{getTotalEarnedXp(progression)} WORLD XP  ·  {mission.xpReward} XP REWARD</Text></View>
+            <View style={styles.rewardChip}><Text style={styles.rewardChipText}>{getTotalEarnedXp(progression)} TOTAL XP  ·  {mission.xpReward} XP REWARD</Text></View>
           </View>
 
           <View style={styles.exerciseCard}>
@@ -221,11 +224,11 @@ export default function WorldMissionScreen() {
                     {exercise.options.map((option) => <Pressable key={option} onPress={() => { if (attemptRef.current?.phase !== 'answering') return; setAnswer(option); setIncorrect(false); }} accessibilityRole="radio" accessibilityState={{ selected: answer === option }} accessibilityLabel={`Operator ${option}`} style={[styles.option, answer === option && styles.optionSelected]}><Text style={[styles.optionText, answer === option && styles.optionTextSelected]}>{option}</Text></Pressable>)}
                   </View>
                 ) : (
-                  <TextInput key={exercise.id} accessibilityLabel="Mission answer" accessibilityHint={multiline ? 'Enter each printed line on a separate line' : 'Type the answer to the Python exercise'}
+                  <TextInput key={exercise.id} accessibilityLabel="Mission answer" accessibilityHint={exercise.validation.kind === 'python-lines' ? 'Enter every code line. Indent block lines with spaces.' : multiline ? 'Enter each printed line on a separate line' : 'Type the answer to the Python exercise'}
                     value={answer} onChangeText={(value) => { if (attemptRef.current?.phase !== 'answering') return; setAnswer(value); setIncorrect(false); }}
                     autoCapitalize="none" autoCorrect={false} spellCheck={false} multiline={multiline} numberOfLines={multiline ? 3 : 1}
                     returnKeyType={multiline ? 'default' : 'done'} onSubmitEditing={multiline ? undefined : (event) => submitAnswer(exercise.id, event.nativeEvent.text)} blurOnSubmit={false}
-                    placeholder={multiline ? 'Line 1\nLine 2' : 'Type your answer'} placeholderTextColor="#888BA8" style={[styles.input, multiline && styles.multilineInput]} />
+                    maxLength={2000} placeholder={exercise.validation.kind === 'python-lines' ? 'Rewrite the code here…' : multiline ? 'Line 1\nLine 2' : 'Type your answer'} placeholderTextColor="#888BA8" style={[styles.input, multiline && styles.multilineInput]} />
                 )}
                 <View accessibilityLiveRegion="polite" style={styles.feedbackBox}>
                   {incorrect ? <><Text style={styles.incorrect}>Not quite. Try another spell.</Text><Text style={styles.hint}>Hint: {exercise.hint}</Text></> :

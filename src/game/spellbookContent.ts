@@ -91,10 +91,50 @@ export const spellbookEntries: readonly SpellbookEntry[] = [
     commonMistake: 'Typing a variable name differently later, or putting quotes around its name when you wanted its value.',
     chapterId: 'python-forest-broken-spells',
   },
+  {
+    id: 'python-booleans', title: 'Boolean values',
+    explanation: 'True and False represent yes-or-no values. Write them with capital initials and no quotes. A comparison also produces a Boolean.',
+    codeExample: 'sealed = False\nready = True\nprint(sealed)\nprint(ready)', expectedOutput: 'False\nTrue',
+    commonMistake: 'Writing true in lowercase, or "True" as text instead of the Boolean True.', chapterId: 'python-valley-crossroads',
+  },
+  {
+    id: 'python-comparisons', title: 'Comparison operators',
+    explanation: '== checks equality; != checks difference. > and < compare sizes. >= and <= also accept equal values. A comparison returns True or False.',
+    codeExample: 'print(9 == 9)\nprint(9 < 4)\nprint(4 <= 4)', expectedOutput: 'True\nFalse\nTrue',
+    commonMistake: 'Using = to compare. One = stores a value; == compares two values.', chapterId: 'python-valley-crossroads',
+  },
+  {
+    id: 'python-if', title: 'if statements',
+    explanation: 'if checks a condition and runs its indented block only when that condition is true. End the condition with a colon. Code outside the block continues afterward.',
+    codeExample: 'keys = 2\nif keys > 0:\n    print("Gate opens")', expectedOutput: 'Gate opens',
+    commonMistake: 'Forgetting the colon or expecting a false condition to run its block.', chapterId: 'python-valley-guardian',
+  },
+  {
+    id: 'python-else', title: 'else statements',
+    explanation: 'else provides an alternative when the if condition is false. Align else with if, add a colon, and indent its block. Exactly one of these two blocks runs.',
+    codeExample: 'keys = 0\nif keys > 0:\n    print("Enter")\nelse:\n    print("Find a key")', expectedOutput: 'Find a key',
+    commonMistake: 'Adding a condition after else or indenting else inside the if block.', chapterId: 'python-valley-guardian',
+  },
+  {
+    id: 'python-indentation', title: 'Python indentation',
+    explanation: 'Spaces at the start of a line define which block it belongs to. Use four spaces per level, consistently. Moving back to the left edge ends the block.',
+    codeExample: 'if True:\n    print("Inside")\nprint("Outside")', expectedOutput: 'Inside\nOutside',
+    commonMistake: 'Leaving a block unindented or mixing tabs and spaces. These exercises accept spaces only.', chapterId: 'python-valley-guardian',
+  },
 ];
 
-/** Every Forest exercise links to reference material, never to its answer. */
+/** Every exercise links to reference material, never to its answer. */
 export const exerciseSpellbookEntryIds: Readonly<Record<string, string>> = {
+  'python-valley-crossroads-boolean': 'python-booleans',
+  'python-valley-crossroads-equality': 'python-comparisons',
+  'python-valley-crossroads-difference': 'python-comparisons',
+  'python-valley-crossroads-boundary': 'python-comparisons',
+  'python-valley-crossroads-threshold': 'python-comparisons',
+  'python-valley-guardian-if': 'python-if',
+  'python-valley-guardian-indent': 'python-indentation',
+  'python-valley-guardian-skip': 'python-if',
+  'python-valley-guardian-else': 'python-else',
+  'python-valley-guardian-branch': 'python-else',
   'python-forest-awakening-print': 'python-print',
   'python-forest-awakening-literal': 'python-strings',
   'python-forest-awakening-number': 'python-integers',

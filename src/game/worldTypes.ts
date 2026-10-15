@@ -4,6 +4,8 @@ export interface World {
   title: string;
   description: string;
   chapterIds: readonly string[];
+  prerequisiteMissionIds: readonly string[];
+  unlockRequirement?: string;
   /** Total XP available from this world's missions, not an extra reward. */
   xpReward: number;
 }
@@ -28,6 +30,7 @@ export interface Mission {
   exerciseIds: readonly string[];
   prerequisiteMissionIds: readonly string[];
   xpReward: number;
+  encounter?: 'guardian';
 }
 
 interface ExerciseBase {
@@ -41,7 +44,7 @@ interface ExerciseBase {
   hint: string;
   explanation: string;
   validation: {
-    kind: 'exact';
+    kind: 'exact' | 'python-lines';
     acceptedAnswers: readonly string[];
     caseSensitive: boolean;
   };

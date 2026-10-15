@@ -28,7 +28,7 @@ export default function SpellbookScreen() {
   return <GameScreen compact header={
     <View style={styles.navRow}>
       <NavigationButton label="Home" accessibilityLabel="Exit Spellbook to Home" onPress={goHome} />
-      <Text style={styles.navLabel}>FOREST OF VARIABLES</Text>
+      <Text style={styles.navLabel}>PYTHON SPELLBOOK</Text>
     </View>
   }>
     <View style={styles.banner}>

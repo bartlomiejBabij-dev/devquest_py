@@ -9,9 +9,14 @@ export function isMissionCompleted(progress: ProgressionState, missionId: string
   return missions.some((mission) => mission.id === missionId) && progress.completedMissionIds.includes(missionId);
 }
 
+export function isWorldUnlocked(progress: ProgressionState, worldId: string): boolean {
+  const world = worlds.find((item) => item.id === worldId);
+  return !!world && world.prerequisiteMissionIds.every((id) => isMissionCompleted(progress, id));
+}
+
 export function isChapterUnlocked(progress: ProgressionState, chapterId: string): boolean {
   const chapter = chapters.find((item) => item.id === chapterId);
-  return !!chapter && chapter.prerequisiteMissionIds.every((id) => isMissionCompleted(progress, id));
+  return !!chapter && isWorldUnlocked(progress, chapter.worldId) && chapter.prerequisiteMissionIds.every((id) => isMissionCompleted(progress, id));
 }
 
 export function isMissionUnlocked(progress: ProgressionState, missionId: string): boolean {

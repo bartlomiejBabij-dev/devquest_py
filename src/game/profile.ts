@@ -1,6 +1,6 @@
 import { isGoblinKingMission } from './boss';
 import { getTotalEarnedXp, getWorldProgress, isChapterCompleted, isMissionCompleted } from './progression';
-import { chapters, exercises, forestOfVariables, missions } from './worldContent';
+import { chapters, exercises, forestOfVariables, missions, worlds } from './worldContent';
 import type { ProgressionState } from './worldTypes';
 
 export const avatars = [
@@ -38,13 +38,16 @@ export function getPlayerStatistics(progress: ProgressionState) {
   // Individual attempts aren't persisted. Count distinct exercises in completed missions only.
   const completedExercises = new Set(completedMissions.flatMap((mission) => mission.exerciseIds).filter((id) => validExercises.has(id)));
   const totalXp = getTotalEarnedXp(progress);
+  // A world becomes current once a mission there is completed; viewing maps never changes stats.
+  const currentWorld = [...worlds].reverse().find((world) =>
+    completedMissions.some((mission) => world.chapterIds.includes(mission.chapterId))) ?? forestOfVariables;
   return {
     totalXp, ...getPlayerLevel(totalXp),
     completedMissions: completedMissions.length,
     completedExercises: completedExercises.size,
     defeatedBosses: completedMissions.filter((mission) => isGoblinKingMission(mission.id)).length,
-    currentWorld: forestOfVariables.title,
-    worldProgress: getWorldProgress(progress, forestOfVariables.id),
+    currentWorld: currentWorld.title,
+    worldProgress: getWorldProgress(progress, currentWorld.id),
   };
 }
 

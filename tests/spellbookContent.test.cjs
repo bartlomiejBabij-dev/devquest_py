@@ -24,9 +24,14 @@ const expectedTitles = [
   'len() and string length',
   'Common syntax mistakes',
   'Basic debugging',
+  'Boolean values',
+  'Comparison operators',
+  'if statements',
+  'else statements',
+  'Python indentation',
 ];
 
-test('Spellbook covers all nine beginner Python concepts with complete content', () => {
+test('Spellbook covers all fourteen beginner Python concepts with complete content', () => {
   assert.deepEqual(spellbookEntries.map((entry) => entry.title), expectedTitles);
   assert.equal(new Set(spellbookEntries.map((entry) => entry.id)).size, spellbookEntries.length);
   const chapterIds = new Set(chapters.map((chapter) => chapter.id));
@@ -39,7 +44,7 @@ test('Spellbook covers all nine beginner Python concepts with complete content',
   }
 });
 
-test('All 30 Forest exercises resolve to a valid relevant Spellbook entry', () => {
+test('All 40 exercises resolve to a valid relevant Spellbook entry', () => {
   const exerciseIds = new Set(exercises.map((exercise) => exercise.id));
   assert.deepEqual(new Set(Object.keys(exerciseSpellbookEntryIds)), exerciseIds);
   const entryIds = new Set(spellbookEntries.map((entry) => entry.id));
