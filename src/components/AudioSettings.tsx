@@ -6,7 +6,7 @@ import { colors } from '@/theme';
 
 export function AudioSettingsButton() {
   const [open, setOpen] = useState(false);
-  const { settings, ready, warning, update, diagnostic, testSound } = useGameAudio();
+  const { settings, ready, warning, update } = useGameAudio();
   return <>
     <Pressable accessibilityRole="button" accessibilityLabel="Open Audio Settings" onPress={() => setOpen(true)} style={({ pressed }) => [styles.trigger, pressed && styles.pressed]}><Text style={styles.gold}>♫  Audio</Text></Pressable>
     <Modal visible={open} transparent animationType="fade" onRequestClose={() => setOpen(false)}>
@@ -20,7 +20,6 @@ export function AudioSettingsButton() {
           <Volume label="Effects volume" value={settings.effectsVolume} change={(effectsVolume) => update({ effectsVolume })} />
           <Pressable accessibilityRole="button" onPress={() => update({ musicEnabled: false, effectsEnabled: false })} style={styles.button}><Text style={styles.gold}>Mute All</Text></Pressable>
           <Text style={styles.help}>Saved automatically on this device. These controls govern game audio independently of your ringer.</Text>
-          {__DEV__ ? <><Pressable accessibilityRole="button" onPress={testSound} style={styles.button}><Text style={styles.gold}>Test Sound (development)</Text></Pressable><Text accessibilityLiveRegion="polite" style={styles.help}>{diagnostic}</Text></> : null}
         </>}
         {warning ? <Text accessibilityRole="alert" style={styles.warning}>{warning}</Text> : null}
         <Pressable accessibilityRole="button" accessibilityLabel="Close Audio Settings" onPress={() => setOpen(false)} style={styles.button}><Text style={styles.gold}>Done</Text></Pressable>
@@ -31,7 +30,7 @@ export function AudioSettingsButton() {
 function Volume({ label, value, change }: { label: string; value: number; change: (value: number) => void }) {
   return <View style={styles.volume}><Text style={styles.help}>{label}</Text><View style={styles.row}>
     <Pressable accessibilityRole="button" accessibilityLabel={`Decrease ${label.toLowerCase()}`} disabled={value <= 0} onPress={() => change(Math.max(0, Math.round((value - 0.1) * 100) / 100))} style={styles.step}><Text style={styles.gold}>−</Text></Pressable>
-    <Text accessibilityLiveRegion="polite" style={styles.label}>{Math.round(value * 100)}%</Text>
+    <Text accessibilityLiveRegion="polite" accessibilityLabel={`${label}: ${Math.round(value * 100)} percent`} style={styles.label}>{Math.round(value * 100)}%</Text>
     <Pressable accessibilityRole="button" accessibilityLabel={`Increase ${label.toLowerCase()}`} disabled={value >= 1} onPress={() => change(Math.min(1, Math.round((value + 0.1) * 100) / 100))} style={styles.step}><Text style={styles.gold}>+</Text></Pressable>
   </View></View>;
 }

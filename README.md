@@ -46,10 +46,8 @@ Playback pauses when the app becomes inactive/backgrounded or Android loses wind
 Bundled music licensing and exact sources are in `assets/audio/CREDITS.md`. Four original effects are reproducible with `python scripts/create_audio.py`. Manual listening on Android/iOS hardware is still required to judge mix, loop seams, Bluetooth/headphone interruption behavior, and device-specific latency.
 
 
-### Physical-device audio diagnostics (Stage 3F.4.1)
+### Audio release cleanup (Stage 3F.5)
 
-SDK 57 can suppress play() when `playsInSilentMode` is false and Android is in silent/vibrate ringer mode. Game audio now uses `playsInSilentMode: true`, activates the native session explicitly, and defers play until native loading completes. This does not bypass media volume, Android Do Not Disturb media restrictions, or Bluetooth routing. DND is not assumed to be the cause of a particular phone's silence.
+The temporary Test Sound control and playback diagnostics have been removed. Development warnings report playback failures using fixed source labels, without native messages, private data, or source URLs. Repeated identical native errors are deduplicated; users still see the audio-unavailable warning.
 
-Development builds/Expo Go expose **Test Sound (development)** in Audio Settings. Enable effects and set a nonzero effects volume, then tap it. It uses the same bundled correct-spell asset and native session but bypasses the gameplay controller. The status below the button and `[DevQuest audio]` console messages distinguish preferences/lifecycle suppression, source location (bundled/cache/Metro Tunnel), loading, buffering, native errors, play calls, and advancing playback position. Logs omit source URLs and player information; status changes are logged rather than every position update. The control and logs are excluded from production behavior by `__DEV__`.
-
-For the physical Android check: reload this code in Expo Go through the existing Tunnel, enable music and effects, test the sound, enter a mission, and try mute plus background/foreground. If silent, report the displayed diagnostic and relevant audio console lines. Compare DND on/off without clearing app data. A native 'playing' status alone does not prove audible output; listening on the affected phone remains the acceptance check.
+The physically verified Stage 3F.4.1 fixes remain: `playsInSilentMode: true`, explicit session activation, native readiness checks, cancellation of pending playback, and foreground/background handling. Normal gameplay events still trigger spell effects. Audio preferences and their storage format are unchanged. Physical-device listening must be retested to verify this cleanup on hardware.
