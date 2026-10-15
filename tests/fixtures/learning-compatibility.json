@@ -1,0 +1,124 @@
+{
+  "missions": [
+    {
+      "id": "python-forest-awakening-01",
+      "exerciseIds": [
+        "python-forest-awakening-print",
+        "python-forest-awakening-literal",
+        "python-forest-awakening-number",
+        "python-forest-awakening-output",
+        "python-forest-awakening-repair"
+      ],
+      "xpReward": 20
+    },
+    {
+      "id": "python-forest-fire-essence-01",
+      "exerciseIds": [
+        "python-forest-fire-essence-assignment",
+        "python-forest-fire-essence-read",
+        "python-forest-fire-essence-update",
+        "python-forest-fire-essence-print",
+        "python-forest-fire-essence-name"
+      ],
+      "xpReward": 30
+    },
+    {
+      "id": "python-forest-mana-stones-01",
+      "exerciseIds": [
+        "python-forest-mana-stones-operator",
+        "python-forest-mana-stones-addition",
+        "python-forest-mana-stones-multiplication",
+        "python-forest-mana-stones-precedence",
+        "python-forest-mana-stones-damage"
+      ],
+      "xpReward": 40
+    },
+    {
+      "id": "python-forest-talking-trees-01",
+      "exerciseIds": [
+        "python-forest-talking-trees-output",
+        "python-forest-talking-trees-variable",
+        "python-forest-talking-trees-repeat",
+        "python-forest-talking-trees-length",
+        "python-forest-talking-trees-repair"
+      ],
+      "xpReward": 50
+    },
+    {
+      "id": "python-forest-broken-spells-01",
+      "exerciseIds": [
+        "python-forest-broken-spells-name",
+        "python-forest-broken-spells-parenthesis",
+        "python-forest-broken-spells-quotes",
+        "python-forest-broken-spells-assignment",
+        "python-forest-broken-spells-debug"
+      ],
+      "xpReward": 60
+    },
+    {
+      "id": "python-forest-goblin-king-01",
+      "exerciseIds": [
+        "python-forest-goblin-king-output",
+        "python-forest-goblin-king-variable",
+        "python-forest-goblin-king-string",
+        "python-forest-goblin-king-arithmetic",
+        "python-forest-goblin-king-debug"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "python-valley-crossroads-01",
+      "exerciseIds": [
+        "python-valley-crossroads-boolean",
+        "python-valley-crossroads-equality",
+        "python-valley-crossroads-difference",
+        "python-valley-crossroads-boundary",
+        "python-valley-crossroads-threshold"
+      ],
+      "xpReward": 70
+    },
+    {
+      "id": "python-valley-guardian-01",
+      "exerciseIds": [
+        "python-valley-guardian-if",
+        "python-valley-guardian-indent",
+        "python-valley-guardian-skip",
+        "python-valley-guardian-else",
+        "python-valley-guardian-branch"
+      ],
+      "xpReward": 80
+    }
+  ],
+  "unchangedExercises": {
+    "python-forest-fire-essence-assignment": "79a8ddb1ede46fb56e7f5498c8317f19680b5d60605683562f1d8a10a201dff0",
+    "python-forest-mana-stones-operator": "55390cb0aa1ef7fe19ffc4550b7f3c877edb2a0934274c3b0c13131575e8497e",
+    "python-forest-talking-trees-output": "0888e89ca2527c787aa8f4dc4e64cce70318745488919ad6d4e6a8f0a1ed80b3",
+    "python-forest-broken-spells-name": "525dfd7ba3710ae4aa3c3f9f75d4a8db9962182a061a5cad04eb23dd36df5817",
+    "python-forest-goblin-king-output": "266f9f256752bc02276616ee66460e0a39ae4f6e5828780cf46f223637a201bd",
+    "python-forest-fire-essence-read": "301884f63dafde49be673dcdea6df425de46ec95a4517fb7fce5e13ddd17b5b2",
+    "python-forest-fire-essence-update": "2c74f843f1775321a7846640764537a7d68f1db6b3d25a102e9f0587c665674c",
+    "python-forest-fire-essence-print": "f6e0b70deabdcd65f820320f65ca4c777eed9b046a581c896780bed26302343d",
+    "python-forest-fire-essence-name": "cff269c6693ed651066ed4fef3716f6ca576dcab8d62978f8ef483db75600287",
+    "python-forest-mana-stones-addition": "2eff389fb2310feaaa70e147c585eef799c2ba8dc45487dff9243d47b2285524",
+    "python-forest-mana-stones-multiplication": "348ba52f73666d94bbb452ac50eee09cbbecb0150e2c0684dbde6ba0a505c8bf",
+    "python-forest-mana-stones-precedence": "cd551df224258ef58091e14c44652b09bdc9fbc29562f4a5f85a4546433c9083",
+    "python-forest-mana-stones-damage": "7e8443e3dea1eb3ba91b189d87487b6ed56803b840cc5a99d60f37b1a6ea77ff",
+    "python-forest-talking-trees-variable": "62d9fd7cf3b25f1d0783b2bada80e169897cf3ecbb03291642e11baba986433e",
+    "python-forest-talking-trees-repeat": "0fde851b6a2af072c7eb9b456c694aa0cce5b4f3690bbcbe9aad416ee72cc368",
+    "python-forest-talking-trees-length": "1494b381595c1c1a81cc104ae0bd390aa83e21172486cfcf77abf4d814ac06cc",
+    "python-forest-talking-trees-repair": "5cef1d063ac350c75742526d5e915f68387a996980b989f43ce6b1584674ecd4",
+    "python-forest-broken-spells-parenthesis": "d2905fc96019d936c9d6b1342718fe2e5e640e0ddfe4a868c5742b8e61bac90f",
+    "python-forest-broken-spells-quotes": "44223e64c4415277921c52b49f73f57fed106fdb48116867343be18185200cc0",
+    "python-forest-broken-spells-assignment": "292907d942a6b5621dca09fcb73b1c7a6166b6108f884ee7d32a2c0797f154bc",
+    "python-forest-broken-spells-debug": "683615587a963fd7eccc0c75a2546717abeeaaf43fa3179a6e4eddf04775f36e",
+    "python-forest-goblin-king-variable": "1f7eb09ca0591863460e9b9437f4d4bdbcf70bd7a36f5bf10484aeb8d79325aa",
+    "python-forest-goblin-king-string": "8b82a37ddcc4ab4b16ac24e092f84836211ba4bfb3b51574c3e9393fb73e3088",
+    "python-forest-goblin-king-arithmetic": "92afa861bfeba462e43a8294e4e80e41fb52b4d1365f19e5a720cf5a39fe2273",
+    "python-forest-goblin-king-debug": "37ea7b9085bb74ddf6cb5f0c3e08543da678a81779294af1de71f847f3542f77",
+    "python-valley-guardian-if": "aa18c715a716198ee8104d24d56bbce3b4911cea0f3a11171262e4622436443f",
+    "python-valley-guardian-indent": "15ef368e3f28d6731c828c878805c8f4247590f000481eb8d66fd7cb51983c4e",
+    "python-valley-guardian-skip": "1b6b1796e1fd5c309f10fb35a52b14799ca276891a0f13da2f03c9f61c35a855",
+    "python-valley-guardian-else": "54ca91b86f5a3f0876d3e7ee6703e095cc0d31c7ae13637bc9f72179c27ead7c",
+    "python-valley-guardian-branch": "6542446b72d62eb817b01471e98bfcd508abdf3ccd22094a9d8f084618af14a1"
+  }
+}

@@ -39,7 +39,45 @@ export const forestMissions: readonly Mission[] = [
 ];
 
 export const forestExercises: readonly Exercise[] = [
-  { id: 'python-forest-awakening-print', chapterId: 'python-forest-awakening', languageId: 'python', difficulty: 'intro', type: 'fill-blank', concept: 'print() and basic output', prompt: 'Fill in the function name that displays the greeting.', code: '____("Welcome to DevQuest")', hint: 'Python uses a four-letter function to display text.', explanation: 'print() displays the value inside its parentheses.', validation: { kind: 'exact', acceptedAnswers: ['print'], caseSensitive: true } },
+  {
+    "id": "python-forest-awakening-print",
+    "chapterId": "python-forest-awakening",
+    "languageId": "python",
+    "difficulty": "intro",
+    "type": "missing-token",
+    "concept": "print() and basic output",
+    "prompt": "Tap the function name that will show this greeting.",
+    "code": "____(\"Welcome to DevQuest\")",
+    "hint": "The function name is lowercase and goes before the parentheses.",
+    "explanation": "print() shows the greeting on screen. The message goes inside the parentheses, between matching quotes.",
+    "lessonId": "python-lesson-first-output",
+    "options": [
+      {
+        "id": "python-forest-awakening-print-a",
+        "label": "show",
+        "feedback": "Python does not have a built-in show() function for this. Think of the function from the example."
+      },
+      {
+        "id": "python-forest-awakening-print-b",
+        "label": "print",
+        "feedback": "print() displays a value on the screen."
+      },
+      {
+        "id": "python-forest-awakening-print-c",
+        "label": "\"print\"",
+        "feedback": "Quotes make text. Here we need a function name, without quotes."
+      },
+      {
+        "id": "python-forest-awakening-print-d",
+        "label": "Print",
+        "feedback": "Python notices uppercase letters. The display function starts with a lowercase p."
+      }
+    ],
+    "validation": {
+      "kind": "option-id",
+      "correctOptionId": "python-forest-awakening-print-b"
+    }
+  },
   { id: 'python-forest-fire-essence-assignment', chapterId: 'python-forest-fire-essence', languageId: 'python', difficulty: 'intro', type: 'fill-blank', concept: 'variables and assignments', prompt: 'Store ten points of mana in the variable.', code: 'mana = ____', hint: 'Enter the integer value shown in the mission.', explanation: 'The = sign assigns the integer 10 to the name mana.', validation: { kind: 'exact', acceptedAnswers: ['10'], caseSensitive: true } },
   { id: 'python-forest-mana-stones-operator', chapterId: 'python-forest-mana-stones', languageId: 'python', difficulty: 'intro', type: 'choose-operator', concept: 'integer subtraction', prompt: 'Which operator leaves 15 mana after spending 5?', code: 'mana = 20\nremaining = mana ____ 5', options: ['+', '-', '*', '/'], hint: 'Spending mana makes the number smaller.', explanation: 'The - operator subtracts 5 from 20, leaving 15.', validation: { kind: 'exact', acceptedAnswers: ['-'], caseSensitive: true } },
   { id: 'python-forest-talking-trees-output', chapterId: 'python-forest-talking-trees', languageId: 'python', difficulty: 'intro', type: 'predict-output', concept: 'string concatenation', prompt: 'What exact line does this spell print?', code: 'greeting = "Hello"\nname = "Pyromancer"\nprint(greeting + ", " + name)', hint: 'The + operator joins all three strings in order.', explanation: 'Joining the strings preserves the comma and space, producing Hello, Pyromancer.', validation: { kind: 'exact', acceptedAnswers: ['Hello, Pyromancer'], caseSensitive: true } },
@@ -47,10 +85,114 @@ export const forestExercises: readonly Exercise[] = [
   { id: 'python-forest-goblin-king-output', chapterId: 'python-forest-goblin-king', languageId: 'python', difficulty: 'challenge', type: 'predict-output', concept: 'combined output, variables, and arithmetic', prompt: 'What two lines does this spell print?', code: 'hero = "Pyro"\nspells = 2 * 3\nprint(hero)\nprint(spells)', hint: 'First print the text stored in hero, then multiply 2 by 3.', explanation: 'hero contains Pyro and spells contains 6, so print() displays them on separate lines.', validation: { kind: 'exact', acceptedAnswers: ['Pyro\n6'], caseSensitive: true } },
 
   // Additional exercises are ordered by each mission's exerciseIds. The original six remain first for Stage 3C.1 gameplay.
-  { id: 'python-forest-awakening-literal', chapterId: 'python-forest-awakening', languageId: 'python', difficulty: 'intro', type: 'fill-blank', concept: 'string literals', prompt: 'Fill the blank with a quoted string so the spell prints Forest.', code: 'print(____)', hint: 'Put the word Forest between matching quotation marks.', explanation: 'Quotation marks tell Python that Forest is text rather than a variable name.', validation: { kind: 'exact', acceptedAnswers: ['"Forest"', "'Forest'"], caseSensitive: true } },
-  { id: 'python-forest-awakening-number', chapterId: 'python-forest-awakening', languageId: 'python', difficulty: 'intro', type: 'fill-blank', concept: 'printing numbers', prompt: 'Fill the blank with the integer seven, without quotes.', code: 'print(____)', hint: 'Type the digit for seven without quotation marks.', explanation: 'print() can display an integer directly; quotes would make it text.', validation: { kind: 'exact', acceptedAnswers: ['7'], caseSensitive: true } },
-  { id: 'python-forest-awakening-output', chapterId: 'python-forest-awakening', languageId: 'python', difficulty: 'practice', type: 'predict-output', concept: 'understanding output', prompt: 'What exact word appears when this spell runs?', code: 'print("Spark")', hint: 'print() displays the text between the quotes, without the quotes.', explanation: 'The output is Spark; quotation marks mark the string but are not displayed.', validation: { kind: 'exact', acceptedAnswers: ['Spark'], caseSensitive: true } },
-  { id: 'python-forest-awakening-repair', chapterId: 'python-forest-awakening', languageId: 'python', difficulty: 'practice', type: 'fix-mistake', concept: 'fixing a print statement', prompt: 'Replace the misspelled function name prnt with the correct one.', code: 'prnt("Ready")', hint: 'The function that displays a value has an i after pr.', explanation: 'Python calls the display function print(), so prnt is an undefined name.', validation: { kind: 'exact', acceptedAnswers: ['print'], caseSensitive: true } },
+  {
+    "id": "python-forest-awakening-literal",
+    "chapterId": "python-forest-awakening",
+    "languageId": "python",
+    "difficulty": "practice",
+    "type": "missing-token",
+    "concept": "string literals",
+    "prompt": "Choose the text that makes this spell display Forest.",
+    "code": "print(____)",
+    "hint": "Text needs matching quotes. The quotes mark the text; they are not printed.",
+    "explanation": "\"Forest\" is a string: a piece of text. print() displays Forest without the quotation marks.",
+    "lessonId": "python-lesson-text-numbers",
+    "options": [
+      {
+        "id": "python-forest-awakening-literal-a",
+        "label": "Forest",
+        "feedback": "Without quotes, Python looks for a name called Forest. We want to provide text directly."
+      },
+      {
+        "id": "python-forest-awakening-literal-b",
+        "label": "\"forest\"",
+        "feedback": "Text keeps its uppercase and lowercase letters. The requested word begins with a capital F."
+      },
+      {
+        "id": "python-forest-awakening-literal-c",
+        "label": "\"Forest\"",
+        "feedback": "Matching quotes mark the text to display."
+      }
+    ],
+    "validation": {
+      "kind": "option-id",
+      "correctOptionId": "python-forest-awakening-literal-c"
+    }
+  },
+  {
+    "id": "python-forest-awakening-number",
+    "chapterId": "python-forest-awakening",
+    "languageId": "python",
+    "difficulty": "practice",
+    "type": "multiple-choice",
+    "concept": "printing numbers",
+    "prompt": "Why can this spell use 7 without quotation marks?",
+    "code": "print(7)",
+    "hint": "Compare how the lesson writes text and numbers.",
+    "explanation": "Numbers can go directly inside print(). This displays 7. Quoting \"7\" would make it text, even though it looks the same on screen.",
+    "lessonId": "python-lesson-text-numbers",
+    "options": [
+      {
+        "id": "python-forest-awakening-number-a",
+        "label": "Numbers can go directly inside print().",
+        "feedback": "A number does not need quotation marks."
+      },
+      {
+        "id": "python-forest-awakening-number-b",
+        "label": "Quotation marks are never used in Python.",
+        "feedback": "Text uses quotes. Numbers can be written without them."
+      },
+      {
+        "id": "python-forest-awakening-number-c",
+        "label": "7 is the name of a variable.",
+        "feedback": "A digit is a number here, not a variable name."
+      }
+    ],
+    "validation": {
+      "kind": "option-id",
+      "correctOptionId": "python-forest-awakening-number-a"
+    }
+  },
+  {
+    "id": "python-forest-awakening-output",
+    "chapterId": "python-forest-awakening",
+    "languageId": "python",
+    "difficulty": "practice",
+    "type": "output-choice",
+    "concept": "understanding output",
+    "prompt": "What appears on the screen?",
+    "code": "print(\"Spark\")",
+    "hint": "The quotation marks surround the text in code, but do not appear in its output.",
+    "explanation": "The output is Spark. print() displays the text inside the quotes; it does not display its own name or the quote marks.",
+    "lessonId": "python-lesson-first-output",
+    "options": [
+      {
+        "id": "python-forest-awakening-output-a",
+        "label": "\"Spark\"",
+        "feedback": "Quotes mark where text starts and ends in code. They are not shown by this print() call."
+      },
+      {
+        "id": "python-forest-awakening-output-b",
+        "label": "print",
+        "feedback": "print is the instruction. It displays the value inside its parentheses."
+      },
+      {
+        "id": "python-forest-awakening-output-c",
+        "label": "Nothing",
+        "feedback": "This line calls print(), so it does display the message."
+      },
+      {
+        "id": "python-forest-awakening-output-d",
+        "label": "Spark",
+        "feedback": "The message appears without quotes."
+      }
+    ],
+    "validation": {
+      "kind": "option-id",
+      "correctOptionId": "python-forest-awakening-output-d"
+    }
+  },
+  { id: 'python-forest-awakening-repair', chapterId: 'python-forest-awakening', languageId: 'python', difficulty: 'practice', type: 'fix-mistake', lessonId: 'python-lesson-first-output', concept: 'fixing a print statement', prompt: 'Replace the misspelled function name prnt with the correct one.', code: 'prnt("Ready")', hint: 'The function that displays a value has an i after pr.', explanation: 'Python calls the display function print(), so prnt is an undefined name.', validation: { kind: 'exact', acceptedAnswers: ['print'], caseSensitive: true } },
 
   { id: 'python-forest-fire-essence-read', chapterId: 'python-forest-fire-essence', languageId: 'python', difficulty: 'intro', type: 'predict-output', concept: 'reading variable values', prompt: 'What number does this spell print?', code: 'mana = 10\nprint(mana)', hint: 'Read the value stored in mana on the first line.', explanation: 'mana stores 10, so print(mana) displays 10.', validation: { kind: 'exact', acceptedAnswers: ['10'], caseSensitive: true } },
   { id: 'python-forest-fire-essence-update', chapterId: 'python-forest-fire-essence', languageId: 'python', difficulty: 'practice', type: 'predict-output', concept: 'updating variables', prompt: 'What number is printed after mana is updated?', code: 'mana = 4\nmana = mana + 3\nprint(mana)', hint: 'Start at 4 and add 3 before printing.', explanation: 'The second assignment stores 7 in mana, replacing the earlier value.', validation: { kind: 'exact', acceptedAnswers: ['7'], caseSensitive: true } },

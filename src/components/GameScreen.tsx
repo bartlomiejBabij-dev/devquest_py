@@ -3,10 +3,16 @@ import { Keyboard, KeyboardAvoidingView, Platform, ScrollView, StyleSheet, View 
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { colors } from '@/theme';
 
-export function GameScreen({ children, header, compact = false, scrollToEndOnKeyboard = false }: { children: ReactNode; header?: ReactNode; compact?: boolean; scrollToEndOnKeyboard?: boolean }) {
+export function GameScreen({ children, header, compact = false, scrollToEndOnKeyboard = false, scrollResetKey }: { children: ReactNode; header?: ReactNode; compact?: boolean; scrollToEndOnKeyboard?: boolean; scrollResetKey?: string }) {
   const scrollRef = useRef<ScrollView>(null);
   const keyboardOpen = useRef(false);
   const scrollTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    if (scrollResetKey === undefined) return;
+    const frame = requestAnimationFrame(() => scrollRef.current?.scrollTo({ y: 0, animated: false }));
+    return () => cancelAnimationFrame(frame);
+  }, [scrollResetKey]);
 
   useEffect(() => {
     if (!scrollToEndOnKeyboard) return;

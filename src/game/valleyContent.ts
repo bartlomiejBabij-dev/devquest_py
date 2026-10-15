@@ -44,39 +44,189 @@ export const valleyMissions: readonly Mission[] = [
 
 export const valleyExercises: readonly Exercise[] = [
   {
-    id: 'python-valley-crossroads-boolean', chapterId: 'python-valley-crossroads', languageId: 'python', difficulty: 'intro', type: 'fill-blank',
-    concept: 'Boolean values', prompt: 'The path is open. Fill in the Boolean value True, without quotes. Python uses True and False for yes-or-no conditions.',
-    code: 'path_open = ____\nprint(path_open)', hint: 'Start True with a capital T. It is a value, not a quoted string.',
-    explanation: 'True and False are Boolean values. path_open stores True, so print() displays True.',
-    validation: { kind: 'exact', acceptedAnswers: ['True'], caseSensitive: true },
+    "id": "python-valley-crossroads-boolean",
+    "chapterId": "python-valley-crossroads",
+    "languageId": "python",
+    "difficulty": "intro",
+    "type": "missing-token",
+    "concept": "Boolean values",
+    "prompt": "The path is open. Choose a Boolean value to record that fact.",
+    "code": "path_open = ____\nprint(path_open)",
+    "hint": "Use the yes-or-no value for a true statement. Boolean values have no quotes.",
+    "explanation": "True records that the path is open. \"True\" would be text instead of a Boolean. Python spells the Boolean with a capital T.",
+    "lessonId": "python-lesson-booleans",
+    "options": [
+      {
+        "id": "python-valley-crossroads-boolean-a",
+        "label": "\"True\"",
+        "feedback": "Quotes turn this into text. We need a Boolean value."
+      },
+      {
+        "id": "python-valley-crossroads-boolean-b",
+        "label": "False",
+        "feedback": "False would mean the statement “the path is open” is not true."
+      },
+      {
+        "id": "python-valley-crossroads-boolean-c",
+        "label": "True",
+        "feedback": "True is a Boolean value, with a capital T and no quotes."
+      }
+    ],
+    "validation": {
+      "kind": "option-id",
+      "correctOptionId": "python-valley-crossroads-boolean-c"
+    }
   },
   {
-    id: 'python-valley-crossroads-equality', chapterId: 'python-valley-crossroads', languageId: 'python', difficulty: 'intro', type: 'choose-operator',
-    concept: 'equality comparison', prompt: 'Choose the operator that checks whether the two rune counts are equal.',
-    code: 'runes = 4\nprint(runes ____ 4)', options: ['=', '==', '!=', '>'], hint: 'One = assigns; two equals signs compare.',
-    explanation: '== compares values. Since 4 equals 4, this comparison prints True.',
-    validation: { kind: 'exact', acceptedAnswers: ['=='], caseSensitive: true },
+    "id": "python-valley-crossroads-equality",
+    "chapterId": "python-valley-crossroads",
+    "languageId": "python",
+    "difficulty": "practice",
+    "type": "missing-token",
+    "concept": "equality comparison",
+    "prompt": "Which operator checks whether the rune counts are equal?",
+    "code": "runes = 4\nprint(runes ____ 4)",
+    "hint": "Use a comparison, not the sign that stores a value.",
+    "explanation": "== compares the values. Since 4 equals 4, print() displays True. A single = is used to assign a value.",
+    "lessonId": "python-lesson-comparisons",
+    "options": [
+      {
+        "id": "python-valley-crossroads-equality-a",
+        "label": "=",
+        "feedback": "One = stores a value. This blank needs a comparison."
+      },
+      {
+        "id": "python-valley-crossroads-equality-b",
+        "label": "!=",
+        "feedback": "!= checks whether values differ. The question asks whether they are equal."
+      },
+      {
+        "id": "python-valley-crossroads-equality-c",
+        "label": ">",
+        "feedback": "> checks whether the left value is greater, not whether both values are equal."
+      },
+      {
+        "id": "python-valley-crossroads-equality-d",
+        "label": "==",
+        "feedback": "Two equals signs compare values for equality."
+      }
+    ],
+    "validation": {
+      "kind": "option-id",
+      "correctOptionId": "python-valley-crossroads-equality-d"
+    }
   },
   {
-    id: 'python-valley-crossroads-difference', chapterId: 'python-valley-crossroads', languageId: 'python', difficulty: 'practice', type: 'predict-output',
-    concept: 'not equal and greater than', prompt: 'Predict both lines. != means “not equal” and > means “greater than”.',
-    code: 'print(3 != 5)\nprint(3 > 5)', hint: '3 differs from 5, but is it greater than 5? Enter True or False on each line.',
-    explanation: '3 != 5 is True because the numbers differ. 3 > 5 is False because 3 is smaller.',
-    validation: { kind: 'exact', acceptedAnswers: ['True\nFalse'], caseSensitive: true },
+    "id": "python-valley-crossroads-difference",
+    "chapterId": "python-valley-crossroads",
+    "languageId": "python",
+    "difficulty": "practice",
+    "type": "output-choice",
+    "concept": "not equal and greater than",
+    "prompt": "Choose the two output lines, in order.",
+    "code": "print(3 != 5)\nprint(3 > 5)",
+    "hint": "First check whether the numbers differ. Then check whether 3 is greater than 5.",
+    "explanation": "3 != 5 is True because the numbers differ. 3 > 5 is False because 3 is smaller. Each print() writes its own line.",
+    "lessonId": "python-lesson-ordering",
+    "options": [
+      {
+        "id": "python-valley-crossroads-difference-a",
+        "label": "True\nTrue",
+        "feedback": "The numbers differ, but 3 is not greater than 5. Check the second line."
+      },
+      {
+        "id": "python-valley-crossroads-difference-b",
+        "label": "True\nFalse",
+        "feedback": "The numbers differ, and 3 is not greater than 5."
+      },
+      {
+        "id": "python-valley-crossroads-difference-c",
+        "label": "False\nTrue",
+        "feedback": "!= asks whether the numbers differ. > asks whether the left number is greater."
+      },
+      {
+        "id": "python-valley-crossroads-difference-d",
+        "label": "False\nFalse",
+        "feedback": "3 and 5 are different, so the first comparison is true."
+      }
+    ],
+    "validation": {
+      "kind": "option-id",
+      "correctOptionId": "python-valley-crossroads-difference-b"
+    }
   },
   {
-    id: 'python-valley-crossroads-boundary', chapterId: 'python-valley-crossroads', languageId: 'python', difficulty: 'practice', type: 'predict-output',
-    concept: 'less than and inclusive boundaries', prompt: 'Predict both lines. < means “less than”; <= also allows equality.',
-    code: 'print(2 < 6)\nprint(6 <= 6)', hint: '2 is smaller than 6. The <= operator accepts equal values too.',
-    explanation: 'Both lines print True: 2 is less than 6, and 6 is less than or equal to itself.',
-    validation: { kind: 'exact', acceptedAnswers: ['True\nTrue'], caseSensitive: true },
+    "id": "python-valley-crossroads-boundary",
+    "chapterId": "python-valley-crossroads",
+    "languageId": "python",
+    "difficulty": "practice",
+    "type": "output-choice",
+    "concept": "less than and inclusive boundaries",
+    "prompt": "Choose the two output lines. Remember that <= allows equality.",
+    "code": "print(2 < 6)\nprint(6 <= 6)",
+    "hint": "Check the second comparison at the boundary: the two values are equal.",
+    "explanation": "Both lines print True. 2 is less than 6, and <= accepts equal values such as 6 and 6.",
+    "lessonId": "python-lesson-ordering",
+    "options": [
+      {
+        "id": "python-valley-crossroads-boundary-a",
+        "label": "True\nTrue",
+        "feedback": "Both comparisons are true; <= accepts equality."
+      },
+      {
+        "id": "python-valley-crossroads-boundary-b",
+        "label": "True\nFalse",
+        "feedback": "<= includes equality. Equal values do pass that comparison."
+      },
+      {
+        "id": "python-valley-crossroads-boundary-c",
+        "label": "False\nTrue",
+        "feedback": "2 is less than 6, so the first comparison is true."
+      }
+    ],
+    "validation": {
+      "kind": "option-id",
+      "correctOptionId": "python-valley-crossroads-boundary-a"
+    }
   },
   {
-    id: 'python-valley-crossroads-threshold', chapterId: 'python-valley-crossroads', languageId: 'python', difficulty: 'challenge', type: 'choose-operator',
-    concept: 'greater than or equal', prompt: 'The gate needs at least 8 mana. Choose the operator that accepts 8 and every larger value.',
-    code: 'mana = 8\nprint(mana ____ 8)', options: ['>', '>=', '==', '<='], hint: '“At least” includes the boundary and all values above it.',
-    explanation: '>= means greater than or equal to. It accepts 8 as well as 9, 10 and larger values; > would reject 8.',
-    validation: { kind: 'exact', acceptedAnswers: ['>='], caseSensitive: true },
+    "id": "python-valley-crossroads-threshold",
+    "chapterId": "python-valley-crossroads",
+    "languageId": "python",
+    "difficulty": "practice",
+    "type": "multiple-choice",
+    "concept": "greater than or equal",
+    "prompt": "The gate needs at least 8 mana. Which condition accepts 8 and every larger value?",
+    "code": "mana = 8",
+    "hint": "“At least” includes the boundary and everything above it.",
+    "explanation": "mana >= 8 accepts 8, 9 and larger values. > would reject 8; == would reject larger values; <= would allow values below 8.",
+    "lessonId": "python-lesson-ordering",
+    "options": [
+      {
+        "id": "python-valley-crossroads-threshold-a",
+        "label": "mana > 8",
+        "feedback": "> accepts values above 8, but leaves out exactly 8."
+      },
+      {
+        "id": "python-valley-crossroads-threshold-b",
+        "label": "mana == 8",
+        "feedback": "== accepts exactly 8, but rejects larger amounts."
+      },
+      {
+        "id": "python-valley-crossroads-threshold-c",
+        "label": "mana >= 8",
+        "feedback": ">= includes the boundary and larger values."
+      },
+      {
+        "id": "python-valley-crossroads-threshold-d",
+        "label": "mana <= 8",
+        "feedback": "<= accepts values below 8. The gate needs at least 8."
+      }
+    ],
+    "validation": {
+      "kind": "option-id",
+      "correctOptionId": "python-valley-crossroads-threshold-c"
+    }
   },
   {
     id: 'python-valley-guardian-if', chapterId: 'python-valley-guardian', languageId: 'python', difficulty: 'intro', type: 'fill-blank',

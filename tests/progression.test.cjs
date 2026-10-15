@@ -79,9 +79,9 @@ test('XP and chapter/world completion are derived once from completed mission ID
   assert.equal(getTotalEarnedXp({ completedMissionIds: [...progress.completedMissionIds, missions[0].id] }), forestOfVariables.xpReward);
 });
 
-test('Every new exercise uses deterministic, exact validation', () => {
+test('Every Forest exercise uses deterministic validation', () => {
   for (const exercise of exercises) {
-    assert.ok(isExerciseAnswerCorrect(exercise, exercise.validation.acceptedAnswers[0]));
+    assert.ok(isExerciseAnswerCorrect(exercise, (exercise.validation.correctOptionId ?? exercise.validation.acceptedAnswers[0])));
     assert.equal(isExerciseAnswerCorrect(exercise, ''), false);
     assert.equal(isExerciseAnswerCorrect(exercise, 'definitely wrong'), false);
   }

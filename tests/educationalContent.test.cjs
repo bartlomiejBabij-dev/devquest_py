@@ -24,7 +24,7 @@ const expectedSequenceIds = [
 ];
 
 const reviewedAnswers = [
-  ['print', '"Forest"', '7', 'Spark', 'print'],
+  ['python-forest-awakening-print-b', 'python-forest-awakening-literal-c', 'python-forest-awakening-number-a', 'python-forest-awakening-output-d', 'print'],
   ['10', '10', '7', 'print', 'flame'],
   ['-', '7', '*', '14', '13'],
   ['Hello, Pyromancer', 'Oak', 'hahaha', '6', '"3"'],
@@ -47,16 +47,17 @@ test('Exactly five ordered exercises belong to each chapter and every reference 
   }
 });
 
-test('All exercises have complete beginner content and accepted answers pass exact validation', () => {
+test('All Forest exercises have complete content and their typed answers pass validation', () => {
   const types = new Set();
   for (const exercise of exercises) {
     types.add(exercise.type);
     assert.equal(exercise.languageId, 'python');
     assert.ok(['intro', 'practice', 'challenge'].includes(exercise.difficulty));
     for (const field of ['concept', 'prompt', 'code', 'hint', 'explanation']) assert.ok(exercise[field].trim(), `${exercise.id}: ${field}`);
-    assert.ok(exercise.validation.acceptedAnswers.length > 0, exercise.id);
-    assert.equal(exercise.validation.kind, 'exact');
-    for (const answer of exercise.validation.acceptedAnswers) {
+    const answers = exercise.validation.kind === 'option-id' ? [exercise.validation.correctOptionId] : exercise.validation.acceptedAnswers;
+    assert.ok(answers.length > 0, exercise.id);
+    assert.ok(['exact', 'option-id'].includes(exercise.validation.kind));
+    for (const answer of answers) {
       assert.ok(answer.trim(), exercise.id);
       assert.equal(isExerciseAnswerCorrect(exercise, answer), true, `${exercise.id}: ${answer}`);
     }
@@ -70,7 +71,7 @@ test('All exercises have complete beginner content and accepted answers pass exa
     assert.equal(isExerciseAnswerCorrect(exercise, ''), false, exercise.id);
     assert.equal(isExerciseAnswerCorrect(exercise, 'definitely wrong'), false, exercise.id);
   }
-  assert.deepEqual(types, new Set(['fill-blank', 'predict-output', 'fix-mistake', 'choose-operator']));
+  assert.deepEqual(types, new Set(['fill-blank', 'predict-output', 'fix-mistake', 'choose-operator', 'multiple-choice', 'missing-token', 'output-choice']));
 });
 
 test('Reviewed expected answers match every authored exercise', () => {
@@ -78,18 +79,18 @@ test('Reviewed expected answers match every authored exercise', () => {
     for (let exerciseIndex = 0; exerciseIndex < 5; exerciseIndex++) {
       const exercise = exercises.find((item) => item.id === expectedSequenceIds[chapterIndex][exerciseIndex]);
       const expected = reviewedAnswers[chapterIndex][exerciseIndex];
-      assert.ok(exercise.validation.acceptedAnswers.includes(expected), exercise.id);
+      assert.ok(exercise.validation.kind === 'option-id' ? exercise.validation.correctOptionId === expected : exercise.validation.acceptedAnswers.includes(expected), exercise.id);
       assert.equal(isExerciseAnswerCorrect(exercise, expected), true, exercise.id);
     }
   }
 });
 
 test('Explicit equivalent quotes are accepted without ignoring meaningful case or inner spaces', () => {
-  const literal = exercises.find((exercise) => exercise.id === 'python-forest-awakening-literal');
-  assert.equal(isExerciseAnswerCorrect(literal, '"Forest"'), true);
-  assert.equal(isExerciseAnswerCorrect(literal, "'Forest'"), true);
-  assert.equal(isExerciseAnswerCorrect(literal, 'Forest'), false);
-  assert.equal(isExerciseAnswerCorrect(literal, '"forest"'), false);
+  const literal = exercises.find((exercise) => exercise.id === 'python-forest-broken-spells-quotes');
+  assert.equal(isExerciseAnswerCorrect(literal, '"Fire"'), true);
+  assert.equal(isExerciseAnswerCorrect(literal, "'Fire'"), true);
+  assert.equal(isExerciseAnswerCorrect(literal, 'Fire'), false);
+  assert.equal(isExerciseAnswerCorrect(literal, '"fire"'), false);
   const output = exercises.find((exercise) => exercise.id === 'python-forest-talking-trees-output');
   assert.equal(isExerciseAnswerCorrect(output, 'Hello,  Pyromancer'), false);
 });

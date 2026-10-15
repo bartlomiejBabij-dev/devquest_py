@@ -131,7 +131,7 @@ test('A correct spell in an unfinished mission does not inflate permanent profil
   const progress = complete(0);
   const missionId = missions[0].id;
   const attempt = startMissionAttempt(progress, missionId);
-  const answer = getPlayableMission(progress, missionId).exercises[0].validation.acceptedAnswers[0];
+  const answer = (getPlayableMission(progress, missionId).exercises[0].validation.correctOptionId ?? getPlayableMission(progress, missionId).exercises[0].validation.acceptedAnswers[0]);
   const result = submitMissionAnswer(progress, attempt, answer);
   assert.equal(result.status, 'correct');
   assert.equal(result.attempt.solvedExerciseIds.length, 1);

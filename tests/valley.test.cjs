@@ -22,7 +22,7 @@ const legacy = require('./fixtures/forest-complete-v1.json');
 const forestComplete = { completedMissionIds: legacy.completedMissionIds };
 // Independently reviewed answers, not generated from validator metadata.
 const answers = [
-  ['True', '==', 'True\nFalse', 'True\nTrue', '>='],
+  ['python-valley-crossroads-boolean-c', 'python-valley-crossroads-equality-d', 'python-valley-crossroads-difference-b', 'python-valley-crossroads-boundary-a', 'python-valley-crossroads-threshold-c'],
   ['if', 'mana = 5\nif mana >= 3:\n    print("Cast")', 'Ready', 'else', 'mana = 2\nif mana < 3:\n    print("Rest")\nelse:\n    print("Cast")'],
 ];
 
@@ -134,7 +134,7 @@ test('Code repair rejects misleading outputs, incorrect operators/branches, bad 
   for (const value of invalid) assert.equal(isExerciseAnswerCorrect(exercise, value), false, value);
 });
 
-test('Boolean/operator/output answers remain exact and case sensitive', () => {
+test('Crossroads options cannot be passed using raw Boolean/operator/output text', () => {
   for (const [id, wrong] of [
     ['boolean', ['true', '"True"', '1', 'False']],
     ['equality', ['=', '!=', '>=', 'True']],
@@ -165,7 +165,7 @@ test('Both missions use existing explanations/Continue, unlock the next chapter,
 
 test('A partial World 2 attempt grants nothing and restarts without altering saved Forest progress', () => {
   const attempt = startMissionAttempt(forestComplete, valleyMissions[0].id);
-  const first = submitMissionAnswer(forestComplete, attempt, 'True');
+  const first = submitMissionAnswer(forestComplete, attempt, 'python-valley-crossroads-boolean-c');
   assert.equal(first.progress, forestComplete);
   assert.equal(first.xpAwarded, 0);
   assert.deepEqual(startMissionAttempt(first.progress, attempt.missionId), attempt);

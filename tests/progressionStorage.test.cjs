@@ -50,7 +50,7 @@ test('Boss completion restores World 1 at 100%; replay after relaunch grants no 
   let attempt = startMissionAttempt(progress, missions.at(-1).id);
   for (let index = 0; index < 5; index++) {
     const exercise = getPlayableMission(progress, attempt.missionId).exercises[index];
-    const result = submitMissionAnswer(progress, attempt, exercise.validation.acceptedAnswers[0]);
+    const result = submitMissionAnswer(progress, attempt, (exercise.validation.correctOptionId ?? exercise.validation.acceptedAnswers[0]));
     assert.equal(result.xpAwarded, 0);
     progress = result.progress;
     attempt = continueMissionAttempt(result.attempt, 5);

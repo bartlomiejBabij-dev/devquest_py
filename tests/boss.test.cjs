@@ -22,7 +22,7 @@ function unlockedBossProgress() {
 
 function answerCurrent(progress, attempt) {
   const exercise = getPlayableMission(progress, attempt.missionId).exercises[attempt.exerciseIndex];
-  return submitMissionAnswer(progress, attempt, exercise.validation.acceptedAnswers[0]);
+  return submitMissionAnswer(progress, attempt, (exercise.validation.correctOptionId ?? exercise.validation.acceptedAnswers[0]));
 }
 
 test('Final boss uses the final chapter’s existing mission and stays locked until prerequisites', () => {

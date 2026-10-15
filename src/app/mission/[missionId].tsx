@@ -1,9 +1,14 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useReducer, useRef, useState } from 'react';
 import { useLocalSearchParams, useNavigation } from 'expo-router';
 import { usePreventRemove } from 'expo-router/react-navigation';
 import { Alert, Animated, Keyboard, Modal, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useReducedMotion } from 'react-native-reanimated';
+import { AnswerChoices } from '@/components/AnswerChoices';
+import { LessonCard } from '@/components/LessonCard';
+import { isChoiceExercise, getIncorrectAnswerFeedback } from '@/game/exerciseValidation';
+import { getLessonForExercise } from '@/game/lessonContent';
+import { getVisibleLesson, initialLessonSession, lessonSessionReducer } from '@/game/lessonSession';
 import { GameButton } from '@/components/GameButton';
 import { GameScreen } from '@/components/GameScreen';
 import { GoblinKingEncounter } from '@/components/GoblinKingEncounter';
@@ -13,7 +18,7 @@ import { NavigationButton } from '@/components/NavigationButton';
 import { SpellbookEntryView, type SpellbookEntryHandle } from '@/components/SpellbookEntryView';
 import { getGoblinKingHp, isGoblinKingMission } from '@/game/boss';
 import { useGame } from '@/game/GameContext';
-import { getTotalEarnedXp, getWorldProgress } from '@/game/progression';
+import { getTotalEarnedXp, getWorldProgress, isMissionCompleted } from '@/game/progression';
 import { getSpellbookEntryForExercise } from '@/game/spellbookContent';
 import { chapters, forestOfVariables, missions } from '@/game/worldContent';
 import { continueMissionAttempt, getPlayableMission, startMissionAttempt, submitMissionAnswer, type MissionAttempt } from '@/game/worldMission';
@@ -38,6 +43,7 @@ export default function WorldMissionScreen() {
   const exitPromptOpen = useRef(false);
   const reduceMotion = useReducedMotion();
   const [answer, setAnswer] = useState('');
+  const [lessonSession, dispatchLesson] = useReducer(lessonSessionReducer, initialLessonSession);
   const [incorrect, setIncorrect] = useState(false);
   const [animationDone, setAnimationDone] = useState(false);
   const [spellbookOpen, setSpellbookOpen] = useState(false);
@@ -55,6 +61,7 @@ export default function WorldMissionScreen() {
     setAnswer('');
     setIncorrect(false);
     setAnimationDone(false);
+    dispatchLesson({ type: 'reset' });
     submitting.current = false;
   }, [missionId, progression]);
   useEffect(() => () => { if (revealTimer.current) clearTimeout(revealTimer.current); }, []);
@@ -75,6 +82,7 @@ export default function WorldMissionScreen() {
 
   useScreenBack(() => {
     if (spellbookOpen) spellbookViewRef.current?.requestClose();
+    else if (lessonSession.reviewing) dispatchLesson({ type: 'close' });
     else returnToMap();
   });
 
@@ -82,6 +90,7 @@ export default function WorldMissionScreen() {
     const current = attemptRef.current;
     const currentExercise = playable?.exercises[current?.exerciseIndex ?? -1];
     if (!current || !currentExercise || currentExercise.id !== expectedExerciseId || current.phase !== 'answering' || submitting.current) return;
+    if (getVisibleLesson(currentExercise, current.phase, isMissionCompleted(currentProgress.current, missionId), lessonSession)) return;
     submitting.current = true;
     const submission = submitMissionAnswer(currentProgress.current, current, submittedAnswer);
     if (submission.status !== 'correct') {
@@ -121,11 +130,13 @@ export default function WorldMissionScreen() {
     setAnswer('');
     setIncorrect(false);
     setAnimationDone(false);
+    dispatchLesson({ type: 'close' });
     submitting.current = false;
     spellPulse.setValue(0);
   }
 
   function replayMission() {
+    dispatchLesson({ type: 'reset' });
     const next = startMissionAttempt(currentProgress.current, missionId);
     if (!next) return;
     attemptRef.current = next;
@@ -153,7 +164,9 @@ export default function WorldMissionScreen() {
   const { chapter, mission } = playable;
   const exercise = playable.exercises[attempt.exerciseIndex];
   const spellbookEntry = getSpellbookEntryForExercise(exercise.id);
-  const multiline = (exercise.type === 'predict-output' || exercise.validation.kind === 'python-lines') && exercise.validation.acceptedAnswers.some((item) => item.includes('\n'));
+  const lesson = getLessonForExercise(exercise);
+  const lessonView = getVisibleLesson(exercise, attempt.phase, isMissionCompleted(progression, missionId), lessonSession);
+  const multiline = !isChoiceExercise(exercise) && (exercise.type === 'predict-output' || exercise.validation.kind === 'python-lines') && exercise.validation.acceptedAnswers.some((item) => item.includes('\n'));
   const solved = attempt.phase === 'solved';
   const result = attempt.result;
   const newlyUnlocked = result?.newlyUnlockedChapterIds.map((id) => chapters.find((item) => item.id === id)?.title).filter(Boolean) ?? [];
@@ -161,7 +174,7 @@ export default function WorldMissionScreen() {
   const worldCompletion = bossMission ? getWorldProgress(progression, forestOfVariables.id) : null;
 
   return (
-    <GameScreen compact scrollToEndOnKeyboard header={
+    <GameScreen compact scrollToEndOnKeyboard scrollResetKey={lesson ? `${missionId}:${attempt.exerciseIndex}:${lessonView ? 'lesson' : 'challenge'}` : undefined} header={
       <View style={styles.topRow}>
         <NavigationButton label="World Map" accessibilityLabel="Exit mission to World Map" onPress={returnToMap} />
         <Text style={styles.worldLabel}>{resolveMapWorld(chapter.worldId).title.toUpperCase()}</Text>
@@ -188,14 +201,14 @@ export default function WorldMissionScreen() {
         <>
           {bossMission && bossHp !== null ? <GoblinKingEncounter hp={bossHp} hitCount={attempt.solvedExerciseIds.length} showDamage={solved} reducedMotion={!!reduceMotion} /> : null}
           {mission.encounter === 'guardian' ? <ValleyGuardian solvedCount={attempt.solvedExerciseIds.length} /> : null}
-          <View style={[styles.headerCard, bossMission && styles.bossHeaderCard]}>
+          <View style={[styles.headerCard, bossMission && styles.bossHeaderCard, lesson && styles.learningHeader]}>
             <Text style={styles.overline}>{chapter.title.toUpperCase()}  ·  PYTHON MISSION</Text>
-            <Text style={styles.title}>{mission.title}</Text>
-            <Text style={styles.body}>{mission.description}</Text>
-            <View style={styles.rewardChip}><Text style={styles.rewardChipText}>{getTotalEarnedXp(progression)} TOTAL XP  ·  {mission.xpReward} XP REWARD</Text></View>
+            <Text style={[styles.title, lesson && styles.learningTitle]}>{mission.title}</Text>
+            {!lesson ? <Text style={styles.body}>{mission.description}</Text> : null}
+            {!lesson ? <View style={styles.rewardChip}><Text style={styles.rewardChipText}>{getTotalEarnedXp(progression)} TOTAL XP  ·  {mission.xpReward} XP REWARD</Text></View> : null}
           </View>
 
-          <View style={styles.exerciseCard}>
+          {lessonView ? <LessonCard lesson={lessonView.lesson} reviewing={!lessonView.introduction} onContinue={() => dispatchLesson({ type: 'continue', lessonId: lessonView.lesson.id })} /> : <View style={styles.exerciseCard}>
             <View style={styles.progressHeading}><Text style={styles.smallLabel}>SPELL {attempt.exerciseIndex + 1} / {playable.exercises.length}</Text><Text style={styles.progressCaption}>COMPLETE ALL FIVE</Text></View>
             <View style={styles.segments} accessibilityLabel={`${attempt.exerciseIndex + (solved ? 1 : 0)} of ${playable.exercises.length} spells solved`}>
               {playable.exercises.map((item, index) => <View key={item.id} style={[styles.segment, index < attempt.exerciseIndex && styles.segmentComplete, index === attempt.exerciseIndex && (solved ? styles.segmentComplete : styles.segmentCurrent)]} />)}
@@ -207,15 +220,24 @@ export default function WorldMissionScreen() {
                 <Text style={styles.spellbookButtonText}>✦  SPELLBOOK</Text>
               </Pressable> : null}
             </View>
+            {lesson ? <Pressable accessibilityRole="button" accessibilityLabel="Review Lesson" onPress={() => { Keyboard.dismiss(); dispatchLesson({ type: 'review' }); }}
+              style={({ pressed }) => [styles.reviewLesson, pressed && styles.reviewPressed]}><Text style={styles.reviewLessonText}>↺  REVIEW LESSON</Text></Pressable> : null}
             <Text style={styles.prompt}>{exercise.prompt}</Text>
             <View style={styles.codeBox}><Text style={styles.codeLabel}>PYTHON SPELL</Text><Text selectable style={styles.code}>{exercise.code}</Text></View>
 
             {solved ? (
               <View accessibilityLiveRegion="polite">
                 <View style={styles.successRow}><Animated.Text style={[styles.successGlyph, { opacity: reduceMotion ? 1 : spellPulse, transform: [{ scale: reduceMotion ? 1 : spellPulse.interpolate({ inputRange: [0, 1], outputRange: [0.7, 1.25] }) }] }]}>✦</Animated.Text><Text style={styles.correct}>Spell cast successfully!</Text></View>
+                {isChoiceExercise(exercise) ? <Text style={styles.chosenAnswer}>{exercise.options.find((option) => option.id === answer)?.label}</Text> : null}
                 <View style={styles.explanationCard}><Text style={styles.smallLabel}>WHAT YOU LEARNED</Text><Text style={styles.explanation}>{exercise.explanation}</Text></View>
                 <GameButton label={attempt.exerciseIndex === playable.exercises.length - 1 ? 'See Mission Result' : 'Continue'} onPress={continueAfterSpell} disabled={!animationDone} style={styles.continueButton} />
               </View>
+            ) : isChoiceExercise(exercise) ? (
+              <AnswerChoices exercise={exercise} selectedId={answer} incorrect={incorrect} onSelect={(optionId) => {
+                if (attemptRef.current?.phase !== 'answering' || attemptRef.current.exerciseIndex !== attempt.exerciseIndex) return;
+                setAnswer(optionId);
+                submitAnswer(exercise.id, optionId);
+              }} />
             ) : (
               <>
                 <Text style={styles.inputLabel}>{exercise.type === 'choose-operator' ? 'CHOOSE AN OPERATOR' : exercise.type === 'predict-output' ? 'PREDICT THE OUTPUT' : exercise.type === 'fix-mistake' ? 'FIX THE MISTAKE' : 'FILL IN THE BLANK'}</Text>
@@ -231,13 +253,13 @@ export default function WorldMissionScreen() {
                     maxLength={2000} placeholder={exercise.validation.kind === 'python-lines' ? 'Rewrite the code here…' : multiline ? 'Line 1\nLine 2' : 'Type your answer'} placeholderTextColor="#888BA8" style={[styles.input, multiline && styles.multilineInput]} />
                 )}
                 <View accessibilityLiveRegion="polite" style={styles.feedbackBox}>
-                  {incorrect ? <><Text style={styles.incorrect}>Not quite. Try another spell.</Text><Text style={styles.hint}>Hint: {exercise.hint}</Text></> :
+                  {incorrect ? <><Text style={styles.incorrect}>Not quite. Try another spell.</Text><Text style={styles.hint}>{getIncorrectAnswerFeedback(exercise, answer)}</Text></> :
                     <Text style={styles.hint}>Solve all five spells to complete this mission. Progress resets if you leave.</Text>}
                 </View>
                 <GameButton label="Cast Spell" onPress={() => submitAnswer(exercise.id)} disabled={!answer.trim()} />
               </>
             )}
-          </View>
+          </View>}
         </>
       )}
       {spellbookOpen && spellbookEntry ? <Modal visible animationType={reduceMotion ? 'none' : 'slide'} presentationStyle="fullScreen" onRequestClose={() => {
@@ -253,6 +275,12 @@ export default function WorldMissionScreen() {
 }
 
 const styles = StyleSheet.create({
+  learningHeader: { paddingVertical: 12 },
+  learningTitle: { fontSize: 22 },
+  reviewLesson: { minHeight: 48, alignSelf: 'flex-start', justifyContent: 'center', paddingHorizontal: 12, marginTop: 8, borderRadius: 10, borderWidth: 1, borderColor: '#75659B', backgroundColor: '#322B4A' },
+  reviewLessonText: { color: colors.gold, fontSize: 10, fontWeight: '900', letterSpacing: 0.6 },
+  reviewPressed: { backgroundColor: '#514267' },
+  chosenAnswer: { color: colors.green, fontFamily: 'monospace', fontSize: 15, lineHeight: 22, marginTop: 8 },
   topRow: { minHeight: 48, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 8 },
   worldLabel: { color: colors.green, fontSize: 9, fontWeight: '900', letterSpacing: 1, flexShrink: 1, textAlign: 'right' },
   headerCard: { borderRadius: 21, backgroundColor: '#17332F', borderWidth: 1, borderColor: '#3F7767', padding: 20 },
@@ -272,7 +300,7 @@ const styles = StyleSheet.create({
   smallLabel: { color: colors.violet, fontSize: 10, fontWeight: '900', letterSpacing: 1.3 },
   concept: { flex: 1, color: colors.violet, fontSize: 10, fontWeight: '900', letterSpacing: 1.3 },
   conceptRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 8 },
-  spellbookButton: { minHeight: 44, minWidth: 105, borderRadius: 11, borderWidth: 1, borderColor: colors.gold, backgroundColor: '#3B3151', alignItems: 'center', justifyContent: 'center', paddingHorizontal: 9 },
+  spellbookButton: { minHeight: 48, minWidth: 105, borderRadius: 11, borderWidth: 1, borderColor: colors.gold, backgroundColor: '#3B3151', alignItems: 'center', justifyContent: 'center', paddingHorizontal: 9 },
   spellbookButtonText: { color: colors.gold, fontSize: 9, fontWeight: '900', letterSpacing: 0.5 },
   spellbookModal: { flex: 1, backgroundColor: colors.background },
   prompt: { color: colors.text, fontSize: 18, fontWeight: '800', lineHeight: 25, marginTop: 10 },

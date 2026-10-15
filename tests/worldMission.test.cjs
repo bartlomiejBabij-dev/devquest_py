@@ -18,7 +18,7 @@ const { challenges } = require('../src/game/challenges.ts');
 function answerCurrent(progress, attempt) {
   const playable = getPlayableMission(progress, attempt.missionId);
   const exercise = playable.exercises[attempt.exerciseIndex];
-  return submitMissionAnswer(progress, attempt, exercise.validation.acceptedAnswers[0]);
+  return submitMissionAnswer(progress, attempt, (exercise.validation.correctOptionId ?? exercise.validation.acceptedAnswers[0]));
 }
 
 test('All six missions load five playable exercises in their defined order', () => {
@@ -112,7 +112,7 @@ test('Exiting after four spells restarts from one and cannot award XP', () => {
 });
 
 test('All 30 exercises complete in order; each mission pays once and replay pays zero', () => {
-  assert.deepEqual(new Set(exercises.map((exercise) => exercise.type)), new Set(['fill-blank', 'choose-operator', 'predict-output', 'fix-mistake']));
+  assert.deepEqual(new Set(exercises.map((exercise) => exercise.type)), new Set(['fill-blank', 'choose-operator', 'predict-output', 'fix-mistake', 'multiple-choice', 'missing-token', 'output-choice']));
   let progress = initialProgressionState;
   let earned = 0;
   for (const mission of missions) {

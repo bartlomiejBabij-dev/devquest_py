@@ -61,3 +61,11 @@ Legacy progression uses the same `devquest.progression` key and version-1 comple
 The new code-repair validator compares complete authored lines and tokens; it does not execute Python. It accepts harmless spacing, blank lines, CRLF, equivalent quotes and consistent indentation of 1–8 spaces (four spaces are taught). It supports only the authored single-depth if/else blocks, identifiers, integer literals and simple strings. Tabs, comments, escape sequences, nested blocks, extra statements and alternative algorithms are intentionally unsupported. Output and single-token exercises retain exact, case-sensitive answers.
 
 See [Stage 3G.1 verification](docs/stage-3g1.md) for changed files, test results and device-testing limitations.
+
+## Beginner learning loop (Stage 3G.2A)
+
+The Awakening and The Crossroads now introduce concepts through short lesson cards with Python examples, output, an explanation and a key rule. New concepts appear once per attempt; completed-mission replays skip automatic lessons. Review Lesson remains available without losing the current answer or mission attempt.
+
+The Awakening has four tappable questions and one five-character `print` answer. The Crossroads has five tappable questions. Multiple choice, missing tokens and output choices validate stable option IDs, never display labels. A correct tap casts the existing spell and reveals an explanation; Continue advances only after that feedback. Incorrect choices explain the misconception and allow retry without a penalty.
+
+All mission/exercise IDs, rewards, save formats and Spellbook links remain unchanged. The other 30 exercises retain their existing content and input mode. See [Stage 3G.2A verification](docs/stage-3g2a.md) for compatibility checks, Android results and the remaining device checks.

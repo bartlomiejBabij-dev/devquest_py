@@ -61,7 +61,8 @@ test('Reference examples avoid copying exercise code or giving its exact output 
   for (const exercise of exercises) {
     const entry = getSpellbookEntryForExercise(exercise.id);
     assert.notEqual(entry.codeExample, exercise.code, exercise.id);
-    assert.ok(!exercise.validation.acceptedAnswers.includes(entry.expectedOutput), `${exercise.id}: reference output is an exercise answer`);
+    const answers = exercise.validation.kind === 'option-id' ? exercise.options.filter(o => o.id === exercise.validation.correctOptionId).map(o => o.label) : exercise.validation.acceptedAnswers;
+    assert.ok(!answers.includes(entry.expectedOutput), `${exercise.id}: reference output is an exercise answer`);
   }
 });
 
@@ -73,7 +74,7 @@ test('Looking up a concept during an active mission preserves exercise position 
   assert.ok(playable);
   assert.ok(attempt);
 
-  const firstAnswer = playable.exercises[0].validation.acceptedAnswers[0];
+  const firstAnswer = (playable.exercises[0].validation.correctOptionId ?? playable.exercises[0].validation.acceptedAnswers[0]);
   const submission = submitMissionAnswer(progress, attempt, firstAnswer);
   assert.equal(submission.status, 'correct');
   attempt = continueMissionAttempt(submission.attempt, playable.exercises.length);

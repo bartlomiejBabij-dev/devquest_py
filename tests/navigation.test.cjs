@@ -103,7 +103,7 @@ test('Only an unfinished mission attempt with progress or a typed answer needs c
   assert.equal(hasUnfinishedMissionProgress(attempt, 'print'), true);
 
   const exercise = getPlayableMission(initialProgressionState, missionId).exercises[0];
-  const submission = submitMissionAnswer(initialProgressionState, attempt, exercise.validation.acceptedAnswers[0]);
+  const submission = submitMissionAnswer(initialProgressionState, attempt, (exercise.validation.correctOptionId ?? exercise.validation.acceptedAnswers[0]));
   assert.equal(submission.status, 'correct');
   assert.equal(hasUnfinishedMissionProgress(submission.attempt, ''), true);
   assert.equal(hasUnfinishedMissionProgress({ ...submission.attempt, phase: 'complete' }, 'answer'), false);
