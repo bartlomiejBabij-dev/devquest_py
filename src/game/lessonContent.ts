@@ -36,6 +36,48 @@ export const lessons: readonly LessonContent[] = [
     whyItWorks: 'Five is not greater than nine, so the first line prints False. Five is equal to five, which >= allows, so the second line prints True.',
     importantRule: '> and < exclude equal values. >= and <= include them. Read each comparison from left to right.',
   },
+  {
+    id: 'python-lesson-variables', title: 'Give a value a name',
+    explanation: 'A variable is a name for a stored value. It lets your game remember things such as health or mana. Use one = to assign a value, then use the name to read it.',
+    codeExample: 'health = 100\nprint(health)', expectedOutput: '100',
+    whyItWorks: 'The first line stores the number 100 under the name health. print(health) reads that value and displays it. print("health") would display the word instead.',
+    importantRule: 'Names must match exactly. Numbers need no quotes. One = assigns; == compares two values, so it cannot replace = here.',
+  },
+  {
+    id: 'python-lesson-variable-update', title: 'Refill your mana',
+    explanation: 'A variable can change as your adventure continues. Assigning again replaces its old value. The + sign adds numbers, so you can use it to refill a supply.',
+    codeExample: 'mana = 10\nmana = mana + 5\nprint(mana)', expectedOutput: '15',
+    whyItWorks: 'Python reads the old mana value, 10, adds 5, then stores 15 in mana. The last line reads the new value. Instructions run from top to bottom.',
+    importantRule: 'Calculate the right side of = first, then store the result in the name on the left.',
+  },
+  {
+    id: 'python-lesson-variable-text', title: 'Remember a name',
+    explanation: 'Variables can store text as well as numbers. Text inside matching quotes is called a string. Use a string variable to remember a hero name or a spell message.',
+    codeExample: 'hero = "Ranger"\nprint(hero)', expectedOutput: 'Ranger',
+    whyItWorks: 'hero stores the text Ranger. Without quotes around hero, print() reads its stored value. The quotes around Ranger mark the text and are not printed.',
+    importantRule: 'print(hero) shows the value; print("hero") shows the word hero. Use the exact variable name to read its value.',
+  },
+  {
+    id: 'python-lesson-add-subtract', title: 'Count your supplies',
+    explanation: 'Integers are whole numbers, such as 2 and 9. Use + to add supplies and - to subtract what you spend. Calculations can use variable values too.',
+    codeExample: 'crystals = 9\nremaining = crystals - 3\nprint(remaining)', expectedOutput: '6',
+    whyItWorks: 'Python reads 9 from crystals, subtracts 3 and stores 6 in remaining. The original crystals value stays 9. Using + instead would add 3 and give 12.',
+    importantRule: 'Calculate with numbers, not quoted text. The result is stored only in the variable on the left of =.',
+  },
+  {
+    id: 'python-lesson-multiply', title: 'Power in groups',
+    explanation: 'Multiplication counts equal groups quickly. In Python, * means multiply. You can use it to calculate the total power of several identical spells.',
+    codeExample: 'damage = 4 * 3\nprint(damage)', expectedOutput: '12',
+    whyItWorks: 'There are four groups of 3: 3 + 3 + 3 + 3 makes 12. Python calculates 4 * 3, stores 12 in damage and then prints it.',
+    importantRule: 'Use the star * in Python code, not x or the multiplication sign ×.',
+  },
+  {
+    id: 'python-lesson-calculation-order', title: 'Which step comes first?',
+    explanation: 'When a calculation mixes * with + or -, Python multiplies first. This lets you combine repeated damage and an extra bonus in one calculation.',
+    codeExample: 'power = 3\nbonus = 2\nprint(1 + power * bonus)', expectedOutput: '7',
+    whyItWorks: 'Read power as 3 and bonus as 2. First multiply 3 * 2 to get 6. Then add 1 to get 7. A variable supplies its number wherever its name appears.',
+    importantRule: 'Do not simply calculate from left to right: multiplication comes before addition and subtraction.',
+  },
 ];
 
 export function getLessonForExercise(exercise: Exercise): LessonContent | null {

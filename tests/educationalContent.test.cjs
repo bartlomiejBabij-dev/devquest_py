@@ -25,8 +25,8 @@ const expectedSequenceIds = [
 
 const reviewedAnswers = [
   ['python-forest-awakening-print-b', 'python-forest-awakening-literal-c', 'python-forest-awakening-number-a', 'python-forest-awakening-output-d', 'print'],
-  ['10', '10', '7', 'print', 'flame'],
-  ['-', '7', '*', '14', '13'],
+  ['python-forest-fire-essence-assignment-b', 'python-forest-fire-essence-read-c', 'python-forest-fire-essence-update-b', 'python-forest-fire-essence-print-a', 'python-forest-fire-essence-name-c'],
+  ['python-forest-mana-stones-operator-b', 'python-forest-mana-stones-addition-c', 'python-forest-mana-stones-multiplication-c', 'python-forest-mana-stones-precedence-a', 'python-forest-mana-stones-damage-b'],
   ['Hello, Pyromancer', 'Oak', 'hahaha', '6', '"3"'],
   ['energy', ')', '"Fire"', '=', 'power'],
   ['Pyro\n6', '5', 'Fireball', '*', 'power'],

@@ -36,7 +36,7 @@ const reviewedChoices = [
   ['python-valley-crossroads-threshold', 'c', 'mana >= 8', 'mana = 8'],
 ];
 
-test('The slice preserves every mission ID, five exercise IDs and XP; the other 30 exercises are byte-equivalent data', () => {
+test('Mission IDs and rewards stay stable; the 30 exercises outside the latest conversion match their baseline', () => {
   assert.deepEqual(missions.map(m => ({ id: m.id, exerciseIds: m.exerciseIds, xpReward: m.xpReward })), baseline.missions);
   assert.equal(sliceExercises.length, 10);
   assert.equal(new Set(exercises.map(e => e.id)).size, 40);
@@ -52,7 +52,7 @@ test('The slice preserves every mission ID, five exercise IDs and XP; the other 
   assert.deepEqual(typing[0].validation.acceptedAnswers, ['print']);
 });
 
-test('Lessons are short, complete, independently reviewed Python examples and are linked only to the slice', () => {
+test('All lessons stay short and complete; the original slice retains its reviewed examples and lesson links', () => {
   const examples = [
     ['print("A lantern glows")', 'A lantern glows'],
     ['print("Lanterns")\nprint(4)', 'Lanterns\n4'],
@@ -60,14 +60,17 @@ test('Lessons are short, complete, independently reviewed Python examples and ar
     ['print(6 == 2)\nprint(6 != 2)', 'False\nTrue'],
     ['print(5 > 9)\nprint(5 >= 5)', 'False\nTrue'],
   ];
-  assert.equal(new Set(lessons.map(l => l.id)).size, 5);
-  assert.deepEqual(lessons.map(l => [l.codeExample,l.expectedOutput]), examples);
+  const originalLessonIds = new Set(sliceExercises.map(e => e.lessonId));
+  const originalLessons = lessons.filter(l => originalLessonIds.has(l.id));
+  assert.equal(originalLessons.length, 5);
+  assert.equal(new Set(lessons.map(l => l.id)).size, lessons.length);
+  assert.deepEqual(originalLessons.map(l => [l.codeExample,l.expectedOutput]), examples);
   for (const lesson of lessons) {
     for (const field of ['title','explanation','codeExample','expectedOutput','whyItWorks','importantRule']) assert.ok(lesson[field].trim(), field);
     assert.ok([lesson.explanation,lesson.whyItWorks,lesson.importantRule].join(' ').split(/\s+/).length <= 110);
   }
   for (const exercise of exercises) {
-    assert.equal(!!getLessonForExercise(exercise), sliceExercises.includes(exercise), exercise.id);
+    assert.equal(originalLessonIds.has(exercise.lessonId), sliceExercises.includes(exercise), exercise.id);
     if (exercise.lessonId) assert.notEqual(getLessonForExercise(exercise).codeExample, exercise.code, 'teaching example must differ from the challenge');
   }
 });

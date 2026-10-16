@@ -69,3 +69,9 @@ The Awakening and The Crossroads now introduce concepts through short lesson car
 The Awakening has four tappable questions and one five-character `print` answer. The Crossroads has five tappable questions. Multiple choice, missing tokens and output choices validate stable option IDs, never display labels. A correct tap casts the existing spell and reveals an explanation; Continue advances only after that feedback. Incorrect choices explain the misconception and allow retry without a penalty.
 
 All mission/exercise IDs, rewards, save formats and Spellbook links remain unchanged. The other 30 exercises retain their existing content and input mode. See [Stage 3G.2A verification](docs/stage-3g2a.md) for compatibility checks, Android results and the remaining device checks.
+
+### Variables and arithmetic (Stage 3G.2B)
+
+Fire Essence and Mana Stones now use the same learning loop. All ten questions are tappable, with no keyboard entry. Three short lessons per mission introduce variable assignment, reassignment and text values, then addition/subtraction, multiplication and calculation order. Examples show real Python output and explain each step. Review Lesson, Spellbook, notes, spell feedback and replay behavior use the existing implementation.
+
+Both missions retain their five exercise IDs and their 30/40 XP rewards. The other 30 exercises, including The Awakening and The Crossroads, are unchanged. See [Stage 3G.2B verification](docs/stage-3g2b.md) for the exercise summary, compatibility tests and device coverage.
