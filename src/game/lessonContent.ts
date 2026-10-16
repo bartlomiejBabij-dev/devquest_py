@@ -78,6 +78,48 @@ export const lessons: readonly LessonContent[] = [
     whyItWorks: 'Read power as 3 and bonus as 2. First multiply 3 * 2 to get 6. Then add 1 to get 7. A variable supplies its number wherever its name appears.',
     importantRule: 'Do not simply calculate from left to right: multiplication comes before addition and subtraction.',
   },
+  {
+    id: 'python-lesson-joining-text', title: 'Let the trees speak',
+    explanation: 'A string is text inside matching quotes. Store it in a variable to reuse a message. The + sign joins strings in order, letting your game build a greeting from smaller pieces.',
+    codeExample: 'greeting = "Welcome, "\nhero = "Ranger"\nprint(greeting + hero)', expectedOutput: 'Welcome, Ranger',
+    whyItWorks: 'Python reads both stored strings and joins them. The comma and space belong to greeting. print() shows the joined text without its quote marks.',
+    importantRule: 'Joining adds no spaces automatically. print(hero) reads a value; print("hero") shows the word hero.',
+  },
+  {
+    id: 'python-lesson-repeat-count-text', title: 'Echoes and letter counts',
+    explanation: 'Use * with a string and a whole number to repeat a chant. Use len() to count its characters: letters, spaces and punctuation. These tools help make repeated messages and measure their size.',
+    codeExample: 'print("Ho" * 2)\nprint(len("Hi!"))', expectedOutput: 'HoHo\n3',
+    whyItWorks: 'The first line repeats Ho twice without adding spaces. The second counts H, i and !. Python calculates len() first, then print() displays its number on a new line.',
+    importantRule: 'Quote marks mark the text in code; they are not characters in this string. Repetition adds no extra spaces.',
+  },
+  {
+    id: 'python-lesson-text-versus-number', title: 'A digit can be text',
+    explanation: 'A digit inside quotes is text, not a number for arithmetic. Use text when adding a number to a label, such as a rune name. Joining with + needs two strings.',
+    codeExample: 'print("Rune" + "2")\nprint(4 + 2)', expectedOutput: 'Rune2\n6',
+    whyItWorks: 'The first line joins two strings. The second adds two numbers. "Rune" + 2 has readable syntax, but fails when it runs because it tries to join text and a number.',
+    importantRule: 'To join a written digit to text, quote the digit. To calculate with numbers, leave the numbers unquoted.',
+  },
+  {
+    id: 'python-lesson-debug-names', title: 'Find the broken rune',
+    explanation: 'A bug is a mistake in code. Debugging means finding and fixing the mistake. If Python says a name is not defined, compare that name with the one you stored.',
+    codeExample: 'spark = 9\nprint(spark)', expectedOutput: '9',
+    whyItWorks: 'The names match, so print() reads 9. Writing spakr instead would ask for an unknown name and stop the spell. Quoting "spark" would run, but print a word instead of the number.',
+    importantRule: 'An undefined name causes an error when the code runs. Check spelling and uppercase letters before changing the value.',
+  },
+  {
+    id: 'python-lesson-debug-pairs', title: 'Close the magic circle',
+    explanation: 'Python needs matching quotation marks around text and matching parentheses around what print() displays. A missing closing mark causes a syntax error: Python cannot read the instructions.',
+    codeExample: 'print("Lantern lit")', expectedOutput: 'Lantern lit',
+    whyItWorks: 'Both quotes and both parentheses are present. Quotes make Lantern lit a string. A single word without quotes is read as a name instead of text.',
+    importantRule: 'Match each opening mark with its closing mark. Single or double quotes work if they match. An unquoted, undefined name is a name error, not a missing-parenthesis error.',
+  },
+  {
+    id: 'python-lesson-debug-values', title: 'Make the spell mean it',
+    explanation: 'Some bugs use valid Python but do the wrong thing. Check what each line means: one = stores a value, while == compares values and does not store them.',
+    codeExample: 'charge = 6\nprint(charge)\nprint("charge")', expectedOutput: '6\ncharge',
+    whyItWorks: 'The assignment stores 6. The next line reads that number. The last line runs too, but prints the word charge. Using charge == 6 before defining charge would fail because that name has no value yet.',
+    importantRule: 'Use = to assign. Use an unquoted name to read its value. Compare the actual output with the result you wanted.',
+  },
 ];
 
 export function getLessonForExercise(exercise: Exercise): LessonContent | null {

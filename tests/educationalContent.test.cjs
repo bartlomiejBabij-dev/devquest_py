@@ -27,8 +27,8 @@ const reviewedAnswers = [
   ['python-forest-awakening-print-b', 'python-forest-awakening-literal-c', 'python-forest-awakening-number-a', 'python-forest-awakening-output-d', 'print'],
   ['python-forest-fire-essence-assignment-b', 'python-forest-fire-essence-read-c', 'python-forest-fire-essence-update-b', 'python-forest-fire-essence-print-a', 'python-forest-fire-essence-name-c'],
   ['python-forest-mana-stones-operator-b', 'python-forest-mana-stones-addition-c', 'python-forest-mana-stones-multiplication-c', 'python-forest-mana-stones-precedence-a', 'python-forest-mana-stones-damage-b'],
-  ['Hello, Pyromancer', 'Oak', 'hahaha', '6', '"3"'],
-  ['energy', ')', '"Fire"', '=', 'power'],
+  ['python-forest-talking-trees-output-b', 'python-forest-talking-trees-variable-c', 'python-forest-talking-trees-repeat-b', 'python-forest-talking-trees-length-c', 'python-forest-talking-trees-repair-c'],
+  ['python-forest-broken-spells-name-c', 'python-forest-broken-spells-parenthesis-b', 'python-forest-broken-spells-quotes-a', 'python-forest-broken-spells-assignment-c', 'python-forest-broken-spells-debug-b'],
   ['Pyro\n6', '5', 'Fireball', '*', 'power'],
 ];
 
@@ -71,7 +71,7 @@ test('All Forest exercises have complete content and their typed answers pass va
     assert.equal(isExerciseAnswerCorrect(exercise, ''), false, exercise.id);
     assert.equal(isExerciseAnswerCorrect(exercise, 'definitely wrong'), false, exercise.id);
   }
-  assert.deepEqual(types, new Set(['fill-blank', 'predict-output', 'fix-mistake', 'choose-operator', 'multiple-choice', 'missing-token', 'output-choice']));
+  assert.deepEqual(types, new Set(['predict-output', 'fix-mistake', 'choose-operator', 'multiple-choice', 'missing-token', 'output-choice']));
 });
 
 test('Reviewed expected answers match every authored exercise', () => {
@@ -85,13 +85,16 @@ test('Reviewed expected answers match every authored exercise', () => {
   }
 });
 
-test('Explicit equivalent quotes are accepted without ignoring meaningful case or inner spaces', () => {
-  const literal = exercises.find((exercise) => exercise.id === 'python-forest-broken-spells-quotes');
+test('Existing code-entry validation preserves explicit equivalent quotes, meaningful case and inner spaces', () => {
+  // These questions now use options; retain direct coverage of the unchanged code-entry validator.
+  const base = exercises.find((exercise) => exercise.id === 'python-forest-goblin-king-variable');
+  const literal = { ...base, type: 'fill-blank', validation: { kind: 'exact', acceptedAnswers: ['"Fire"', "'Fire'"], caseSensitive: true } };
   assert.equal(isExerciseAnswerCorrect(literal, '"Fire"'), true);
   assert.equal(isExerciseAnswerCorrect(literal, "'Fire'"), true);
   assert.equal(isExerciseAnswerCorrect(literal, 'Fire'), false);
   assert.equal(isExerciseAnswerCorrect(literal, '"fire"'), false);
-  const output = exercises.find((exercise) => exercise.id === 'python-forest-talking-trees-output');
+  const output = { ...base, type: 'predict-output', validation: { kind: 'exact', acceptedAnswers: ['Hello, Pyromancer'], caseSensitive: true } };
+  assert.equal(isExerciseAnswerCorrect(output, 'Hello, Pyromancer'), true);
   assert.equal(isExerciseAnswerCorrect(output, 'Hello,  Pyromancer'), false);
 });
 

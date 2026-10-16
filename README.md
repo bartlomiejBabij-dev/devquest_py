@@ -75,3 +75,9 @@ All mission/exercise IDs, rewards, save formats and Spellbook links remain uncha
 Fire Essence and Mana Stones now use the same learning loop. All ten questions are tappable, with no keyboard entry. Three short lessons per mission introduce variable assignment, reassignment and text values, then addition/subtraction, multiplication and calculation order. Examples show real Python output and explain each step. Review Lesson, Spellbook, notes, spell feedback and replay behavior use the existing implementation.
 
 Both missions retain their five exercise IDs and their 30/40 XP rewards. The other 30 exercises, including The Awakening and The Crossroads, are unchanged. See [Stage 3G.2B verification](docs/stage-3g2b.md) for the exercise summary, compatibility tests and device coverage.
+
+### Strings and debugging (Stage 3G.2C)
+
+Talking Trees and Broken Spells now each have five tap-based questions and three short concept lessons, with no keyboard entry. Strings retain joining, variable values, repetition, character counts and text-versus-number repair. Debugging covers name mistakes, matching punctuation, assignment and valid code that prints an unwanted result. Feedback explains the difference between syntax errors, undefined names and incorrect output.
+
+The existing learning components, mission engine, IDs, 50/60 XP rewards, notes and save formats are unchanged. All other exercises and previous lessons are preserved. See [Stage 3G.2C verification](docs/stage-3g2c.md) for the exact changes and test coverage.
