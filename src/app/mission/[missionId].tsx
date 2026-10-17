@@ -183,7 +183,7 @@ export default function WorldMissionScreen() {
       {attempt.phase === 'complete' && result ? (
         <View style={[styles.resultCard, bossMission && styles.bossResultCard]}>
           <Text style={styles.resultGlyph}>{bossMission ? '♛' : '✦'}</Text>
-          <Text style={styles.overline}>FIVE SPELLS CAST</Text>
+          <Text style={styles.overline}>{bossMission ? 'FIVE SPELLS CAST' : `${attempt.solvedExerciseIds.length} / ${playable.exercises.length} SPELLS CAST`}</Text>
           <Text style={[styles.resultTitle, bossMission && styles.bossResultTitle]}>{bossMission ? 'GOBLIN KING DEFEATED!' : 'MISSION COMPLETE!'}</Text>
           {bossMission ? <Text style={styles.worldClear}>WORLD 1 CLEARED!</Text> : null}
           <Text style={styles.body}>{mission.title}</Text>
@@ -200,7 +200,7 @@ export default function WorldMissionScreen() {
       ) : (
         <>
           {bossMission && bossHp !== null ? <GoblinKingEncounter hp={bossHp} hitCount={attempt.solvedExerciseIds.length} showDamage={solved} reducedMotion={!!reduceMotion} /> : null}
-          {mission.encounter === 'guardian' ? <ValleyGuardian solvedCount={attempt.solvedExerciseIds.length} /> : null}
+          {mission.encounter === 'guardian' ? <ValleyGuardian solvedCount={attempt.solvedExerciseIds.length} totalCount={playable.exercises.length} /> : null}
           <View style={[styles.headerCard, bossMission && styles.bossHeaderCard, lesson && styles.learningHeader]}>
             <Text style={styles.overline}>{chapter.title.toUpperCase()}  ·  PYTHON MISSION</Text>
             <Text style={[styles.title, lesson && styles.learningTitle]}>{mission.title}</Text>
@@ -209,7 +209,7 @@ export default function WorldMissionScreen() {
           </View>
 
           {lessonView ? <LessonCard lesson={lessonView.lesson} reviewing={!lessonView.introduction} onContinue={() => dispatchLesson({ type: 'continue', lessonId: lessonView.lesson.id })} /> : <View style={styles.exerciseCard}>
-            <View style={styles.progressHeading}><Text style={styles.smallLabel}>SPELL {attempt.exerciseIndex + 1} / {playable.exercises.length}</Text><Text style={styles.progressCaption}>COMPLETE ALL FIVE</Text></View>
+            <View style={styles.progressHeading}><Text style={styles.smallLabel}>SPELL {attempt.exerciseIndex + 1} / {playable.exercises.length}</Text><Text style={styles.progressCaption}>COMPLETE ALL {playable.exercises.length}</Text></View>
             <View style={styles.segments} accessibilityLabel={`${attempt.exerciseIndex + (solved ? 1 : 0)} of ${playable.exercises.length} spells solved`}>
               {playable.exercises.map((item, index) => <View key={item.id} style={[styles.segment, index < attempt.exerciseIndex && styles.segmentComplete, index === attempt.exerciseIndex && (solved ? styles.segmentComplete : styles.segmentCurrent)]} />)}
             </View>
@@ -254,7 +254,7 @@ export default function WorldMissionScreen() {
                 )}
                 <View accessibilityLiveRegion="polite" style={styles.feedbackBox}>
                   {incorrect ? <><Text style={styles.incorrect}>Not quite. Try another spell.</Text><Text style={styles.hint}>{getIncorrectAnswerFeedback(exercise, answer)}</Text></> :
-                    <Text style={styles.hint}>Solve all five spells to complete this mission. Progress resets if you leave.</Text>}
+                    <Text style={styles.hint}>Solve all {playable.exercises.length} spells to complete this mission. Progress resets if you leave.</Text>}
                 </View>
                 <GameButton label="Cast Spell" onPress={() => submitAnswer(exercise.id)} disabled={!answer.trim()} />
               </>

@@ -167,6 +167,10 @@ export const SpellbookEntryView = forwardRef<SpellbookEntryHandle, Props>(functi
               <Text style={[styles.sectionLabel, styles.outputLabel]}>EXPECTED OUTPUT</Text>
               <View style={styles.outputBox}><Text selectable style={styles.output}>{entry.expectedOutput}</Text></View>
             </> : null}
+            {entry.whyItWorks ? <>
+              <Text style={[styles.sectionLabel, styles.outputLabel]}>WHY IT WORKS</Text>
+              <Text style={styles.body}>{entry.whyItWorks}</Text>
+            </> : null}
           </View>
 
           <View style={styles.mistakeCard}>

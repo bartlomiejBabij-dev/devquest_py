@@ -3,12 +3,12 @@ import type { Chapter, Exercise, Mission, World } from './worldTypes';
 export const valleyOfDecisions: World = {
   id: 'python-valley-of-decisions', languageId: 'python', title: 'Valley of Decisions',
   description: 'Beyond the forest, ancient gates respond to your choices. Turn conditions into Python spells.',
-  chapterIds: ['python-valley-crossroads', 'python-valley-guardian'],
+  chapterIds: ['python-valley-crossroads', 'python-valley-guardian', 'python-valley-three-gates', 'python-valley-twin-runes'],
   prerequisiteMissionIds: [
     'python-forest-awakening-01', 'python-forest-fire-essence-01', 'python-forest-mana-stones-01',
     'python-forest-talking-trees-01', 'python-forest-broken-spells-01', 'python-forest-goblin-king-01',
   ],
-  xpReward: 150,
+  xpReward: 210,
   unlockRequirement: 'Complete all six chapters of Forest of Variables, including the Goblin King.',
 };
 
@@ -25,6 +25,18 @@ export const valleyChapters: readonly Chapter[] = [
     learningObjective: 'Use if, else and indentation to run the right block when a condition is true or false.',
     missionIds: ['python-valley-guardian-01'], prerequisiteMissionIds: ['python-valley-crossroads-01'], xpReward: 80,
   },
+  {
+    id: 'python-valley-three-gates', worldId: valleyOfDecisions.id, title: 'The Three Gates',
+    description: 'Three magical gates offer different paths. Read their conditions to choose the first open route.',
+    learningObjective: 'Use elif to check several conditions in order and follow the first match.',
+    missionIds: ['python-valley-three-gates-01'], prerequisiteMissionIds: ['python-valley-guardian-01'], xpReward: 30,
+  },
+  {
+    id: 'python-valley-twin-runes', worldId: valleyOfDecisions.id, title: 'The Twin Runes',
+    description: 'Paired runes guard the next passage. Discover when both must glow and when either will do.',
+    learningObjective: 'Combine conditions with and for both, or with or for at least one.',
+    missionIds: ['python-valley-twin-runes-01'], prerequisiteMissionIds: ['python-valley-three-gates-01'], xpReward: 30,
+  },
 ];
 
 export const valleyMissions: readonly Mission[] = [
@@ -39,6 +51,18 @@ export const valleyMissions: readonly Mission[] = [
     description: 'Earn the guardian’s trust with five spells that choose the right action.', encounter: 'guardian',
     exerciseIds: ['python-valley-guardian-if', 'python-valley-guardian-indent', 'python-valley-guardian-skip', 'python-valley-guardian-else', 'python-valley-guardian-branch'],
     prerequisiteMissionIds: [], xpReward: 80,
+  },
+  {
+    id: 'python-valley-three-gates-01', chapterId: 'python-valley-three-gates', title: 'The Three Gates',
+    description: 'Choose a path through three quick elif spells.', encounter: 'guardian',
+    exerciseIds: ['python-valley-three-gates-output', 'python-valley-three-gates-keyword', 'python-valley-three-gates-first'],
+    prerequisiteMissionIds: [], xpReward: 30,
+  },
+  {
+    id: 'python-valley-twin-runes-01', chapterId: 'python-valley-twin-runes', title: 'The Twin Runes',
+    description: 'Light the paired runes with three spells using and and or.', encounter: 'guardian',
+    exerciseIds: ['python-valley-twin-runes-and', 'python-valley-twin-runes-operator', 'python-valley-twin-runes-or'],
+    prerequisiteMissionIds: [], xpReward: 30,
   },
 ];
 
@@ -399,5 +423,90 @@ export const valleyExercises: readonly Exercise[] = [
       "kind": "option-id",
       "correctOptionId": "python-valley-guardian-branch-b"
     }
+  },
+
+  {
+    id: 'python-valley-three-gates-output', chapterId: 'python-valley-three-gates', languageId: 'python', difficulty: 'intro',
+    type: 'output-choice', concept: 'following an elif chain', lessonId: 'python-lesson-elif-paths',
+    prompt: 'Which gate name appears? Check the conditions from top to bottom.',
+    code: 'crystals = 7\nif crystals >= 12:\n    print("Ruby")\nelif crystals >= 6:\n    print("Sapphire")\nelse:\n    print("Pebble")',
+    hint: 'Try the first comparison before the second. Stop once a branch matches.',
+    explanation: '7 >= 12 is False, so Python checks elif. 7 >= 6 is True, so it prints Sapphire. The else branch is skipped.',
+    options: [
+      { id: 'python-valley-three-gates-output-a', label: 'Ruby', feedback: 'Seven crystals do not meet the first requirement of at least twelve. Check the next condition.' },
+      { id: 'python-valley-three-gates-output-b', label: 'Sapphire', feedback: 'The first condition fails and the elif condition matches, so only Sapphire prints.' },
+      { id: 'python-valley-three-gates-output-c', label: 'Sapphire\nPebble', feedback: 'else runs only if every earlier condition fails. The elif branch matched, so Pebble is skipped.' },
+    ],
+    validation: { kind: 'option-id', correctOptionId: 'python-valley-three-gates-output-b' },
+  },
+  {
+    id: 'python-valley-three-gates-keyword', chapterId: 'python-valley-three-gates', languageId: 'python', difficulty: 'practice',
+    type: 'missing-token', concept: 'continuing one conditional chain', lessonId: 'python-lesson-elif-paths',
+    prompt: 'Continue the same chain. Which keyword checks this second condition only if the first one was False?',
+    code: 'mana = 3\nif mana >= 8:\n    print("Fire")\n____ mana >= 2:\n    print("Frost")\nelse:\n    print("Rest")',
+    hint: 'The next check must belong to the original if, rather than start a separate decision.',
+    explanation: 'elif adds another condition to the same chain. Here 3 is below 8 but at least 2, so only Frost prints. A separate if could run even after the first branch matched.',
+    options: [
+      { id: 'python-valley-three-gates-keyword-a', label: 'if', feedback: 'Another if starts an independent decision. It would still check its condition after the first branch matched.' },
+      { id: 'python-valley-three-gates-keyword-b', label: 'else', feedback: 'else is the fallback without a condition. This line has a comparison to check.' },
+      { id: 'python-valley-three-gates-keyword-c', label: 'elif', feedback: 'elif checks another condition only when earlier branches in this chain did not match.' },
+    ],
+    validation: { kind: 'option-id', correctOptionId: 'python-valley-three-gates-keyword-c' },
+  },
+  {
+    id: 'python-valley-three-gates-first', chapterId: 'python-valley-three-gates', languageId: 'python', difficulty: 'practice',
+    type: 'multiple-choice', concept: 'only the first matching branch', lessonId: 'python-lesson-elif-paths',
+    prompt: 'Both comparisons would be True. Which branch actually runs in this chain?',
+    code: 'power = 10\nif power >= 8:\n    print("Crown")\nelif power >= 4:\n    print("Staff")\nelse:\n    print("Twig")',
+    hint: 'Python stops choosing as soon as one condition in this chain matches.',
+    explanation: 'The first condition, 10 >= 8, is True. Python prints Crown and skips the remaining branches, even though 10 >= 4 would also be True.',
+    options: [
+      { id: 'python-valley-three-gates-first-a', label: 'The if branch: Crown', feedback: 'The first condition matches. Its branch runs and the rest of this chain is skipped.' },
+      { id: 'python-valley-three-gates-first-b', label: 'The elif branch: Staff', feedback: 'The earlier if already matched. Python does not continue looking for another matching branch.' },
+      { id: 'python-valley-three-gates-first-c', label: 'Both branches: Crown then Staff', feedback: 'An if/elif/else chain chooses just one branch. Separate if statements would be different.' },
+    ],
+    validation: { kind: 'option-id', correctOptionId: 'python-valley-three-gates-first-a' },
+  },
+  {
+    id: 'python-valley-twin-runes-and', chapterId: 'python-valley-twin-runes', languageId: 'python', difficulty: 'intro',
+    type: 'output-choice', concept: 'both conditions with and', lessonId: 'python-lesson-both-runes',
+    prompt: 'Which message appears when the spell needs enough mana and enough health?',
+    code: 'mana = 6\nhealth = 4\nif mana >= 5 and health >= 10:\n    print("Cast")\nelse:\n    print("Heal")',
+    hint: 'Check each comparison. Does and accept just one True condition?',
+    explanation: 'The mana comparison is True, but the health comparison is False. and needs both to be True, so the combined condition is False and else prints Heal.',
+    options: [
+      { id: 'python-valley-twin-runes-and-a', label: 'Cast', feedback: 'Mana is high enough, but health is too low. and requires both comparisons to be True.' },
+      { id: 'python-valley-twin-runes-and-b', label: 'Cast\nHeal', feedback: 'The combined condition chooses one branch. It does not run a branch for each comparison.' },
+      { id: 'python-valley-twin-runes-and-c', label: 'Heal', feedback: 'One comparison is False, so and is False and the alternative prints Heal.' },
+    ],
+    validation: { kind: 'option-id', correctOptionId: 'python-valley-twin-runes-and-c' },
+  },
+  {
+    id: 'python-valley-twin-runes-operator', chapterId: 'python-valley-twin-runes', languageId: 'python', difficulty: 'practice',
+    type: 'missing-token', concept: 'at least one condition with or', lessonId: 'python-lesson-either-rune',
+    prompt: 'Choose the operator that allows entry with a key, a known spell, or both. It must work for every combination.',
+    code: 'has_key = False\nknows_spell = True\nif has_key ____ knows_spell:\n    print("Enter")\nelse:\n    print("Wait")',
+    hint: 'At least one way to enter must be True; two ways should work too.',
+    explanation: 'or accepts at least one True condition, including when both are True. Here the known spell is enough, so Enter prints. and would require both ways.',
+    options: [
+      { id: 'python-valley-twin-runes-operator-a', label: 'and', feedback: 'and requires a key and a spell together. The rule allows either one on its own.' },
+      { id: 'python-valley-twin-runes-operator-b', label: 'or', feedback: 'or accepts either condition or both. It fails only when both conditions are False.' },
+      { id: 'python-valley-twin-runes-operator-c', label: '==', feedback: '== compares the Boolean values. It would wrongly allow entry when both are False because they are equal.' },
+    ],
+    validation: { kind: 'option-id', correctOptionId: 'python-valley-twin-runes-operator-b' },
+  },
+  {
+    id: 'python-valley-twin-runes-or', chapterId: 'python-valley-twin-runes', languageId: 'python', difficulty: 'practice',
+    type: 'output-choice', concept: 'or also accepts both conditions', lessonId: 'python-lesson-either-rune',
+    prompt: 'Both tools are available. What does this or condition print?',
+    code: 'has_map = True\nhas_compass = True\nif has_map or has_compass:\n    print("Explore")\nelse:\n    print("Camp")',
+    hint: 'At least one includes both. A matching condition runs its block once.',
+    explanation: 'or is True when one or both conditions are True. The if block runs once and prints Explore. It does not run twice because two tools are available.',
+    options: [
+      { id: 'python-valley-twin-runes-or-a', label: 'Explore', feedback: 'Both conditions are True, which satisfies or. The chosen block runs once.' },
+      { id: 'python-valley-twin-runes-or-b', label: 'Camp', feedback: 'or includes the case where both conditions are True. It does not require exactly one.' },
+      { id: 'python-valley-twin-runes-or-c', label: 'Explore\nExplore', feedback: 'The two conditions choose one block. They do not each run a separate copy of print().' },
+    ],
+    validation: { kind: 'option-id', correctOptionId: 'python-valley-twin-runes-or-a' },
   },
 ];

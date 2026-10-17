@@ -1,6 +1,6 @@
 # DevQuest
 
-A local, playable Expo fantasy RPG that teaches beginner Python concepts. Forest of Variables has six five-exercise missions; completing it unlocks the first two five-exercise missions in Valley of Decisions. Progression is saved locally. The original three-spell Goblin battle remains playable from Home.
+A local, playable Expo fantasy RPG that teaches beginner Python concepts. Forest of Variables has six five-exercise missions; completing it unlocks four Valley of Decisions missions: two with five exercises and two short adventures with three. Progression is saved locally. The original three-spell Goblin battle remains playable from Home.
 
 ## Run in Expo Go
 
@@ -19,11 +19,11 @@ Run `npx tsc --noEmit` for strict TypeScript checking, `npm run lint` for the Ex
 - `src/game`: battle data and reducer, world content, Spellbook lessons, pure exercise validation, mission submissions, progression logic, and separate local progression, onboarding, and notes storage.
 - `src/theme.ts`: visual theme colors.
 
-Answers are checked against local challenge data; no Python code is executed. Completed world missions are saved locally, so earned XP and chapter unlocks survive relaunch. All five mission spells must be solved before the configured XP is awarded and the next chapter unlocks. An unfinished attempt restarts from its first spell. Replays remain available without awarding XP again. The Goblin prototype has its own battle and Victory flow; its decorative reward is separate from world mission XP.
+Answers are checked against local challenge data; no Python code is executed. Completed world missions are saved locally, so earned XP and chapter unlocks survive relaunch. All authored mission spells must be solved before the configured XP is awarded and the next chapter unlocks. An unfinished attempt restarts from its first spell. Replays remain available without awarding XP again. The Goblin prototype has its own battle and Victory flow; its decorative reward is separate from world mission XP.
 
 New players see a three-screen Python introduction. Skip and Start Adventure save its completion under a separate local key; players with completed missions bypass it. Learn Python on Home reopens it.
 
-The Spellbook on Home contains fourteen short Python references. Each world mission can open the relevant entry without leaving the current exercise. Personal notes are tied to exercise IDs and saved locally with an explicit Save Note action; they can be edited or deleted and do not affect XP or progression.
+The Spellbook on Home contains seventeen short Python references. Each world mission can open the relevant entry without leaving the current exercise. Personal notes are tied to exercise IDs and saved locally with an explicit Save Note action; they can be edited or deleted and do not affect XP or progression.
 
 My Profile saves only a trimmed 3–20 character nickname and one of five local avatars under `devquest.profile.v1`. Saves are explicit and queued. Missing or damaged profiles fall back to Python Apprentice/Mage; unreadable or future-version saves are protected from replacement. Profile editing never writes to progression, notes, or onboarding.
 
@@ -54,7 +54,7 @@ The physically verified Stage 3F.4.1 fixes remain: `playsInSilentMode: true`, ex
 
 ## Valley of Decisions (Stage 3G.1)
 
-World 2 opens only after all six Forest missions, including the Goblin King. The Crossroads teaches Booleans and all six comparison operators (70 XP); The Guardian’s Choice teaches if, else, indentation and branching (80 XP). These are the only two Valley chapters currently included. Map percentages describe the currently available missions. World selection updates the existing route; mission exits return to the owning world. No XP is awarded for viewing or replaying a mission.
+World 2 opens only after all six Forest missions, including the Goblin King. The Crossroads teaches Booleans and all six comparison operators (70 XP); The Guardian’s Choice teaches if, else, indentation and branching (80 XP). Stage 3G.3A extends these with The Three Gates and The Twin Runes, each with three exercises and 30 XP. Map percentages describe the currently available missions. World selection updates the existing route; mission exits return to the owning world. No XP is awarded for viewing or replaying a mission.
 
 Legacy progression uses the same `devquest.progression` key and version-1 completed-ID record. Existing mission IDs and rewards are unchanged. Profile statistics include both worlds; the current world is the latest world with a completed mission. Forest achievements and the 100-XP level formula are unchanged.
 
@@ -87,3 +87,12 @@ The existing learning components, mission engine, IDs, 50/60 XP rewards, notes a
 Goblin King's Lair now has four tap questions and one short `power` repair, with an optional Forest recap available before the first answer and throughout the fight. The Guardian's Choice has five tap questions and three lessons about if/indentation, skipped blocks and else branches. Complete code choices use monospace text and retain their leading spaces.
 
 All forty exercises now have lesson or recap help: 38 use taps and two retain short identifier recall. Boss HP remains 100 with 20 damage per successful spell; rewards remain 100/80 XP once, and replay pays zero. IDs, saves, other content, combat and audio are unchanged. The strict Python-line validator remains available and regression-tested with its original authored exercises. See [Stage 3G.2D verification](docs/stage-3g2d.md) for details.
+
+
+### Short Valley adventures (Stage 3G.3A)
+
+Regular mission counters now follow their authored exercise arrays, supporting three, four or five spells through the existing engine. Goblin King remains five spells, 100 HP and 20 damage per success.
+
+After The Guardian's Choice, The Three Gates teaches `elif` and first-match branching. It unlocks The Twin Runes, which teaches `and` and `or`. Both missions contain three tap questions, short introductory lessons, specific wrong-answer feedback and relevant Spellbook references. Each pays 30 XP once; replays pay zero. There are now 46 exercises (44 tap questions and two short typed answers), ten missions and seventeen Spellbook entries.
+
+Existing saves retain their IDs, XP, notes and settings without migration. Valley percentages reflect its four available chapters; an old fully completed 450-XP save now shows 2/4 Valley chapters complete. Completing the new missions adds six completed exercises and brings the available total to 510 XP. See [Stage 3G.3A verification](docs/stage-3g3a.md) for changes, compatibility tests and Android coverage.

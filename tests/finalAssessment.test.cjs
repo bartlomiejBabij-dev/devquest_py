@@ -17,6 +17,7 @@ const { createProgressionStore, parseSavedProgression } = require('../src/game/p
 const { getPlayerStatistics, getAchievements } = require('../src/game/profile.ts');
 const { exerciseSpellbookEntryIds, getSpellbookEntryForExercise } = require('../src/game/spellbookContent.ts');
 const { createNotesStore, setExerciseNote } = require('../src/game/notesStorage.ts');
+const preExpansion = require('./helpers/preExpansionContent.cjs');
 const baseline = require('./fixtures/final-assessment-compatibility.json');
 const hash = value => crypto.createHash('sha256').update(JSON.stringify(value)).digest('hex');
 const targetMissions = [goblinKingMissionId, 'python-valley-guardian-01'].map(id => missions.find(m => m.id === id));
@@ -38,18 +39,18 @@ const reviewed = [
 ];
 
 test('Final conversion preserves all IDs, rewards, prerequisites, links, other 30 exercises and 17 earlier lessons', () => {
-  for (const [name, value] of Object.entries({ worlds, chapters, missions, spellbookLinks: exerciseSpellbookEntryIds })) assert.equal(hash(value), baseline[name], name);
+  for (const [name, value] of Object.entries({ worlds: preExpansion.worlds, chapters: preExpansion.chapters, missions: preExpansion.missions, spellbookLinks: preExpansion.spellbookLinks })) assert.equal(hash(value), baseline[name], name);
   assert.deepEqual(targets.map(e => e.id), baseline.targetIds);
   assert.deepEqual(targetMissions.map(m => m.exerciseIds.length), [5, 5]);
   assert.deepEqual(targetMissions.map(m => m.xpReward), [100, 80]);
-  assert.deepEqual(new Set(Object.keys(baseline.unchangedExercises)), new Set(exercises.filter(e => !targets.includes(e)).map(e => e.id)));
+  assert.deepEqual(new Set(Object.keys(baseline.unchangedExercises)), new Set(preExpansion.exercises.filter(e => !targets.includes(e)).map(e => e.id)));
   assert.equal(Object.keys(baseline.unchangedExercises).length, 30);
   for (const [id, expected] of Object.entries(baseline.unchangedExercises)) assert.equal(hash(exercises.find(e => e.id === id)), expected, id);
   assert.equal(Object.keys(baseline.existingLessons).length, 17);
   for (const [id, expected] of Object.entries(baseline.existingLessons)) assert.equal(hash(lessons.find(l => l.id === id)), expected, id);
   assert.equal(targets.slice(0, 5).filter(isChoiceExercise).length, 4);
   assert.equal(targets.slice(5).filter(isChoiceExercise).length, 5);
-  assert.equal(exercises.filter(isChoiceExercise).length, 38);
+  assert.equal(preExpansion.exercises.filter(isChoiceExercise).length, 38);
   assert.ok(exercises.every(e => getLessonForExercise(e)), 'all forty exercises now have teaching or recap help');
 });
 
@@ -208,7 +209,7 @@ test('Five boss spells deal exactly 20 each; wrong/duplicate answers do nothing,
       assert.equal(attempt.phase, 'complete');
       assert.equal(attempt.result.xpAwarded, replay === 0 ? [100, 80][missionIndex] : 0);
       assert.equal(attempt.result.totalXp, [300, 450][missionIndex]);
-      assert.equal(getWorldProgress(progress, worlds[missionIndex].id).percent, 100);
+      assert.equal(getWorldProgress(progress, worlds[missionIndex].id).percent, missionIndex === 0 ? 100 : 50);
     }
   }
   const forestIds = missions.slice(0, 6).map(m => m.id);
@@ -216,7 +217,7 @@ test('Five boss spells deal exactly 20 each; wrong/duplicate answers do nothing,
 });
 
 test('Every legacy progress point restores XP, stats, achievements and gates; target notes retain their IDs', async () => {
-  for (let count = 0; count <= missions.length; count++) {
+  for (let count = 0; count <= preExpansion.missions.length; count++) {
     const ids = missions.slice(0, count).map(m => m.id);
     const loaded = parseSavedProgression(JSON.stringify({ version: 1, completedMissionIds: ids }));
     assert.equal(loaded.status, 'ready');

@@ -16,6 +16,7 @@ const { createProgressionStore, parseSavedProgression } = require('../src/game/p
 const { getPlayerStatistics, getAchievements } = require('../src/game/profile.ts');
 const { exerciseSpellbookEntryIds, getSpellbookEntryForExercise } = require('../src/game/spellbookContent.ts');
 const { createNotesStore, setExerciseNote } = require('../src/game/notesStorage.ts');
+const preExpansion = require('./helpers/preExpansionContent.cjs');
 const baseline = require('./fixtures/strings-debugging-compatibility.json');
 const targetIds = ['python-forest-talking-trees-01', 'python-forest-broken-spells-01'];
 const targetMissions = targetIds.map(id => missions.find(m => m.id === id));
@@ -38,11 +39,11 @@ const reviewed = [
 ];
 
 test('Strings/debugging preserve every world, chapter, mission, reward, other exercise and previous lesson', () => {
-  assert.equal(hash(worlds), baseline.worlds);
-  assert.equal(hash(chapters), baseline.chapters);
-  assert.equal(hash(missions), baseline.missions);
-  assert.equal(hash(exerciseSpellbookEntryIds), baseline.spellbookLinks);
-  assert.deepEqual(new Set(Object.keys(baseline.unchangedExercises)), new Set(exercises.filter(e => !targetExercises.includes(e)).map(e => e.id)));
+  assert.equal(hash(preExpansion.worlds), baseline.worlds);
+  assert.equal(hash(preExpansion.chapters), baseline.chapters);
+  assert.equal(hash(preExpansion.missions), baseline.missions);
+  assert.equal(hash(preExpansion.spellbookLinks), baseline.spellbookLinks);
+  assert.deepEqual(new Set(Object.keys(baseline.unchangedExercises)), new Set(preExpansion.exercises.filter(e => !targetExercises.includes(e)).map(e => e.id)));
   assert.equal(Object.keys(baseline.unchangedExercises).length, 30);
   for (const [id, expected] of Object.entries(baseline.unchangedExercises)) assert.equal(hash(exercises.find(e => e.id === id)), expected, id);
   for (const [id, expected] of Object.entries(baseline.existingLessons)) assert.equal(hash(lessons.find(l => l.id === id)), expected, id);
@@ -237,7 +238,7 @@ test('Wrong answers and help preserve state; correct answers solve once, require
 });
 
 test('Legacy completion records restore unchanged XP, stats, achievements and prerequisites at every completion point', async () => {
-  for (let count = 0; count <= missions.length; count++) {
+  for (let count = 0; count <= preExpansion.missions.length; count++) {
     const ids = missions.slice(0, count).map(m => m.id);
     const loaded = parseSavedProgression(JSON.stringify({ version: 1, completedMissionIds: ids }));
     assert.equal(loaded.status, 'ready');

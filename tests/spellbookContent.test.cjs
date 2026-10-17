@@ -29,9 +29,12 @@ const expectedTitles = [
   'if statements',
   'else statements',
   'Python indentation',
+  'elif and multiple branches',
+  'and: both conditions',
+  'or: at least one condition',
 ];
 
-test('Spellbook covers all fourteen beginner Python concepts with complete content', () => {
+test('Spellbook covers all seventeen beginner Python concepts with complete content', () => {
   assert.deepEqual(spellbookEntries.map((entry) => entry.title), expectedTitles);
   assert.equal(new Set(spellbookEntries.map((entry) => entry.id)).size, spellbookEntries.length);
   const chapterIds = new Set(chapters.map((chapter) => chapter.id));
@@ -44,7 +47,7 @@ test('Spellbook covers all fourteen beginner Python concepts with complete conte
   }
 });
 
-test('All 40 exercises resolve to a valid relevant Spellbook entry', () => {
+test('All 46 exercises resolve to a valid relevant Spellbook entry', () => {
   const exerciseIds = new Set(exercises.map((exercise) => exercise.id));
   assert.deepEqual(new Set(Object.keys(exerciseSpellbookEntryIds)), exerciseIds);
   const entryIds = new Set(spellbookEntries.map((entry) => entry.id));

@@ -8,7 +8,11 @@ require.extensions['.ts'] = (module, filename) => {
   }).outputText, filename);
 };
 const { worlds, chapters, missions, exercises, forestOfVariables, forestMissions, valleyOfDecisions } = require('../src/game/worldContent.ts');
-const { valleyChapters, valleyMissions, valleyExercises } = require('../src/game/valleyContent.ts');
+const valley = require('../src/game/valleyContent.ts');
+// Keep the original ten-exercise progression/validator regression scenarios.
+const valleyChapters = valley.valleyChapters.slice(0, 2);
+const valleyMissions = valley.valleyMissions.slice(0, 2);
+const valleyExercises = valley.valleyExercises.slice(0, 10);
 const { completeMission, initialProgressionState, isWorldUnlocked, isChapterUnlocked, getTotalEarnedXp, getWorldProgress } = require('../src/game/progression.ts');
 const { startMissionAttempt, getPlayableMission, submitMissionAnswer, continueMissionAttempt } = require('../src/game/worldMission.ts');
 const { isExerciseAnswerCorrect } = require('../src/game/exerciseValidation.ts');
@@ -55,7 +59,7 @@ test('Two worlds contain unique linked IDs, exactly ten new exercises and five p
   assert.equal(valleyMissions.length, 2);
   assert.equal(valleyExercises.length, 10);
   for (const items of [worlds, chapters, missions, exercises]) assert.equal(new Set(items.map(x => x.id)).size, items.length);
-  assert.deepEqual(valleyOfDecisions.chapterIds, valleyChapters.map(c => c.id));
+  assert.deepEqual(valleyOfDecisions.chapterIds.slice(0, 2), valleyChapters.map(c => c.id));
   assert.deepEqual(new Set(valleyOfDecisions.prerequisiteMissionIds), new Set(forestMissions.map(m => m.id)));
   for (const chapter of valleyChapters) {
     assert.equal(chapter.worldId, valleyOfDecisions.id);
@@ -66,7 +70,7 @@ test('Two worlds contain unique linked IDs, exactly ten new exercises and five p
     assert.equal(new Set(mission.exerciseIds).size, 5);
     for (const id of mission.exerciseIds) assert.equal(valleyExercises.find(e => e.id === id)?.chapterId, chapter.id);
   }
-  assert.equal(valleyOfDecisions.xpReward, 150);
+  assert.equal(valleyOfDecisions.xpReward, 210);
   assert.equal(valleyMissions.reduce((sum, m) => sum + m.xpReward, 0), 150);
 });
 
@@ -155,7 +159,7 @@ test('Both missions use existing explanations/Continue, unlock the next chapter,
   valleyMissions.forEach((mission, index) => {
     const played = play(progress, index);
     assert.equal(played.result.xpAwarded, mission.xpReward);
-    assert.deepEqual(played.result.newlyUnlockedChapterIds, index === 0 ? [valleyChapters[1].id] : []);
+    assert.deepEqual(played.result.newlyUnlockedChapterIds, index === 0 ? [valleyChapters[1].id] : ['python-valley-three-gates']);
     progress = played.progress;
     const replay = play(progress, index);
     assert.equal(replay.result.xpAwarded, 0);
@@ -163,7 +167,7 @@ test('Both missions use existing explanations/Continue, unlock the next chapter,
     assert.deepEqual(getWorldProgress(progress, forestOfVariables.id), { completed: 6, total: 6, percent: 100 });
   });
   assert.equal(getTotalEarnedXp(progress), 450);
-  assert.deepEqual(getWorldProgress(progress, valleyOfDecisions.id), { completed: 2, total: 2, percent: 100 });
+  assert.deepEqual(getWorldProgress(progress, valleyOfDecisions.id), { completed: 2, total: 4, percent: 50 });
 });
 
 test('A partial World 2 attempt grants nothing and restarts without altering saved Forest progress', () => {

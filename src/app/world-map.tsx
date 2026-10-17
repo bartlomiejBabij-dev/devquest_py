@@ -46,6 +46,7 @@ function ChapterNode({ chapter, index, state, onPress, pulse }: {
             {state === 'available' ? <Animated.Text style={[styles.availableSparkle, { opacity: pulse }]}>✦</Animated.Text> : null}
           </View>
           <Text style={[styles.chapterTitle, state === 'locked' && styles.lockedTitle]} numberOfLines={2}>{chapter.title}</Text>
+          {chapter.worldId !== forestOfVariables.id ? <Text style={styles.missionDescription}>{chapter.learningObjective}</Text> : null}
           <Text style={styles.chapterMeta}>{chapter.missionIds.length} {chapter.missionIds.length === 1 ? 'MISSION' : 'MISSIONS'}  ·  {chapter.xpReward} XP</Text>
           <View style={styles.statusRow}>
             {state === 'locked' ? <LockMark /> : null}
@@ -105,7 +106,8 @@ function ChapterDetails({ chapter, index, progress, onClose, onOpenMission }: {
               {!isWorldUnlocked(progress, world.id) ? <Text style={styles.noticeText}>{world.unlockRequirement}</Text> : null}
               {unmetPrerequisites.map((id) => {
                 const mission = missions.find((item) => item.id === id);
-                return <Text key={id} style={styles.noticeText}>Complete “{mission?.title ?? 'the previous mission'}” to unlock this chapter.</Text>;
+                const prerequisiteTitle = chapter.worldId === forestOfVariables.id ? mission?.title : chapters.find((item) => item.id === mission?.chapterId)?.title ?? mission?.title;
+                return <Text key={id} style={styles.noticeText}>Complete “{prerequisiteTitle ?? 'the previous mission'}” to unlock this chapter.</Text>;
               })}
             </View>
           ) : (
@@ -115,6 +117,7 @@ function ChapterDetails({ chapter, index, progress, onClose, onOpenMission }: {
                 <View key={mission.id} style={styles.missionPreview}>
                   <View style={styles.missionPreviewTop}><Text style={styles.missionTitle}>{mission.title}</Text><Text style={styles.missionXp}>+{mission.xpReward} XP</Text></View>
                   <Text style={styles.missionDescription}>{isGoblinKingMission(mission.id) ? 'Defeat the Goblin King with five Python spells. ' : ''}{mission.description}</Text>
+                  {chapter.worldId !== forestOfVariables.id ? <Text style={styles.chapterMeta}>{mission.exerciseIds.length} PYTHON SPELLS</Text> : null}
                   {isMissionCompleted(progress, mission.id) ? <Text style={styles.missionComplete}>✓  COMPLETED</Text> : null}
                   {isMissionUnlocked(progress, mission.id) ? (
                     <Pressable onPress={() => onOpenMission(mission.id)} accessibilityRole="button" accessibilityLabel={`${isMissionCompleted(progress, mission.id) ? 'Replay' : 'Start'} ${mission.title}`}
@@ -183,7 +186,7 @@ export default function WorldMapScreen() {
               accessibilityLabel={`World ${index + 1}: ${item.title}, ${completed ? 'available chapters completed' : unlocked ? 'unlocked' : 'locked'}`}
               onPress={() => { setSelectedId(null); router.setParams({ worldId: item.id }); }}
               style={({ pressed }) => [styles.worldChoice, item.id === world.id && styles.worldChoiceSelected, pressed && styles.pressed]}>
-              <Text style={styles.worldChoiceLabel}>WORLD {index + 1} · {completed ? '✓ COMPLETE' : unlocked ? 'AVAILABLE' : 'LOCKED'}</Text>
+              <Text style={styles.worldChoiceLabel}>WORLD {index + 1} · {completed ? item.id === forestOfVariables.id ? '✓ COMPLETE' : '✓ UP TO DATE' : unlocked ? 'AVAILABLE' : 'LOCKED'}</Text>
               <Text style={styles.worldChoiceTitle}>{item.title}</Text>
             </Pressable>;
           })}

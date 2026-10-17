@@ -5,6 +5,7 @@ export interface SpellbookEntry {
   explanation: string;
   codeExample: string;
   expectedOutput?: string;
+  whyItWorks?: string;
   commonMistake: string;
   chapterId: string;
 }
@@ -121,10 +122,37 @@ export const spellbookEntries: readonly SpellbookEntry[] = [
     codeExample: 'if True:\n    print("Inside")\nprint("Outside")', expectedOutput: 'Inside\nOutside',
     commonMistake: 'Leaving a block unindented or mixing tabs and spaces. These exercises accept spaces only.', chapterId: 'python-valley-guardian',
   },
+  {
+    id: 'python-elif', title: 'elif and multiple branches', chapterId: 'python-valley-three-gates',
+    explanation: 'Use elif to add another condition after if. Check conditions from top to bottom. Only the first matching branch runs; else handles the case where none match.',
+    codeExample: 'level = 2\nif level >= 5:\n    print("Gold")\nelif level >= 2:\n    print("Bronze")\nelse:\n    print("Wood")', expectedOutput: 'Bronze',
+    whyItWorks: '2 is below 5 but at least 2. The elif branch matches and prints Bronze, so else is skipped.',
+    commonMistake: 'Using separate if statements when only one branch should run, or expecting later matching branches to run too.',
+  },
+  {
+    id: 'python-and', title: 'and: both conditions', chapterId: 'python-valley-twin-runes',
+    explanation: 'and requires both conditions to be True. If either is False, the combined condition is False.',
+    codeExample: 'has_rope = True\nhas_torch = False\nif has_rope and has_torch:\n    print("Cross")\nelse:\n    print("Prepare")', expectedOutput: 'Prepare',
+    whyItWorks: 'The rope is ready but the torch is missing. Both are required, so the condition is False and the alternative prints Prepare.',
+    commonMistake: 'Thinking one True condition is enough for and. Check both requirements.',
+  },
+  {
+    id: 'python-or', title: 'or: at least one condition', chapterId: 'python-valley-twin-runes',
+    explanation: 'or accepts either condition or both. It is False only when both conditions are False.',
+    codeExample: 'has_pass = False\nknows_rune = True\nif has_pass or knows_rune:\n    print("Passage")\nelse:\n    print("Search")', expectedOutput: 'Passage',
+    whyItWorks: 'Knowing the rune is enough, even without a pass. The condition is True, so Passage prints once.',
+    commonMistake: 'Treating or as exactly one. Both True is allowed and still runs the block only once.',
+  },
 ];
 
 /** Every exercise links to reference material, never to its answer. */
 export const exerciseSpellbookEntryIds: Readonly<Record<string, string>> = {
+  'python-valley-three-gates-output': 'python-elif',
+  'python-valley-three-gates-keyword': 'python-elif',
+  'python-valley-three-gates-first': 'python-elif',
+  'python-valley-twin-runes-and': 'python-and',
+  'python-valley-twin-runes-operator': 'python-or',
+  'python-valley-twin-runes-or': 'python-or',
   'python-valley-crossroads-boolean': 'python-booleans',
   'python-valley-crossroads-equality': 'python-comparisons',
   'python-valley-crossroads-difference': 'python-comparisons',

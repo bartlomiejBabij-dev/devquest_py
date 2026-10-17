@@ -18,6 +18,7 @@ const { getPlayerStatistics, getAchievements } = require('../src/game/profile.ts
 const { getSpellbookEntryForExercise } = require('../src/game/spellbookContent.ts');
 const { setExerciseNote, createNotesStore } = require('../src/game/notesStorage.ts');
 const { initialProgressionSession, progressionSessionReducer, shouldPersistProgression } = require('../src/game/progressionSession.ts');
+const preExpansion = require('./helpers/preExpansionContent.cjs');
 const baseline = require('./fixtures/learning-compatibility.json');
 const legacy = require('./fixtures/forest-complete-v1.json');
 const sliceIds = ['python-forest-awakening-01', 'python-valley-crossroads-01'];
@@ -37,9 +38,9 @@ const reviewedChoices = [
 ];
 
 test('Mission IDs and rewards stay stable; the 30 exercises outside the latest conversion match their baseline', () => {
-  assert.deepEqual(missions.map(m => ({ id: m.id, exerciseIds: m.exerciseIds, xpReward: m.xpReward })), baseline.missions);
+  assert.deepEqual(preExpansion.missions.map(m => ({ id: m.id, exerciseIds: m.exerciseIds, xpReward: m.xpReward })), baseline.missions);
   assert.equal(sliceExercises.length, 10);
-  assert.equal(new Set(exercises.map(e => e.id)).size, 40);
+  assert.equal(new Set(preExpansion.exercises.map(e => e.id)).size, 40);
   assert.equal(Object.keys(baseline.unchangedExercises).length, 30);
   for (const [id, hash] of Object.entries(baseline.unchangedExercises)) {
     const exercise = exercises.find(e => e.id === id);

@@ -148,6 +148,27 @@ export const lessons: readonly LessonContent[] = [
     whyItWorks: '4 < 4 is False: < excludes equality. Python skips Save and prints Buy. Fewer than 4 coins would choose Save. Four or more chooses Buy.',
     importantRule: 'Align else with if, add a colon but no condition, and indent each block. Only one branch runs. Check boundary values such as exactly 4.',
   },
+  {
+    id: 'python-lesson-elif-paths', title: 'Three paths, one choice',
+    explanation: 'elif means “else if”. It adds another condition to the same if chain. Python checks from top to bottom, runs the first matching branch, then skips the rest. else is the fallback if none match.',
+    codeExample: 'rank = 6\nif rank >= 9:\n    print("Sky")\nelif rank >= 4:\n    print("River")\nelse:\n    print("Trail")', expectedOutput: 'River',
+    whyItWorks: 'Six is below nine, so the first branch fails. Six is at least four, so elif selects River. The fallback is skipped.',
+    importantRule: 'Align elif and else with if. Use a condition and colon after elif, and indent its block. Even if several conditions could be True, only the first match runs.',
+  },
+  {
+    id: 'python-lesson-both-runes', title: 'Both runes must glow',
+    explanation: 'and combines two conditions. The result is True only when both are True. Use it when a spell needs two requirements at once.',
+    codeExample: 'lanterns = 2\nrope = 1\nif lanterns >= 1 and rope >= 1:\n    print("Equipped")\nelse:\n    print("Prepare")', expectedOutput: 'Equipped',
+    whyItWorks: 'Both comparisons are True: there is at least one lantern and at least one rope. The combined condition is True, so Equipped prints.',
+    importantRule: 'With and, one False condition is enough to make the combined condition False. Check each side before choosing the branch.',
+  },
+  {
+    id: 'python-lesson-either-rune', title: 'Either rune can guide you',
+    explanation: 'or combines two conditions when at least one is enough. It is True when the first, the second, or both are True. It is False only when both are False.',
+    codeExample: 'has_map = True\nsees_tower = False\nif has_map or sees_tower:\n    print("Travel")\nelse:\n    print("Scout")', expectedOutput: 'Travel',
+    whyItWorks: 'The map alone is enough. True or False is True, so the spell prints Travel. A visible tower alone would also be enough.',
+    importantRule: 'and needs both; or needs at least one. Even when both are True, the chosen block runs once.',
+  },
 ];
 
 export function getLessonForExercise(exercise: Exercise): LessonContent | null {

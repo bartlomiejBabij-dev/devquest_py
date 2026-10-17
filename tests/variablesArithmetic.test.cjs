@@ -16,6 +16,7 @@ const { parseSavedProgression, createProgressionStore } = require('../src/game/p
 const { getPlayerStatistics, getAchievements } = require('../src/game/profile.ts');
 const { getSpellbookEntryForExercise } = require('../src/game/spellbookContent.ts');
 const { createNotesStore, setExerciseNote } = require('../src/game/notesStorage.ts');
+const preExpansion = require('./helpers/preExpansionContent.cjs');
 const baseline = require('./fixtures/learning-compatibility.json');
 const fireId = 'python-forest-fire-essence-01';
 const manaId = 'python-forest-mana-stones-01';
@@ -50,7 +51,7 @@ test('Variables/arithmetic keep original IDs, order, five questions and 30/40 XP
   assert.equal(targetExercises.slice(0, 5).filter(e => ['multiple-choice', 'output-choice'].includes(e.type)).length, 3);
   assert.equal(targetExercises.slice(5).filter(e => e.type === 'output-choice').length, 3);
   assert.equal(targetExercises.slice(5).filter(e => e.type === 'missing-token').length, 2);
-  assert.deepEqual(new Set(Object.keys(baseline.unchangedExercises)), new Set(exercises.filter(e => !targetExercises.includes(e)).map(e => e.id)), 'baseline must cover every other exercise, including Awakening and Crossroads');
+  assert.deepEqual(new Set(Object.keys(baseline.unchangedExercises)), new Set(preExpansion.exercises.filter(e => !targetExercises.includes(e)).map(e => e.id)), 'baseline must cover every other exercise, including Awakening and Crossroads');
 });
 
 test('Every authored option has exactly one correct stable ID, unique text and misconception feedback', () => {
@@ -225,7 +226,7 @@ test('Replay skips introductions; review and Spellbook preserve selected answers
 });
 
 test('Legacy saves preserve XP, completions, stats, achievements and world gates at every completion point', async () => {
-  for (let count = 0; count <= missions.length; count++) {
+  for (let count = 0; count <= preExpansion.missions.length; count++) {
     const ids = baseline.missions.slice(0, count).map(m => m.id);
     const loaded = parseSavedProgression(JSON.stringify({ version: 1, completedMissionIds: ids }));
     assert.equal(loaded.status, 'ready');

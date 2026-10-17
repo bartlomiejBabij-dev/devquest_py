@@ -2,8 +2,8 @@ import { StyleSheet, Text, View } from 'react-native';
 import { colors } from '@/theme';
 
 /** Compact original rune sentinel; successful spells use the mission's shared animation. */
-export function ValleyGuardian({ solvedCount }: { solvedCount: number }) {
-  return <View style={styles.arena} accessibilityLabel={`Valley guardian. ${solvedCount} of 5 trials solved.`}>
+export function ValleyGuardian({ solvedCount, totalCount }: { solvedCount: number; totalCount: number }) {
+  return <View style={styles.arena} accessibilityLabel={`Valley guardian. ${solvedCount} of ${totalCount} trials solved.`}>
     <View style={styles.guardian} accessible={false}>
       <View style={styles.crest} />
       <View style={styles.face}><View style={styles.eye} /><View style={styles.eye} /></View>
@@ -11,8 +11,8 @@ export function ValleyGuardian({ solvedCount }: { solvedCount: number }) {
     </View>
     <View style={styles.copy}>
       <Text style={styles.title}>THE RUNE GUARDIAN</Text>
-      <Text style={styles.body}>{solvedCount === 5 ? 'The gate opens. You have earned my trust.' : 'Show me how your code chooses its path.'}</Text>
-      <Text style={styles.progress}>{solvedCount} / 5 TRIALS SOLVED</Text>
+      <Text style={styles.body}>{solvedCount === totalCount ? 'The gate opens. You have earned my trust.' : 'Show me how your code chooses its path.'}</Text>
+      <Text style={styles.progress}>{solvedCount} / {totalCount} TRIALS SOLVED</Text>
     </View>
   </View>;
 }
