@@ -20,6 +20,6 @@ export function lessonSessionReducer(session: LessonSession, action: LessonActio
 export function getVisibleLesson(exercise: Exercise, phase: 'answering' | 'solved' | 'complete', missionCompleted: boolean, session: LessonSession) {
   const lesson = getLessonForExercise(exercise);
   if (!lesson || phase === 'complete') return null;
-  const introduction = phase === 'answering' && !missionCompleted && !session.seenLessonIds.includes(lesson.id);
+  const introduction = !lesson.optionalReview && phase === 'answering' && !missionCompleted && !session.seenLessonIds.includes(lesson.id);
   return introduction || session.reviewing ? { lesson, introduction } : null;
 }

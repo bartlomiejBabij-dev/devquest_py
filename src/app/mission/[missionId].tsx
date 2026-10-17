@@ -221,7 +221,7 @@ export default function WorldMissionScreen() {
               </Pressable> : null}
             </View>
             {lesson ? <Pressable accessibilityRole="button" accessibilityLabel="Review Lesson" onPress={() => { Keyboard.dismiss(); dispatchLesson({ type: 'review' }); }}
-              style={({ pressed }) => [styles.reviewLesson, pressed && styles.reviewPressed]}><Text style={styles.reviewLessonText}>↺  REVIEW LESSON</Text></Pressable> : null}
+              style={({ pressed }) => [styles.reviewLesson, pressed && styles.reviewPressed]}><Text style={styles.reviewLessonText}>{lesson.optionalReview ? '↺  OPTIONAL RECAP' : '↺  REVIEW LESSON'}</Text></Pressable> : null}
             <Text style={styles.prompt}>{exercise.prompt}</Text>
             <View style={styles.codeBox}><Text style={styles.codeLabel}>PYTHON SPELL</Text><Text selectable style={styles.code}>{exercise.code}</Text></View>
 

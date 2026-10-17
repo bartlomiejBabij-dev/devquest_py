@@ -29,7 +29,7 @@ const reviewedAnswers = [
   ['python-forest-mana-stones-operator-b', 'python-forest-mana-stones-addition-c', 'python-forest-mana-stones-multiplication-c', 'python-forest-mana-stones-precedence-a', 'python-forest-mana-stones-damage-b'],
   ['python-forest-talking-trees-output-b', 'python-forest-talking-trees-variable-c', 'python-forest-talking-trees-repeat-b', 'python-forest-talking-trees-length-c', 'python-forest-talking-trees-repair-c'],
   ['python-forest-broken-spells-name-c', 'python-forest-broken-spells-parenthesis-b', 'python-forest-broken-spells-quotes-a', 'python-forest-broken-spells-assignment-c', 'python-forest-broken-spells-debug-b'],
-  ['Pyro\n6', '5', 'Fireball', '*', 'power'],
+  ['python-forest-goblin-king-output-c', 'python-forest-goblin-king-variable-b', 'python-forest-goblin-king-string-d', 'python-forest-goblin-king-arithmetic-b', 'power'],
 ];
 
 test('Exactly five ordered exercises belong to each chapter and every reference resolves', () => {
@@ -71,7 +71,7 @@ test('All Forest exercises have complete content and their typed answers pass va
     assert.equal(isExerciseAnswerCorrect(exercise, ''), false, exercise.id);
     assert.equal(isExerciseAnswerCorrect(exercise, 'definitely wrong'), false, exercise.id);
   }
-  assert.deepEqual(types, new Set(['predict-output', 'fix-mistake', 'choose-operator', 'multiple-choice', 'missing-token', 'output-choice']));
+  assert.deepEqual(types, new Set(['fix-mistake', 'multiple-choice', 'missing-token', 'output-choice']));
 });
 
 test('Reviewed expected answers match every authored exercise', () => {

@@ -120,6 +120,34 @@ export const lessons: readonly LessonContent[] = [
     whyItWorks: 'The assignment stores 6. The next line reads that number. The last line runs too, but prints the word charge. Using charge == 6 before defining charge would fail because that name has no value yet.',
     importantRule: 'Use = to assign. Use an unquoted name to read its value. Compare the actual output with the result you wanted.',
   },
+  {
+    id: 'python-lesson-forest-mastery', title: 'Your Forest spellcraft', optionalReview: true,
+    explanation: 'You know these spells. Take a quick recap if you need it: = stores a value, * multiplies numbers, + joins strings, and print() displays the result. Read each instruction in order.',
+    codeExample: 'name = "Rune"\ncharge = 2\ncharge = charge + 2\nprint(name + "stone")\nprint(charge * 2)', expectedOutput: 'Runestone\n8',
+    whyItWorks: 'charge changes from 2 to 4. The text joins without an extra space. The last line multiplies the updated charge by 2. Each print() writes a separate line.',
+    importantRule: 'To repair a name error, match the defined name exactly. Quotes mean literal text; an unquoted name reads its value.',
+  },
+  {
+    id: 'python-lesson-if-block', title: 'A spell with a condition',
+    explanation: 'if lets your code choose when to act. Write a condition after if and finish with a colon. When the condition is True, Python runs the indented instructions beneath it.',
+    codeExample: 'keys = 4\nif keys > 2:\n    print("Unlock")', expectedOutput: 'Unlock',
+    whyItWorks: 'Four is greater than two, so the condition is True. The four spaces before print() place it inside the if block. It displays Unlock.',
+    importantRule: 'Keep if at the left edge here. Indent its block four spaces. Without an indented block after the colon, Python reports a syntax error.',
+  },
+  {
+    id: 'python-lesson-skipping-blocks', title: 'When a spell stays quiet',
+    explanation: 'When an if condition is False, Python skips its indented block. Code after that block can still run. Returning to the left edge ends the block in these examples.',
+    codeExample: 'keys = 0\nif keys > 2:\n    print("Unlock")\nprint("Waiting")', expectedOutput: 'Waiting',
+    whyItWorks: 'Zero is not greater than two. The indented Unlock line is skipped. The final print() is at the left edge, outside the block, so it displays Waiting.',
+    importantRule: 'Read indentation as part of the instruction. A false condition skips its block, not every line below it.',
+  },
+  {
+    id: 'python-lesson-else-branches', title: 'Choose the other path',
+    explanation: 'else gives an if statement an alternative. Python runs the if block when its condition is True, or the else block when it is False. These alternatives are called branches.',
+    codeExample: 'coins = 4\nif coins < 4:\n    print("Save")\nelse:\n    print("Buy")', expectedOutput: 'Buy',
+    whyItWorks: '4 < 4 is False: < excludes equality. Python skips Save and prints Buy. Fewer than 4 coins would choose Save. Four or more chooses Buy.',
+    importantRule: 'Align else with if, add a colon but no condition, and indent each block. Only one branch runs. Check boundary values such as exactly 4.',
+  },
 ];
 
 export function getLessonForExercise(exercise: Exercise): LessonContent | null {

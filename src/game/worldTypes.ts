@@ -48,6 +48,8 @@ interface ExerciseBase {
 
 export interface LessonContent {
   id: string;
+  /** Previously taught assessment concepts: available through Review Lesson only. */
+  optionalReview?: boolean;
   title: string;
   explanation: string;
   codeExample: string;
@@ -66,6 +68,8 @@ export interface AnswerOption {
 
 export type ChoiceExercise = ExerciseBase & {
   type: 'multiple-choice' | 'missing-token' | 'output-choice';
+  /** Preserve visible indentation when choices contain complete Python snippets. */
+  optionFormat?: 'code';
   options: readonly AnswerOption[];
   validation: { kind: 'option-id'; correctOptionId: string };
 };

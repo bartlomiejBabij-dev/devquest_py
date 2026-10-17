@@ -19,11 +19,12 @@ const { isValidExerciseId } = require('../src/game/notesStorage.ts');
 const { isGoblinKingMission } = require('../src/game/boss.ts');
 const { trackForRoute } = require('../src/game/audioController.ts');
 const legacy = require('./fixtures/forest-complete-v1.json');
+const { legacyCodeExercises } = require('./fixtures/final-assessment-compatibility.json');
 const forestComplete = { completedMissionIds: legacy.completedMissionIds };
 // Independently reviewed answers, not generated from validator metadata.
 const answers = [
   ['python-valley-crossroads-boolean-c', 'python-valley-crossroads-equality-d', 'python-valley-crossroads-difference-b', 'python-valley-crossroads-boundary-a', 'python-valley-crossroads-threshold-c'],
-  ['if', 'mana = 5\nif mana >= 3:\n    print("Cast")', 'Ready', 'else', 'mana = 2\nif mana < 3:\n    print("Rest")\nelse:\n    print("Cast")'],
+  ['python-valley-guardian-if-b', 'python-valley-guardian-indent-c', 'python-valley-guardian-skip-b', 'python-valley-guardian-else-a', 'python-valley-guardian-branch-b'],
 ];
 
 function play(progress, missionIndex) {
@@ -112,7 +113,8 @@ test('All ten exercises contain teaching content, reviewed answers and valid Spe
 });
 
 test('Code repair accepts harmless spacing, CRLF, blank lines and equivalent quotes while preserving indentation', () => {
-  const exercise = valleyExercises.find(e => e.id === 'python-valley-guardian-branch');
+  // Keep exercising the unchanged strict validator with the original code-entry definition.
+  const exercise = legacyCodeExercises.find(e => e.id === 'python-valley-guardian-branch');
   for (const width of [1,2,4,8]) {
     const spaces = ' '.repeat(width);
     assert.equal(isExerciseAnswerCorrect(exercise, `\r\nmana=2  \r\nif mana<3 :\r\n${spaces}print ( 'Rest' )\r\n\r\nelse :\r\n${spaces}print('Cast')\r\n`), true);
@@ -120,8 +122,9 @@ test('Code repair accepts harmless spacing, CRLF, blank lines and equivalent quo
 });
 
 test('Code repair rejects misleading outputs, incorrect operators/branches, bad indentation and extra Python', () => {
-  const exercise = valleyExercises.find(e => e.id === 'python-valley-guardian-branch');
-  const answer = answers[1][4];
+  // Keep exercising the unchanged strict validator with the original code-entry definition.
+  const exercise = legacyCodeExercises.find(e => e.id === 'python-valley-guardian-branch');
+  const answer = 'mana = 2\nif mana < 3:\n    print("Rest")\nelse:\n    print("Cast")';
   const invalid = [
     'Rest', 'print("Rest")', answer.replace('<', '<='), answer.replace('<', '>='), answer.replace('<', '!='),
     answer.replace('Rest', 'Cast'), answer.replace('if mana', 'ifmana'), answer.replace('mana = 2', 'mana == 2'),

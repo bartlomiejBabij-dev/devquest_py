@@ -85,7 +85,10 @@ test('Every Forest exercise uses deterministic validation', () => {
     assert.equal(isExerciseAnswerCorrect(exercise, ''), false);
     assert.equal(isExerciseAnswerCorrect(exercise, 'definitely wrong'), false);
   }
-  assert.equal(isExerciseAnswerCorrect(exercises[5], 'Pyro\r\n6'), true);
+  // Preserve CRLF normalization coverage after the boss output question became a tap choice.
+  const output = { ...exercises[5], type: 'predict-output', validation: { kind: 'exact', acceptedAnswers: ['Pyro\n6'], caseSensitive: true } };
+  assert.equal(isExerciseAnswerCorrect(output, 'Pyro\r\n6'), true);
+  assert.equal(isExerciseAnswerCorrect(exercises[5], 'Pyro\r\n6'), false);
   assert.equal(isExerciseAnswerCorrect(exercises[3], 'hello, Pyromancer'), false);
 });
 

@@ -81,3 +81,9 @@ Both missions retain their five exercise IDs and their 30/40 XP rewards. The oth
 Talking Trees and Broken Spells now each have five tap-based questions and three short concept lessons, with no keyboard entry. Strings retain joining, variable values, repetition, character counts and text-versus-number repair. Debugging covers name mistakes, matching punctuation, assignment and valid code that prints an unwanted result. Feedback explains the difference between syntax errors, undefined names and incorrect output.
 
 The existing learning components, mission engine, IDs, 50/60 XP rewards, notes and save formats are unchanged. All other exercises and previous lessons are preserved. See [Stage 3G.2C verification](docs/stage-3g2c.md) for the exact changes and test coverage.
+
+### Final assessments (Stage 3G.2D)
+
+Goblin King's Lair now has four tap questions and one short `power` repair, with an optional Forest recap available before the first answer and throughout the fight. The Guardian's Choice has five tap questions and three lessons about if/indentation, skipped blocks and else branches. Complete code choices use monospace text and retain their leading spaces.
+
+All forty exercises now have lesson or recap help: 38 use taps and two retain short identifier recall. Boss HP remains 100 with 20 damage per successful spell; rewards remain 100/80 XP once, and replay pays zero. IDs, saves, other content, combat and audio are unchanged. The strict Python-line validator remains available and regression-tested with its original authored exercises. See [Stage 3G.2D verification](docs/stage-3g2d.md) for details.

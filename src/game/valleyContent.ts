@@ -229,38 +229,175 @@ export const valleyExercises: readonly Exercise[] = [
     }
   },
   {
-    id: 'python-valley-guardian-if', chapterId: 'python-valley-guardian', languageId: 'python', difficulty: 'intro', type: 'fill-blank',
-    concept: 'if statements', prompt: 'Fill in the keyword that runs the indented spell only when the condition is True.',
-    code: 'mana = 5\n____ mana >= 3:\n    print("Cast")', hint: 'Use the two-letter keyword if. The colon starts its block.',
-    explanation: 'if checks a condition. Since 5 >= 3 is True, the indented print() runs and displays Cast.',
-    validation: { kind: 'exact', acceptedAnswers: ['if'], caseSensitive: true },
+    "id": "python-valley-guardian-if",
+    "chapterId": "python-valley-guardian",
+    "languageId": "python",
+    "difficulty": "intro",
+    "type": "missing-token",
+    "concept": "if statements",
+    "prompt": "Choose the keyword that runs the indented line only when the condition is True.",
+    "code": "mana = 5\n____ mana >= 3:\n    print(\"Cast\")",
+    "hint": "A condition asks a yes-or-no question. Which keyword checks it?",
+    "explanation": "if checks mana >= 3. Since 5 >= 3 is True, Python runs the indented line and displays Cast.",
+    "lessonId": "python-lesson-if-block",
+    "options": [
+      {
+        "id": "python-valley-guardian-if-a",
+        "label": "else",
+        "feedback": "else needs an earlier if and has no condition of its own. This line must check a condition."
+      },
+      {
+        "id": "python-valley-guardian-if-b",
+        "label": "if",
+        "feedback": "if checks the condition and runs its indented block only when it is True."
+      },
+      {
+        "id": "python-valley-guardian-if-c",
+        "label": "print",
+        "feedback": "print() displays a value. It does not begin a conditional block."
+      }
+    ],
+    "validation": {
+      "kind": "option-id",
+      "correctOptionId": "python-valley-guardian-if-b"
+    }
   },
   {
-    id: 'python-valley-guardian-indent', chapterId: 'python-valley-guardian', languageId: 'python', difficulty: 'practice', type: 'fix-mistake',
-    concept: 'Python indentation', prompt: 'Rewrite all three lines, indenting print() inside the if block. Use four spaces before print(); keep the other lines at the left edge.',
-    code: 'mana = 5\nif mana >= 3:\nprint("Cast")', hint: 'Indent only the last line. Spaces at the start tell Python which statements belong to if.',
-    explanation: 'Indentation defines a block in Python. With print() inside the if block, it runs only when mana >= 3 is True.',
-    validation: { kind: 'python-lines', acceptedAnswers: ['mana = 5\nif mana >= 3:\n    print("Cast")'], caseSensitive: true },
+    "id": "python-valley-guardian-indent",
+    "chapterId": "python-valley-guardian",
+    "languageId": "python",
+    "difficulty": "practice",
+    "type": "multiple-choice",
+    "concept": "Python indentation",
+    "prompt": "Choose the repaired spell. Keep mana and if at the left edge; indent print() four spaces inside the if block.",
+    "code": "mana = 5\nif mana >= 3:\nprint(\"Cast\")",
+    "hint": "Spaces at the start group instructions. The line controlled by if must be moved inward.",
+    "explanation": "The four spaces put print() inside the if block. The condition is True, so Cast is printed. Leaving print() at the left edge gives a syntax error because if needs an indented block.",
+    "lessonId": "python-lesson-if-block",
+    "optionFormat": "code",
+    "options": [
+      {
+        "id": "python-valley-guardian-indent-a",
+        "label": "mana = 5\nif mana >= 3:\nprint(\"Cast\")",
+        "feedback": "The print line has no indentation. Python needs an indented block after if."
+      },
+      {
+        "id": "python-valley-guardian-indent-b",
+        "label": "mana = 5\n    if mana >= 3:\n    print(\"Cast\")",
+        "feedback": "if is unexpectedly indented, and print is not farther in than if. Keep if at the left edge."
+      },
+      {
+        "id": "python-valley-guardian-indent-c",
+        "label": "mana = 5\nif mana >= 3:\n    print(\"Cast\")",
+        "feedback": "Only print is moved four spaces inward, so it belongs to the if block."
+      }
+    ],
+    "validation": {
+      "kind": "option-id",
+      "correctOptionId": "python-valley-guardian-indent-c"
+    }
   },
   {
-    id: 'python-valley-guardian-skip', chapterId: 'python-valley-guardian', languageId: 'python', difficulty: 'practice', type: 'predict-output',
-    concept: 'conditional execution', prompt: 'What single word is printed? The last line is outside the if block.',
-    code: 'mana = 1\nif mana >= 3:\n    print("Cast")\nprint("Ready")', hint: '1 >= 3 is False, so skip the indented line. The unindented print() still runs.',
-    explanation: 'The condition is False, so Cast is skipped. Ready is printed because that statement is outside the block.',
-    validation: { kind: 'exact', acceptedAnswers: ['Ready'], caseSensitive: true },
+    "id": "python-valley-guardian-skip",
+    "chapterId": "python-valley-guardian",
+    "languageId": "python",
+    "difficulty": "practice",
+    "type": "output-choice",
+    "concept": "conditional execution",
+    "prompt": "Which output appears? Notice where the final print() begins.",
+    "code": "mana = 1\nif mana >= 3:\n    print(\"Cast\")\nprint(\"Ready\")",
+    "hint": "Check the condition, then compare the starting positions of the two print lines.",
+    "explanation": "1 >= 3 is False, so the indented Cast line is skipped. Ready still prints because its line is outside the if block.",
+    "lessonId": "python-lesson-skipping-blocks",
+    "options": [
+      {
+        "id": "python-valley-guardian-skip-a",
+        "label": "Cast\nReady",
+        "feedback": "The final line runs, but the false condition skips the indented Cast line."
+      },
+      {
+        "id": "python-valley-guardian-skip-b",
+        "label": "Ready",
+        "feedback": "Only the print outside the block runs when this condition is False."
+      },
+      {
+        "id": "python-valley-guardian-skip-c",
+        "label": "Cast",
+        "feedback": "The false condition skips Cast. The unindented print still runs and shows Ready."
+      }
+    ],
+    "validation": {
+      "kind": "option-id",
+      "correctOptionId": "python-valley-guardian-skip-b"
+    }
   },
   {
-    id: 'python-valley-guardian-else', chapterId: 'python-valley-guardian', languageId: 'python', difficulty: 'practice', type: 'fill-blank',
-    concept: 'else statements', prompt: 'Fill in the keyword that selects the alternative block when the if condition is False.',
-    code: 'mana = 1\nif mana >= 3:\n    print("Cast")\n____:\n    print("Rest")', hint: 'Use else, aligned with if. It does not need another condition.',
-    explanation: 'else runs when the if condition is False. With only 1 mana, this spell prints Rest.',
-    validation: { kind: 'exact', acceptedAnswers: ['else'], caseSensitive: true },
+    "id": "python-valley-guardian-else",
+    "chapterId": "python-valley-guardian",
+    "languageId": "python",
+    "difficulty": "practice",
+    "type": "missing-token",
+    "concept": "else statements",
+    "prompt": "Choose the keyword for the alternative block when the if condition is False.",
+    "code": "mana = 1\nif mana >= 3:\n    print(\"Cast\")\n____:\n    print(\"Rest\")",
+    "hint": "The alternative begins level with if and needs no new condition.",
+    "explanation": "else selects the alternative when the if condition is False. Here 1 is below 3, so Python prints Rest and skips Cast.",
+    "lessonId": "python-lesson-else-branches",
+    "options": [
+      {
+        "id": "python-valley-guardian-else-a",
+        "label": "else",
+        "feedback": "else runs its indented block when the preceding if condition is False."
+      },
+      {
+        "id": "python-valley-guardian-else-b",
+        "label": "if",
+        "feedback": "A new if would need another condition. This blank is the alternative to the existing if."
+      },
+      {
+        "id": "python-valley-guardian-else-c",
+        "label": "False",
+        "feedback": "False is a Boolean value, not a keyword that begins an alternative block."
+      }
+    ],
+    "validation": {
+      "kind": "option-id",
+      "correctOptionId": "python-valley-guardian-else-a"
+    }
   },
   {
-    id: 'python-valley-guardian-branch', chapterId: 'python-valley-guardian', languageId: 'python', difficulty: 'challenge', type: 'fix-mistake',
-    concept: 'choosing the correct branch', prompt: 'Rewrite all five lines. Change only the comparison so mana below 3 prints Rest, and mana of 3 or more prints Cast. Keep both print lines indented.',
-    code: 'mana = 2\nif mana >= 3:\n    print("Rest")\nelse:\n    print("Cast")', hint: 'Use < to test “below 3”. Align else with if and indent both print lines equally.',
-    explanation: 'if mana < 3 selects Rest for low mana. Otherwise, else selects Cast. At exactly 3, the else branch runs.',
-    validation: { kind: 'python-lines', acceptedAnswers: ['mana = 2\nif mana < 3:\n    print("Rest")\nelse:\n    print("Cast")'], caseSensitive: true },
+    "id": "python-valley-guardian-branch",
+    "chapterId": "python-valley-guardian",
+    "languageId": "python",
+    "difficulty": "challenge",
+    "type": "multiple-choice",
+    "concept": "choosing the correct branch",
+    "prompt": "Repair only the comparison. Choose the spell that prints Rest for mana below 3, and Cast for 3 or more. It must work at the boundary too.",
+    "code": "mana = 2\nif mana >= 3:\n    print(\"Rest\")\nelse:\n    print(\"Cast\")",
+    "hint": "Test the rule with both 2 and exactly 3. Keep else level with if.",
+    "explanation": "mana < 3 sends low mana to Rest. At exactly 3 or above, that condition is False and else prints Cast. Only one branch runs each time.",
+    "lessonId": "python-lesson-else-branches",
+    "optionFormat": "code",
+    "options": [
+      {
+        "id": "python-valley-guardian-branch-a",
+        "label": "mana = 2\nif mana <= 3:\n    print(\"Rest\")\nelse:\n    print(\"Cast\")",
+        "feedback": "<= would also send exactly 3 to Rest. The rule requires Cast at 3."
+      },
+      {
+        "id": "python-valley-guardian-branch-b",
+        "label": "mana = 2\nif mana < 3:\n    print(\"Rest\")\nelse:\n    print(\"Cast\")",
+        "feedback": "< selects Rest below 3. At 3 and above, the alternative selects Cast."
+      },
+      {
+        "id": "python-valley-guardian-branch-c",
+        "label": "mana = 2\nif mana >= 3:\n    print(\"Rest\")\nelse:\n    print(\"Cast\")",
+        "feedback": "This reverses the rule: low mana prints Cast, while 3 or more prints Rest."
+      }
+    ],
+    "validation": {
+      "kind": "option-id",
+      "correctOptionId": "python-valley-guardian-branch-b"
+    }
   },
 ];

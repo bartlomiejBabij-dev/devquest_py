@@ -14,7 +14,7 @@ export function AnswerChoices({ exercise, selectedId, incorrect, onSelect }: {
         onPress={() => onSelect(option.id)} style={({ pressed }) => [styles.option, selected && styles.selected, selected && incorrect && styles.retry, pressed && styles.pressed]}>
         <View style={[styles.badge, selected && styles.selectedBadge]}><Text style={styles.letter}>{String.fromCharCode(65 + index)}</Text></View>
         <View style={styles.copy}>
-          <Text style={[styles.answer, exercise.type !== 'multiple-choice' && styles.code]}>{option.label}</Text>
+          <Text style={[styles.answer, (exercise.type !== 'multiple-choice' || exercise.optionFormat === 'code') && styles.code]}>{option.label}</Text>
           {selected && incorrect ? <Text style={styles.feedback} accessibilityLiveRegion="polite">{option.feedback} Try another answer.</Text> : null}
         </View>
       </Pressable>;

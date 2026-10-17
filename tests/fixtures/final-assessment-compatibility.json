@@ -1,0 +1,109 @@
+{
+  "worlds": "d4a9b8e6904b9b4f1fa3e70e9d553aaf9d584e94d451278268eda672d54175d1",
+  "chapters": "df5ccf36819d3b3df7466cb115dea5c3a21510a6a6ed309b86eb3439fa53ab13",
+  "missions": "7c17c9ef8e7e9b88a58950e9d7a9dca10ef2bd9cea63d548325d6175565325b4",
+  "spellbookLinks": "d450da8985967a501641936f574616a0932c0c17adee7e4d48f162f85533394e",
+  "targetIds": [
+    "python-forest-goblin-king-output",
+    "python-forest-goblin-king-variable",
+    "python-forest-goblin-king-string",
+    "python-forest-goblin-king-arithmetic",
+    "python-forest-goblin-king-debug",
+    "python-valley-guardian-if",
+    "python-valley-guardian-indent",
+    "python-valley-guardian-skip",
+    "python-valley-guardian-else",
+    "python-valley-guardian-branch"
+  ],
+  "unchangedExercises": {
+    "python-forest-awakening-print": "86062be46e76c66638a664b033b24cfde24db72fe2f3c9d8859f80a80656b0e9",
+    "python-forest-fire-essence-assignment": "8c04c7b5f572f78008b9940867a988b7f1f28cb2b01f8f513c9e996ab47e5ceb",
+    "python-forest-mana-stones-operator": "476892ccf3977fb7d5fa514dc0fd2c437645b3ad11bbf912ca639b80b64da1d8",
+    "python-forest-talking-trees-output": "bcbe69b2c6e75a6769132fca42f9effa8662939b914ef125863a2784e037a9b0",
+    "python-forest-broken-spells-name": "5e8f02c3f6bc40f8dea56b9ffc464f888833ce2a8bce603f1dc26c297f7926b8",
+    "python-forest-awakening-literal": "29c4d1e0eedeafaf88808a944497a91b2111d7b0fc38a4c16e4c0cff7e91718a",
+    "python-forest-awakening-number": "6d63272e96d0476955346b0a2612172ee21946c7c15cd667bfaa92b5dee83c6e",
+    "python-forest-awakening-output": "837650ca910b66ae739c1ee3199f607e2c3f16424378ad9645eb7ea11c1f737f",
+    "python-forest-awakening-repair": "6d2336b94f2f5ce78f5b3b842c981c48e3afb553e1087974bc0c966e04022bfa",
+    "python-forest-fire-essence-read": "cb4dd3f93ee7d75b8443254b855dd829dc736a5746356baf321dab98e13f724c",
+    "python-forest-fire-essence-update": "ef2b1e731cc14745352722a05740721f9cda32161e85acd8a29012dc8646c2b0",
+    "python-forest-fire-essence-print": "de5ef0e0f695215d68846879030746ace476f3d0f3c3163b7bfe14cbad7c6a2c",
+    "python-forest-fire-essence-name": "87f5bbaa2128cb10cd83d0995d2a3f7a0c14a43756b5146d7ae4b7c7419ad13b",
+    "python-forest-mana-stones-addition": "2b6ebaeeaf280e29a5cf0882e0142fd0db673e3cd3f6463606887471e17b909b",
+    "python-forest-mana-stones-multiplication": "d8cbc27010bda6e47d926c269667d1de55e96ed6addad373596f07b3b93a3560",
+    "python-forest-mana-stones-precedence": "75d213c1e4da7443ede28dc0828d88f6265e98a03ff5d4b579476162277a3dbd",
+    "python-forest-mana-stones-damage": "56d0510b99418f647f834e992f493d71d2d5c891750691dc064d439c76ffd259",
+    "python-forest-talking-trees-variable": "23c03d5d65ceb019bb96fcbafb24484d2aa19375ff96fa9023e7fd2cc9215136",
+    "python-forest-talking-trees-repeat": "391f27e6faed4b76eb6546c02e02087b09acd7a4d020d3e3b22c0ff1d9469c5b",
+    "python-forest-talking-trees-length": "f4c30464deee812ee771717551692e795de012c8e3f7f2c8f91fc6b04eaa2cab",
+    "python-forest-talking-trees-repair": "a12f5014d52e5022a5c5dd37f7f10c801d1b9dba98408e222d6bec80313789c1",
+    "python-forest-broken-spells-parenthesis": "8652535fecdfdab4db388fc6f6b3e56dba2be506641c33646443046ff9fdc974",
+    "python-forest-broken-spells-quotes": "3a80cff38b4e195802c06c9fa349bb79743d5bbf09dd4137396ca1711ab65e2f",
+    "python-forest-broken-spells-assignment": "71b6e9536692f09accda4168f34a2c97328b86f8b9a19f372f214935c6cac0ba",
+    "python-forest-broken-spells-debug": "61dcaff682732205ebaebfe0bfe5d3a7ca81fbec7233e4026b865b9530cce7c8",
+    "python-valley-crossroads-boolean": "8c38b8f5980855ed4a6e89a7e00fcbe79e039320cc069788410725db1850df75",
+    "python-valley-crossroads-equality": "37477735294acb3b0e5ae52597e73479db272b9197050757f886079f2ea1a66a",
+    "python-valley-crossroads-difference": "2d60cd2f8ab444b7d37691b182f2ffef3178d8bf4e0ac12bb312c0fc6ddc0f69",
+    "python-valley-crossroads-boundary": "0d60e048f8d60edaad5a32f22d5914292d159843ac5716d0ff871308a2b3455f",
+    "python-valley-crossroads-threshold": "f472ef0060c4f8238c01560f230889b113cdeda18caee6d8ce4a985e871c85a1"
+  },
+  "existingLessons": {
+    "python-lesson-first-output": "64b7aa0d1fe0efae19e7c73ed44bf1cf7298a719f897dfd1523f178ebe78dd62",
+    "python-lesson-text-numbers": "6fea3f44148a9ea8ef0f5f3629deb7cf3e3f3d9aa8da4b3e46cf840c4d34996e",
+    "python-lesson-booleans": "0813dc6fbea66f27f08e2981b64a6e1e68f7c458989f076bc6450f7f8d3712e1",
+    "python-lesson-comparisons": "691bc8a8f9d6e4aae5965ec50afea0c0438827afa780d689abeb1df128a703a9",
+    "python-lesson-ordering": "b51ff1ae2da820fefdad6c33d6e351e42bb15b5bf60803e18591d079ec578fdd",
+    "python-lesson-variables": "787d44cbd851b587cc43115cb1011e7e72847f9a93c04fb1d8bb3503bed2b2c7",
+    "python-lesson-variable-update": "4af8fee455c3d135596b64638e38f172f31fef4f08c5c036291675a4dade295e",
+    "python-lesson-variable-text": "eedb5e4e8bb487e0a1e7bfbf11c39e54c3ae643c6d2da669517b0e7a52b363d6",
+    "python-lesson-add-subtract": "d45fc9cda237d4884bd1255ddb92cca476b3ce3ae8f70eaa93fb5beec7976567",
+    "python-lesson-multiply": "53bfcbe17b93c011ea2f0dac1594cef5cc85ed358702ba252dd94f7f8318fff7",
+    "python-lesson-calculation-order": "da0c5b9d9a96326a652eb9096e451f5d15e62b933380304c73be3c7490a84447",
+    "python-lesson-joining-text": "3a0d758d872fefd87ea49d42131f5e24fba57c6af484ce2cc068cc3ca88dadf1",
+    "python-lesson-repeat-count-text": "191bb9d9cf599c93276c53cb1a203a43017de32b58f8180294417c13d371964f",
+    "python-lesson-text-versus-number": "a51981ec8d389b4954b292236216bdf35b4a822bac685e0b9913a425896b6d17",
+    "python-lesson-debug-names": "21bd4345f82665ec74a68bfcdaf587dc6740c477e19fd785c4ec40379021ba43",
+    "python-lesson-debug-pairs": "52dfcdbfb619889fc5c44706d9a5a59f5df1e766aa3707cbf3fbc2dd9ed8b7fc",
+    "python-lesson-debug-values": "35b8d16ac0f59f339db0e30ae70beeab0fad7470cf509b85efcd482132b12582"
+  },
+  "legacyCodeExercises": [
+    {
+      "id": "python-valley-guardian-indent",
+      "chapterId": "python-valley-guardian",
+      "languageId": "python",
+      "difficulty": "practice",
+      "type": "fix-mistake",
+      "concept": "Python indentation",
+      "prompt": "Rewrite all three lines, indenting print() inside the if block. Use four spaces before print(); keep the other lines at the left edge.",
+      "code": "mana = 5\nif mana >= 3:\nprint(\"Cast\")",
+      "hint": "Indent only the last line. Spaces at the start tell Python which statements belong to if.",
+      "explanation": "Indentation defines a block in Python. With print() inside the if block, it runs only when mana >= 3 is True.",
+      "validation": {
+        "kind": "python-lines",
+        "acceptedAnswers": [
+          "mana = 5\nif mana >= 3:\n    print(\"Cast\")"
+        ],
+        "caseSensitive": true
+      }
+    },
+    {
+      "id": "python-valley-guardian-branch",
+      "chapterId": "python-valley-guardian",
+      "languageId": "python",
+      "difficulty": "challenge",
+      "type": "fix-mistake",
+      "concept": "choosing the correct branch",
+      "prompt": "Rewrite all five lines. Change only the comparison so mana below 3 prints Rest, and mana of 3 or more prints Cast. Keep both print lines indented.",
+      "code": "mana = 2\nif mana >= 3:\n    print(\"Rest\")\nelse:\n    print(\"Cast\")",
+      "hint": "Use < to test “below 3”. Align else with if and indent both print lines equally.",
+      "explanation": "if mana < 3 selects Rest for low mana. Otherwise, else selects Cast. At exactly 3, the else branch runs.",
+      "validation": {
+        "kind": "python-lines",
+        "acceptedAnswers": [
+          "mana = 2\nif mana < 3:\n    print(\"Rest\")\nelse:\n    print(\"Cast\")"
+        ],
+        "caseSensitive": true
+      }
+    }
+  ]
+}

@@ -131,7 +131,45 @@ export const forestExercises: readonly Exercise[] = [
     ],
     validation: { kind: 'option-id', correctOptionId: 'python-forest-broken-spells-name-c' },
   },
-  { id: 'python-forest-goblin-king-output', chapterId: 'python-forest-goblin-king', languageId: 'python', difficulty: 'challenge', type: 'predict-output', concept: 'combined output, variables, and arithmetic', prompt: 'What two lines does this spell print?', code: 'hero = "Pyro"\nspells = 2 * 3\nprint(hero)\nprint(spells)', hint: 'First print the text stored in hero, then multiply 2 by 3.', explanation: 'hero contains Pyro and spells contains 6, so print() displays them on separate lines.', validation: { kind: 'exact', acceptedAnswers: ['Pyro\n6'], caseSensitive: true } },
+  {
+    "id": "python-forest-goblin-king-output",
+    "chapterId": "python-forest-goblin-king",
+    "languageId": "python",
+    "difficulty": "challenge",
+    "type": "output-choice",
+    "concept": "combined output, variables, and arithmetic",
+    "prompt": "Read the spell from top to bottom. Which two lines appear, in order?",
+    "code": "hero = \"Pyro\"\nspells = 2 * 3\nprint(hero)\nprint(spells)",
+    "hint": "Read the stored text first. Then calculate the number of spells.",
+    "explanation": "hero stores Pyro. Multiplying 2 by 3 stores 6 in spells. Each print() displays one value on its own line.",
+    "lessonId": "python-lesson-forest-mastery",
+    "options": [
+      {
+        "id": "python-forest-goblin-king-output-a",
+        "label": "hero\nspells",
+        "feedback": "These are variable names. Unquoted names read the values stored in them."
+      },
+      {
+        "id": "python-forest-goblin-king-output-b",
+        "label": "Pyro\n5",
+        "feedback": "The text is right. The star multiplies 2 and 3; it does not add them."
+      },
+      {
+        "id": "python-forest-goblin-king-output-c",
+        "label": "Pyro\n6",
+        "feedback": "The stored text appears first, followed by the product of 2 and 3."
+      },
+      {
+        "id": "python-forest-goblin-king-output-d",
+        "label": "6\nPyro",
+        "feedback": "Both values are right, but print(hero) runs before print(spells)."
+      }
+    ],
+    "validation": {
+      "kind": "option-id",
+      "correctOptionId": "python-forest-goblin-king-output-c"
+    }
+  },
 
   // Additional exercises are ordered by each mission's exerciseIds. The original six remain first for Stage 3C.1 gameplay.
   {
@@ -457,10 +495,114 @@ export const forestExercises: readonly Exercise[] = [
     validation: { kind: 'option-id', correctOptionId: 'python-forest-broken-spells-debug-b' },
   },
 
-  { id: 'python-forest-goblin-king-variable', chapterId: 'python-forest-goblin-king', languageId: 'python', difficulty: 'practice', type: 'predict-output', concept: 'mixed variable updates', prompt: 'What number does the final line print?', code: 'flame = 4\nflame = flame + 1\nprint(flame)', hint: 'The second assignment changes flame before print() runs.', explanation: 'flame starts at 4, increases by 1, and prints 5.', validation: { kind: 'exact', acceptedAnswers: ['5'], caseSensitive: true } },
-  { id: 'python-forest-goblin-king-string', chapterId: 'python-forest-goblin-king', languageId: 'python', difficulty: 'practice', type: 'predict-output', concept: 'mixed string operations', prompt: 'What exact word is printed when the two strings join?', code: 'print("Fire" + "ball")', hint: 'The + operator joins the words without adding a space.', explanation: 'The two strings join directly to produce Fireball.', validation: { kind: 'exact', acceptedAnswers: ['Fireball'], caseSensitive: true } },
-  { id: 'python-forest-goblin-king-arithmetic', chapterId: 'python-forest-goblin-king', languageId: 'python', difficulty: 'challenge', type: 'choose-operator', concept: 'mixed arithmetic', prompt: 'Choose the operator that makes damage equal 12.', code: 'damage = 3 ____ 4\nprint(damage)', options: ['+', '-', '*', '/'], hint: 'Think of three groups of four.', explanation: '* multiplies 3 and 4 to make 12 damage.', validation: { kind: 'exact', acceptedAnswers: ['*'], caseSensitive: true } },
-  { id: 'python-forest-goblin-king-debug', chapterId: 'python-forest-goblin-king', languageId: 'python', difficulty: 'challenge', type: 'fix-mistake', concept: 'mixed debugging', prompt: 'Replace powr with the defined name so the spell prints 6.', code: 'power = 3\nprint(powr * 2)', hint: 'The assigned name contains an e before r.', explanation: 'power is defined as 3; using power * 2 prints 6.', validation: { kind: 'exact', acceptedAnswers: ['power'], caseSensitive: true } },
+  {
+    "id": "python-forest-goblin-king-variable",
+    "chapterId": "python-forest-goblin-king",
+    "languageId": "python",
+    "difficulty": "practice",
+    "type": "output-choice",
+    "concept": "mixed variable updates",
+    "prompt": "What number does the final line print after the update?",
+    "code": "flame = 4\nflame = flame + 1\nprint(flame)",
+    "hint": "Calculate the right side of the second assignment using the old value.",
+    "explanation": "flame starts at 4. Python adds 1 to that value, stores 5 back in flame, then prints 5.",
+    "lessonId": "python-lesson-forest-mastery",
+    "options": [
+      {
+        "id": "python-forest-goblin-king-variable-a",
+        "label": "4",
+        "feedback": "That is the starting value. The second assignment updates it before printing."
+      },
+      {
+        "id": "python-forest-goblin-king-variable-b",
+        "label": "5",
+        "feedback": "The update adds 1 to the old value, so flame now stores 5."
+      },
+      {
+        "id": "python-forest-goblin-king-variable-c",
+        "label": "1",
+        "feedback": "The new value is the whole calculation flame + 1, not just the added amount."
+      }
+    ],
+    "validation": {
+      "kind": "option-id",
+      "correctOptionId": "python-forest-goblin-king-variable-b"
+    }
+  },
+  {
+    "id": "python-forest-goblin-king-string",
+    "chapterId": "python-forest-goblin-king",
+    "languageId": "python",
+    "difficulty": "practice",
+    "type": "output-choice",
+    "concept": "mixed string operations",
+    "prompt": "What exact text appears when the two strings join?",
+    "code": "print(\"Fire\" + \"ball\")",
+    "hint": "Joining text inserts nothing between the pieces. Check spaces and uppercase letters.",
+    "explanation": "The + sign joins Fire and ball directly to make Fireball. No space is inserted, and the quote marks are not printed.",
+    "lessonId": "python-lesson-forest-mastery",
+    "options": [
+      {
+        "id": "python-forest-goblin-king-string-a",
+        "label": "Fire ball",
+        "feedback": "Joining adds no spaces. Neither original string contains a space."
+      },
+      {
+        "id": "python-forest-goblin-king-string-b",
+        "label": "fireball",
+        "feedback": "Joining preserves uppercase letters. The first piece starts with capital F."
+      },
+      {
+        "id": "python-forest-goblin-king-string-c",
+        "label": "\"Fireball\"",
+        "feedback": "Quotes mark the text in code; these quote marks are not part of the output."
+      },
+      {
+        "id": "python-forest-goblin-king-string-d",
+        "label": "Fireball",
+        "feedback": "Both strings join in order, keeping the capital F and adding no spaces."
+      }
+    ],
+    "validation": {
+      "kind": "option-id",
+      "correctOptionId": "python-forest-goblin-king-string-d"
+    }
+  },
+  {
+    "id": "python-forest-goblin-king-arithmetic",
+    "chapterId": "python-forest-goblin-king",
+    "languageId": "python",
+    "difficulty": "challenge",
+    "type": "missing-token",
+    "concept": "mixed arithmetic",
+    "prompt": "Choose the operator that stores the number 12 in damage.",
+    "code": "damage = 3 ____ 4\nprint(damage)",
+    "hint": "Think of three equal groups of four.",
+    "explanation": "* multiplies 3 and 4, so damage stores 12. The last line prints that number.",
+    "lessonId": "python-lesson-forest-mastery",
+    "options": [
+      {
+        "id": "python-forest-goblin-king-arithmetic-a",
+        "label": "+",
+        "feedback": "Addition gives 7. We need the total for three groups of four."
+      },
+      {
+        "id": "python-forest-goblin-king-arithmetic-b",
+        "label": "*",
+        "feedback": "Multiplication counts the three groups of four and gives 12."
+      },
+      {
+        "id": "python-forest-goblin-king-arithmetic-c",
+        "label": "-",
+        "feedback": "Subtraction gives -1. It does not combine equal groups."
+      }
+    ],
+    "validation": {
+      "kind": "option-id",
+      "correctOptionId": "python-forest-goblin-king-arithmetic-b"
+    }
+  },
+  { id: 'python-forest-goblin-king-debug', chapterId: 'python-forest-goblin-king', languageId: 'python', difficulty: 'challenge', type: 'fix-mistake', lessonId: 'python-lesson-forest-mastery', concept: 'mixed debugging', prompt: 'Final spell: type only the variable name that should replace powr so the spell prints 6.', code: 'power = 3\nprint(powr * 2)', hint: 'The assigned name contains an e before r.', explanation: 'You repaired the final spell! powr is undefined. The name power reads 3, and power * 2 produces 6. Matching a defined name fixes this bug.', validation: { kind: 'exact', acceptedAnswers: ['power'], caseSensitive: true } },
 ];
 
 export { valleyOfDecisions };

@@ -106,7 +106,7 @@ test('Short typing retains exact safe validation and the existing multiline vali
   const short = exercises.find(e => e.id === 'python-forest-awakening-repair');
   assert.equal(isExerciseAnswerCorrect(short, ' print '), true);
   for (const wrong of ['Print','prnt','print("Ready")','anything print','print; import os']) assert.equal(isExerciseAnswerCorrect(short, wrong), false);
-  const block = exercises.find(e => e.id === 'python-valley-guardian-indent');
+  const block = require('./fixtures/final-assessment-compatibility.json').legacyCodeExercises.find(e => e.id === 'python-valley-guardian-indent');
   assert.equal(isExerciseAnswerCorrect(block, 'mana = 5\nif mana >= 3:\n    print("Cast")'), true);
   assert.equal(isExerciseAnswerCorrect(block, 'mana = 5\nif mana >= 3:\nprint("Cast")'), false);
 });

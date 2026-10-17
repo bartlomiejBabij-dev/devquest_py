@@ -112,7 +112,7 @@ test('Exiting after four spells restarts from one and cannot award XP', () => {
 });
 
 test('All 30 exercises complete in order; each mission pays once and replay pays zero', () => {
-  assert.deepEqual(new Set(exercises.map((exercise) => exercise.type)), new Set(['choose-operator', 'predict-output', 'fix-mistake', 'multiple-choice', 'missing-token', 'output-choice']));
+  assert.deepEqual(new Set(exercises.map((exercise) => exercise.type)), new Set(['fix-mistake', 'multiple-choice', 'missing-token', 'output-choice']));
   let progress = initialProgressionState;
   let earned = 0;
   for (const mission of missions) {
