@@ -169,6 +169,20 @@ export const lessons: readonly LessonContent[] = [
     whyItWorks: 'The map alone is enough. True or False is True, so the spell prints Travel. A visible tower alone would also be enough.',
     importantRule: 'and needs both; or needs at least one. Even when both are True, the chosen block runs once.',
   },
+  {
+    id: 'python-lesson-not-reversal', title: 'Reverse the reflection',
+    explanation: 'Boolean values are True and False: yes-or-no answers. not reverses a Boolean. not True becomes False, and not False becomes True. Write not before the value you want to reverse.',
+    codeExample: 'has_key = False\nprint(not has_key)', expectedOutput: 'True',
+    whyItWorks: 'has_key is False because the key is missing. not False is True, so print() displays True.',
+    importantRule: 'Write not in lowercase and True or False with a capital initial. not produces a new result; it does not change the stored variable.',
+  },
+  {
+    id: 'python-lesson-not-condition', title: 'Notice what is missing',
+    explanation: 'Use not in an if condition to act when something is absent or not ready. Reverse the Boolean first, then choose the branch. A True condition runs if; a False condition chooses else when present.',
+    codeExample: 'door_open = True\nif not door_open:\n    print("Unlock")\nelse:\n    print("Step inside")', expectedOutput: 'Step inside',
+    whyItWorks: 'The door is already open. not True is False, so Python skips Unlock and prints Step inside. If door_open were False, the reminder to unlock would run.',
+    importantRule: 'Do not choose a branch from the variable alone: include not. The colon and indented blocks still follow the usual if/else rules.',
+  },
 ];
 
 export function getLessonForExercise(exercise: Exercise): LessonContent | null {

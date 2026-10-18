@@ -209,7 +209,7 @@ test('Five boss spells deal exactly 20 each; wrong/duplicate answers do nothing,
       assert.equal(attempt.phase, 'complete');
       assert.equal(attempt.result.xpAwarded, replay === 0 ? [100, 80][missionIndex] : 0);
       assert.equal(attempt.result.totalXp, [300, 450][missionIndex]);
-      assert.equal(getWorldProgress(progress, worlds[missionIndex].id).percent, missionIndex === 0 ? 100 : 50);
+      assert.equal(getWorldProgress(progress, worlds[missionIndex].id).percent, missionIndex === 0 ? 100 : 40);
     }
   }
   const forestIds = missions.slice(0, 6).map(m => m.id);

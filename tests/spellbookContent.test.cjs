@@ -32,9 +32,10 @@ const expectedTitles = [
   'elif and multiple branches',
   'and: both conditions',
   'or: at least one condition',
+  'not: reverse a Boolean',
 ];
 
-test('Spellbook covers all seventeen beginner Python concepts with complete content', () => {
+test('Spellbook covers all eighteen beginner Python concepts with complete content', () => {
   assert.deepEqual(spellbookEntries.map((entry) => entry.title), expectedTitles);
   assert.equal(new Set(spellbookEntries.map((entry) => entry.id)).size, spellbookEntries.length);
   const chapterIds = new Set(chapters.map((chapter) => chapter.id));
@@ -47,7 +48,7 @@ test('Spellbook covers all seventeen beginner Python concepts with complete cont
   }
 });
 
-test('All 46 exercises resolve to a valid relevant Spellbook entry', () => {
+test('All 49 exercises resolve to a valid relevant Spellbook entry', () => {
   const exerciseIds = new Set(exercises.map((exercise) => exercise.id));
   assert.deepEqual(new Set(Object.keys(exerciseSpellbookEntryIds)), exerciseIds);
   const entryIds = new Set(spellbookEntries.map((entry) => entry.id));

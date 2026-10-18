@@ -3,12 +3,12 @@ import type { Chapter, Exercise, Mission, World } from './worldTypes';
 export const valleyOfDecisions: World = {
   id: 'python-valley-of-decisions', languageId: 'python', title: 'Valley of Decisions',
   description: 'Beyond the forest, ancient gates respond to your choices. Turn conditions into Python spells.',
-  chapterIds: ['python-valley-crossroads', 'python-valley-guardian', 'python-valley-three-gates', 'python-valley-twin-runes'],
+  chapterIds: ['python-valley-crossroads', 'python-valley-guardian', 'python-valley-three-gates', 'python-valley-twin-runes', 'python-valley-mirror-of-truth'],
   prerequisiteMissionIds: [
     'python-forest-awakening-01', 'python-forest-fire-essence-01', 'python-forest-mana-stones-01',
     'python-forest-talking-trees-01', 'python-forest-broken-spells-01', 'python-forest-goblin-king-01',
   ],
-  xpReward: 210,
+  xpReward: 240,
   unlockRequirement: 'Complete all six chapters of Forest of Variables, including the Goblin King.',
 };
 
@@ -37,6 +37,12 @@ export const valleyChapters: readonly Chapter[] = [
     learningObjective: 'Combine conditions with and for both, or with or for at least one.',
     missionIds: ['python-valley-twin-runes-01'], prerequisiteMissionIds: ['python-valley-three-gates-01'], xpReward: 30,
   },
+  {
+    id: 'python-valley-mirror-of-truth', worldId: valleyOfDecisions.id, title: 'Mirror of Truth',
+    description: 'An enchanted mirror reverses the glow of ancient seals. Read what is missing to reveal the passage.',
+    learningObjective: 'Use not to reverse True and False and check when something is absent.',
+    missionIds: ['python-valley-mirror-of-truth-01'], prerequisiteMissionIds: ['python-valley-twin-runes-01'], xpReward: 30,
+  },
 ];
 
 export const valleyMissions: readonly Mission[] = [
@@ -62,6 +68,12 @@ export const valleyMissions: readonly Mission[] = [
     id: 'python-valley-twin-runes-01', chapterId: 'python-valley-twin-runes', title: 'The Twin Runes',
     description: 'Light the paired runes with three spells using and and or.', encounter: 'guardian',
     exerciseIds: ['python-valley-twin-runes-and', 'python-valley-twin-runes-operator', 'python-valley-twin-runes-or'],
+    prerequisiteMissionIds: [], xpReward: 30,
+  },
+  {
+    id: 'python-valley-mirror-of-truth-01', chapterId: 'python-valley-mirror-of-truth', title: 'Mirror of Truth',
+    description: 'Cast three reversal spells with not to clear the enchanted mirror.', encounter: 'guardian',
+    exerciseIds: ['python-valley-mirror-reversal', 'python-valley-mirror-keyword', 'python-valley-mirror-passage'],
     prerequisiteMissionIds: [], xpReward: 30,
   },
 ];
@@ -508,5 +520,47 @@ export const valleyExercises: readonly Exercise[] = [
       { id: 'python-valley-twin-runes-or-c', label: 'Explore\nExplore', feedback: 'The two conditions choose one block. They do not each run a separate copy of print().' },
     ],
     validation: { kind: 'option-id', correctOptionId: 'python-valley-twin-runes-or-a' },
+  },
+  {
+    id: 'python-valley-mirror-reversal', chapterId: 'python-valley-mirror-of-truth', languageId: 'python', difficulty: 'intro',
+    type: 'output-choice', concept: 'reversing a Boolean', lessonId: 'python-lesson-not-reversal',
+    prompt: 'The ward is active. What Boolean does its reflection print?',
+    code: 'ward_active = True\nprint(not ward_active)',
+    hint: 'Read the stored value first, then reverse it with not.',
+    explanation: 'ward_active holds True. not True becomes False, so False prints. The expression does not change the stored value of ward_active.',
+    options: [
+      { id: 'python-valley-mirror-reversal-a', label: 'True', feedback: 'True is the stored value, but not reverses it before print() displays the result.' },
+      { id: 'python-valley-mirror-reversal-b', label: 'False', feedback: 'not reverses the Boolean True to False. That is the value print() displays.' },
+      { id: 'python-valley-mirror-reversal-c', label: 'not True', feedback: 'Python evaluates not rather than printing the code as text. It displays the resulting Boolean.' },
+    ],
+    validation: { kind: 'option-id', correctOptionId: 'python-valley-mirror-reversal-b' },
+  },
+  {
+    id: 'python-valley-mirror-keyword', chapterId: 'python-valley-mirror-of-truth', languageId: 'python', difficulty: 'practice',
+    type: 'missing-token', concept: 'checking for a missing shield', lessonId: 'python-lesson-not-condition',
+    prompt: 'Raise a shield only when one is missing. Which keyword reverses has_shield?',
+    code: 'has_shield = False\nif ____ has_shield:\n    print("Raise shield")\nelse:\n    print("Ready")',
+    hint: 'You need one operator that turns False into True, not an operator joining two conditions.',
+    explanation: 'not has_shield becomes not False, which is True. The if block prints Raise shield. Checking what is missing helps the player prepare.',
+    options: [
+      { id: 'python-valley-mirror-keyword-a', label: 'not', feedback: 'not reverses False to True, so the shield reminder runs when a shield is missing.' },
+      { id: 'python-valley-mirror-keyword-b', label: 'and', feedback: 'and joins two conditions and needs both. There is no condition to its left here; use an operator that reverses one Boolean.' },
+      { id: 'python-valley-mirror-keyword-c', label: 'or', feedback: 'or joins two conditions; it does not reverse this value. This blank needs an operator for one Boolean.' },
+    ],
+    validation: { kind: 'option-id', correctOptionId: 'python-valley-mirror-keyword-a' },
+  },
+  {
+    id: 'python-valley-mirror-passage', chapterId: 'python-valley-mirror-of-truth', languageId: 'python', difficulty: 'practice',
+    type: 'output-choice', concept: 'opening a path when a seal is gone', lessonId: 'python-lesson-not-condition',
+    prompt: 'Final spell: the seal is gone. Which message reveals the path through the mirror?',
+    code: 'seal_intact = False\nif not seal_intact:\n    print("Mirror cleared!")\nelse:\n    print("Break the seal")',
+    hint: 'Evaluate not False before deciding between if and else.',
+    explanation: 'The seal is no longer intact: seal_intact is False. not False is True, so the if branch prints Mirror cleared! and skips else. Your final reversal spell reveals the passage.',
+    options: [
+      { id: 'python-valley-mirror-passage-a', label: 'Break the seal', feedback: 'That is the else branch. The condition includes not, so the stored False becomes a True condition.' },
+      { id: 'python-valley-mirror-passage-b', label: 'Mirror cleared!\nBreak the seal', feedback: 'Only one branch runs. Once the True condition chooses if, Python skips the else block.' },
+      { id: 'python-valley-mirror-passage-c', label: 'Mirror cleared!', feedback: 'not False is True. The if branch runs once, revealing the clear passage.' },
+    ],
+    validation: { kind: 'option-id', correctOptionId: 'python-valley-mirror-passage-c' },
   },
 ];

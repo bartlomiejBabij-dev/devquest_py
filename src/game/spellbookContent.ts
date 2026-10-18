@@ -143,10 +143,20 @@ export const spellbookEntries: readonly SpellbookEntry[] = [
     whyItWorks: 'Knowing the rune is enough, even without a pass. The condition is True, so Passage prints once.',
     commonMistake: 'Treating or as exactly one. Both True is allowed and still runs the block only once.',
   },
+  {
+    id: 'python-not', title: 'not: reverse a Boolean', chapterId: 'python-valley-mirror-of-truth',
+    explanation: 'not reverses a Boolean: not True is False, and not False is True. Put it before a value, including in an if condition, to check that something is absent.',
+    codeExample: 'has_lantern = False\nif not has_lantern:\n    print("Pack a lantern")\nelse:\n    print("Light the path")', expectedOutput: 'Pack a lantern',
+    whyItWorks: 'The lantern is missing, so has_lantern is False. not False becomes True and the if block prints the reminder. The else block is skipped.',
+    commonMistake: 'Thinking not changes the variable itself. It produces the opposite Boolean for this expression; has_lantern still stores False.',
+  },
 ];
 
 /** Every exercise links to reference material, never to its answer. */
 export const exerciseSpellbookEntryIds: Readonly<Record<string, string>> = {
+  'python-valley-mirror-reversal': 'python-not',
+  'python-valley-mirror-keyword': 'python-not',
+  'python-valley-mirror-passage': 'python-not',
   'python-valley-three-gates-output': 'python-elif',
   'python-valley-three-gates-keyword': 'python-elif',
   'python-valley-three-gates-first': 'python-elif',

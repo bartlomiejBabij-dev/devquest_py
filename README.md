@@ -1,6 +1,6 @@
 # DevQuest
 
-A local, playable Expo fantasy RPG that teaches beginner Python concepts. Forest of Variables has six five-exercise missions; completing it unlocks four Valley of Decisions missions: two with five exercises and two short adventures with three. Progression is saved locally. The original three-spell Goblin battle remains playable from Home.
+A local, playable Expo fantasy RPG that teaches beginner Python concepts. Forest of Variables has six five-exercise missions; completing it unlocks five Valley of Decisions missions: two with five exercises and three short adventures with three. Progression is saved locally. The original three-spell Goblin battle remains playable from Home.
 
 ## Run in Expo Go
 
@@ -23,7 +23,7 @@ Answers are checked against local challenge data; no Python code is executed. Co
 
 New players see a three-screen Python introduction. Skip and Start Adventure save its completion under a separate local key; players with completed missions bypass it. Learn Python on Home reopens it.
 
-The Spellbook on Home contains seventeen short Python references. Each world mission can open the relevant entry without leaving the current exercise. Personal notes are tied to exercise IDs and saved locally with an explicit Save Note action; they can be edited or deleted and do not affect XP or progression.
+The Spellbook on Home contains eighteen short Python references. Each world mission can open the relevant entry without leaving the current exercise. Personal notes are tied to exercise IDs and saved locally with an explicit Save Note action; they can be edited or deleted and do not affect XP or progression.
 
 My Profile saves only a trimmed 3–20 character nickname and one of five local avatars under `devquest.profile.v1`. Saves are explicit and queued. Missing or damaged profiles fall back to Python Apprentice/Mage; unreadable or future-version saves are protected from replacement. Profile editing never writes to progression, notes, or onboarding.
 
@@ -96,3 +96,10 @@ Regular mission counters now follow their authored exercise arrays, supporting t
 After The Guardian's Choice, The Three Gates teaches `elif` and first-match branching. It unlocks The Twin Runes, which teaches `and` and `or`. Both missions contain three tap questions, short introductory lessons, specific wrong-answer feedback and relevant Spellbook references. Each pays 30 XP once; replays pay zero. There are now 46 exercises (44 tap questions and two short typed answers), ten missions and seventeen Spellbook entries.
 
 Existing saves retain their IDs, XP, notes and settings without migration. Valley percentages reflect its four available chapters; an old fully completed 450-XP save now shows 2/4 Valley chapters complete. Completing the new missions adds six completed exercises and brings the available total to 510 XP. See [Stage 3G.3A verification](docs/stage-3g3a.md) for changes, compatibility tests and Android coverage.
+
+
+### Mirror of Truth (Stage 3G.3B)
+
+After The Twin Runes, Mirror of Truth teaches Boolean `not` through three tap questions: predict a reversed Boolean, choose the missing keyword, and reveal the mirror passage with an `if not` condition. Two concise lessons introduce reversal and checking for absence, with automatic introductions skipped on completed replays. A new Spellbook reference explains both Boolean reversals and why `not` does not change the stored variable.
+
+The mission awards 30 XP once; replay awards zero. Existing IDs, content, rewards, saves, notes and settings remain unchanged. The map uses five available Valley chapters; a completed Stage 3G.3A save keeps 510 XP and 46 completed exercises while showing 4/5 (80%) Valley progress. Completing Mirror brings the available totals to 540 XP, eleven missions and 49 exercises (47 tap and two short typed answers), with 26 lessons and eighteen Spellbook references. See [Stage 3G.3B verification](docs/stage-3g3b.md).

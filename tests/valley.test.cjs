@@ -70,7 +70,7 @@ test('Two worlds contain unique linked IDs, exactly ten new exercises and five p
     assert.equal(new Set(mission.exerciseIds).size, 5);
     for (const id of mission.exerciseIds) assert.equal(valleyExercises.find(e => e.id === id)?.chapterId, chapter.id);
   }
-  assert.equal(valleyOfDecisions.xpReward, 210);
+  assert.equal(valleyOfDecisions.xpReward, 240);
   assert.equal(valleyMissions.reduce((sum, m) => sum + m.xpReward, 0), 150);
 });
 
@@ -167,7 +167,7 @@ test('Both missions use existing explanations/Continue, unlock the next chapter,
     assert.deepEqual(getWorldProgress(progress, forestOfVariables.id), { completed: 6, total: 6, percent: 100 });
   });
   assert.equal(getTotalEarnedXp(progress), 450);
-  assert.deepEqual(getWorldProgress(progress, valleyOfDecisions.id), { completed: 2, total: 4, percent: 50 });
+  assert.deepEqual(getWorldProgress(progress, valleyOfDecisions.id), { completed: 2, total: 5, percent: 40 });
 });
 
 test('A partial World 2 attempt grants nothing and restarts without altering saved Forest progress', () => {
