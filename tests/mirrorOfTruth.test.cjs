@@ -38,10 +38,10 @@ test('Mirror only appends content: ten prior missions, 46 exercises, 24 lessons,
 });
 
 test('Registry adds exactly one three-tap mission with unique IDs, 30 XP and accurate totals', () => {
-  assert.deepEqual([worlds.length, chapters.length, missions.length, exercises.length, lessons.length, spellbookEntries.length], [3, 14, 14, 60, 31, 20]);
-  assert.equal(exercises.filter(isChoiceExercise).length, 58);
-  assert.equal(exercises.filter(e => !isChoiceExercise(e)).length, 2);
-  assert.deepEqual(missions.filter(m => !Object.hasOwn(baseline.missions, m.id)).map(m => m.id), [id, 'python-valley-decision-keeper-01', 'python-caverns-repeating-road-01', 'python-caverns-lanterns-of-range-01']);
+  assert.deepEqual([worlds.length, chapters.length, missions.length, exercises.length, lessons.length, spellbookEntries.length], [3, 16, 16, 66, 33, 20]);
+  assert.equal(exercises.filter(isChoiceExercise).length, 60);
+  assert.equal(exercises.filter(e => !isChoiceExercise(e) && e.type !== 'code-builder').length, 2);
+  assert.deepEqual(missions.filter(m => !Object.hasOwn(baseline.missions, m.id)).map(m => m.id), [id, 'python-valley-decision-keeper-01', 'python-caverns-repeating-road-01', 'python-caverns-lanterns-of-range-01', 'python-caverns-echo-bridge-01', 'python-caverns-counting-tower-01']);
   assert.equal(mission.title, 'Mirror of Truth');
   assert.equal(mission.xpReward, 30);
   assert.equal(mission.chapterId, chapterId);
@@ -50,7 +50,7 @@ test('Registry adds exactly one three-tap mission with unique IDs, 30 XP and acc
   assert.ok(targets.every(e => isChoiceExercise(e) && e.chapterId === chapterId));
   const allIds = [...worlds, ...chapters, ...missions, ...exercises, ...lessons, ...spellbookEntries, ...exercises.filter(isChoiceExercise).flatMap(e => e.options)].map(v => v.id);
   assert.equal(new Set(allIds).size, allIds.length);
-  assert.equal(missions.reduce((sum, m) => sum + m.xpReward, 0), 700);
+  assert.equal(missions.reduce((sum, m) => sum + m.xpReward, 0), 780);
   assert.equal(missions.filter(m => valleyOfDecisions.chapterIds.includes(m.chapterId)).reduce((sum, m) => sum + m.xpReward, 0), valleyOfDecisions.xpReward);
 });
 
@@ -217,8 +217,8 @@ test('Two-answer exit and review retain zero extra XP; a fabricated last-questio
 
 test('Version-1 saves keep all old XP and records; Mirror persists across storage instances and still replays for zero', async () => {
   assert.equal(PROGRESSION_STORAGE_KEY, 'devquest.progression');
-  const xp = [0, 20, 50, 90, 140, 200, 300, 370, 450, 480, 510, 540, 640, 670, 700];
-  const exerciseCounts = [0, 5, 10, 15, 20, 25, 30, 35, 40, 43, 46, 49, 54, 57, 60];
+  const xp = [0, 20, 50, 90, 140, 200, 300, 370, 450, 480, 510, 540, 640, 670, 700, 740, 780];
+  const exerciseCounts = [0, 5, 10, 15, 20, 25, 30, 35, 40, 43, 46, 49, 54, 57, 60, 63, 66];
   for (let count = 0; count <= missions.length; count++) {
     const completedMissionIds = missions.slice(0, count).map(m => m.id);
     const payload = { version: 1, completedMissionIds };

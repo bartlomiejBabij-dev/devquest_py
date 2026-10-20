@@ -50,7 +50,7 @@ test('Spellbook covers all twenty beginner Python concepts with complete content
   }
 });
 
-test('All 60 exercises resolve to a valid relevant Spellbook entry', () => {
+test('All 66 exercises resolve to a valid relevant Spellbook entry', () => {
   const exerciseIds = new Set(exercises.map((exercise) => exercise.id));
   assert.deepEqual(new Set(Object.keys(exerciseSpellbookEntryIds)), exerciseIds);
   const entryIds = new Set(spellbookEntries.map((entry) => entry.id));
@@ -67,7 +67,7 @@ test('Reference examples avoid copying exercise code or giving its exact output 
   for (const exercise of exercises) {
     const entry = getSpellbookEntryForExercise(exercise.id);
     assert.notEqual(entry.codeExample, exercise.code, exercise.id);
-    const answers = exercise.validation.kind === 'option-id' ? exercise.options.filter(o => o.id === exercise.validation.correctOptionId).map(o => o.label) : exercise.validation.acceptedAnswers;
+    const answers = exercise.validation.kind === 'option-id' ? exercise.options.filter(o => o.id === exercise.validation.correctOptionId).map(o => o.label) : exercise.type === 'code-builder' ? [exercise.expectedOutput] : exercise.validation.acceptedAnswers;
     assert.ok(!answers.includes(entry.expectedOutput), `${exercise.id}: reference output is an exercise answer`);
   }
 });

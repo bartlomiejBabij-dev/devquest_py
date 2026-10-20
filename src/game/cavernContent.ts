@@ -1,13 +1,14 @@
 import { valleyMissions } from './valleyContent';
+import { builderChapters, builderExercises, builderMissions } from './cavernBuilderContent';
 import type { Chapter, Exercise, Mission, World } from './worldTypes';
 
 export const loopCaverns: World = {
   id: 'python-loop-caverns', languageId: 'python', title: 'Loop Caverns',
   description: 'Blue crystals pulse beneath the valley. Use repeating Python spells to awaken ancient mechanisms.',
-  chapterIds: ['python-caverns-repeating-road', 'python-caverns-lanterns-of-range'],
+  chapterIds: ['python-caverns-repeating-road', 'python-caverns-lanterns-of-range', ...builderChapters.map(chapter => chapter.id)],
   prerequisiteMissionIds: valleyMissions.map(mission => mission.id),
   unlockRequirement: 'Complete all six chapters of Valley of Decisions, including The Decision Keeper.',
-  xpReward: 60,
+  xpReward: 140,
 };
 
 export const cavernChapters: readonly Chapter[] = [
@@ -24,6 +25,7 @@ export const cavernChapters: readonly Chapter[] = [
     missionIds: ['python-caverns-lanterns-of-range-01'],
     prerequisiteMissionIds: ['python-caverns-repeating-road-01'], xpReward: 30,
   },
+  ...builderChapters,
 ];
 
 export const cavernMissions: readonly Mission[] = [
@@ -39,6 +41,7 @@ export const cavernMissions: readonly Mission[] = [
     exerciseIds: ['python-caverns-range-zero', 'python-caverns-range-stop', 'python-caverns-range-start'],
     prerequisiteMissionIds: [], xpReward: 30,
   },
+  ...builderMissions,
 ];
 
 export const cavernExercises: readonly Exercise[] = [
@@ -126,4 +129,5 @@ export const cavernExercises: readonly Exercise[] = [
     ],
     validation: { kind: 'option-id', correctOptionId: 'python-caverns-range-start-b' },
   },
+  ...builderExercises,
 ];

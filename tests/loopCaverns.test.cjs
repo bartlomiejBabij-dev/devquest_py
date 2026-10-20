@@ -8,6 +8,8 @@ require.extensions['.ts'] = (m, f) => m._compile(ts.transpileModule(fs.readFileS
 }).outputText, f);
 const { worlds, chapters, missions, exercises, loopCaverns, valleyOfDecisions, forestOfVariables } = require('../src/game/worldContent.ts');
 const { cavernChapters, cavernMissions, cavernExercises } = require('../src/game/cavernContent.ts');
+const foundationMissions = cavernMissions.slice(0, 2);
+const foundationExercises = cavernExercises.slice(0, 6);
 const { lessons, getLessonForExercise } = require('../src/game/lessonContent.ts');
 const { initialLessonSession, getVisibleLesson, lessonSessionReducer } = require('../src/game/lessonSession.ts');
 const { isChoiceExercise, isExerciseAnswerCorrect, getIncorrectAnswerFeedback } = require('../src/game/exerciseValidation.ts');
@@ -35,19 +37,20 @@ test('Loop Caverns preserves every prior world, chapter, mission, exercise, less
   assert.equal(getTotalEarnedXp(oldComplete), 640);
 });
 
-test('The registry adds only two three-tap missions, four lessons and two references with globally unique IDs', () => {
-  assert.deepEqual([worlds.length, chapters.length, missions.length, exercises.length, lessons.length, spellbookEntries.length], [3, 14, 14, 60, 31, 20]);
-  assert.equal(exercises.filter(isChoiceExercise).length, 58);
-  assert.equal(exercises.filter(e => !isChoiceExercise(e)).length, 2);
+test('The foundation retains its two three-tap missions within the expanded registry', () => {
+  assert.deepEqual([worlds.length, chapters.length, missions.length, exercises.length, lessons.length, spellbookEntries.length], [3, 16, 16, 66, 33, 20]);
+  assert.equal(exercises.filter(isChoiceExercise).length, 60);
+  assert.equal(exercises.filter(e => !isChoiceExercise(e) && e.type !== 'code-builder').length, 2);
   assert.deepEqual(missions.filter(m => !Object.hasOwn(baseline.missions, m.id)), cavernMissions);
-  assert.deepEqual(cavernMissions.map(m => [m.title, m.exerciseIds.length, m.xpReward]), [['The Repeating Road', 3, 30], ['Lanterns of Range', 3, 30]]);
-  assert.equal(cavernExercises.length, 6);
-  assert.ok(cavernExercises.every(isChoiceExercise));
+  assert.deepEqual(foundationMissions.map(m => [m.title, m.exerciseIds.length, m.xpReward]), [['The Repeating Road', 3, 30], ['Lanterns of Range', 3, 30]]);
+  assert.equal(foundationExercises.length, 6);
+  assert.equal(cavernExercises.length, 12);
+  assert.ok(foundationExercises.every(isChoiceExercise));
   assert.ok(cavernMissions.every(m => !isBossMission(m.id)));
   const ids = [...worlds, ...chapters, ...missions, ...exercises, ...lessons, ...spellbookEntries, ...exercises.filter(isChoiceExercise).flatMap(e => e.options)].map(v => v.id);
   assert.equal(new Set(ids).size, ids.length);
-  assert.equal(missions.reduce((sum, m) => sum + m.xpReward, 0), 700);
-  assert.equal(loopCaverns.xpReward, 60);
+  assert.equal(missions.reduce((sum, m) => sum + m.xpReward, 0), 780);
+  assert.equal(loopCaverns.xpReward, 140);
   assert.deepEqual(loopCaverns.chapterIds, cavernChapters.map(c => c.id));
 });
 
@@ -87,7 +90,7 @@ const reviewed = [
 ];
 
 test('Reviewed Python questions accept exactly one stable option ID and reject wrong, foreign and display-label answers', () => {
-  cavernExercises.forEach((e, index) => {
+  foundationExercises.forEach((e, index) => {
     const [code, letter, label] = reviewed[index];
     assert.equal(e.code, code);
     assert.equal(e.validation.correctOptionId, `${e.id}-${letter}`);
@@ -100,7 +103,7 @@ test('Reviewed Python questions accept exactly one stable option ID and reject w
       assert.ok(o.feedback.length > 30);
       if (o.id !== e.validation.correctOptionId) assert.equal(getIncorrectAnswerFeedback(e, o.id), o.feedback);
     }
-    for (const invalid of ['', 'unknown', 'toString', ` ${e.validation.correctOptionId}`, ...cavernExercises.filter(v => v !== e).map(v => v.validation.correctOptionId)]) assert.equal(isExerciseAnswerCorrect(e, invalid), false);
+    for (const invalid of ['', 'unknown', 'toString', ` ${e.validation.correctOptionId}`, ...foundationExercises.filter(v => v !== e).map(v => v.validation.correctOptionId)]) assert.equal(isExerciseAnswerCorrect(e, invalid), false);
     assert.ok(e.code.split('\n').every(line => line.length <= 25), 'compact source for small screens');
   });
   const repeat = (word, count) => Array(count).fill(word).join('\n');
@@ -125,7 +128,7 @@ test('Four concise lessons precede unfamiliar concepts, use different examples, 
     assert.deepEqual([lesson.codeExample, lesson.expectedOutput], expected[i]);
     assert.ok([lesson.explanation, lesson.whyItWorks, lesson.importantRule].join(' ').split(/\s+/).length < 125);
   });
-  cavernMissions.forEach(mission => {
+  foundationMissions.forEach(mission => {
     let session = initialLessonSession;
     const targets = mission.exerciseIds.map(id => exercises.find(e => e.id === id));
     targets.forEach((e, i) => {
@@ -172,13 +175,13 @@ test('Each three-spell mission pays 30 XP only after its last answer; replay pay
   const road = play(oldComplete, cavernMissions[0], 30);
   assert.deepEqual(road.attempt.result.newlyUnlockedChapterIds, [cavernChapters[1].id]);
   assert.equal(getTotalEarnedXp(road.progress), 670);
-  assert.deepEqual(getWorldProgress(road.progress, loopCaverns.id), { completed: 1, total: 2, percent: 50 });
+  assert.deepEqual(getWorldProgress(road.progress, loopCaverns.id), { completed: 1, total: 4, percent: 25 });
   assert.equal(play(road.progress, cavernMissions[0], 0).progress, road.progress);
   const lanterns = play(road.progress, cavernMissions[1], 30);
   assert.equal(getTotalEarnedXp(lanterns.progress), 700);
-  assert.deepEqual(lanterns.attempt.result.newlyUnlockedChapterIds, []);
+  assert.deepEqual(lanterns.attempt.result.newlyUnlockedChapterIds, ['python-caverns-echo-bridge']);
   assert.equal(play(lanterns.progress, cavernMissions[1], 0).progress, lanterns.progress);
-  assert.deepEqual(getWorldProgress(lanterns.progress, loopCaverns.id), { completed: 2, total: 2, percent: 100 });
+  assert.deepEqual(getWorldProgress(lanterns.progress, loopCaverns.id), { completed: 2, total: 4, percent: 50 });
   assert.equal(isWorldCleared(lanterns.progress, loopCaverns.id), false);
   for (const world of [forestOfVariables, valleyOfDecisions]) {
     assert.equal(isWorldCleared(lanterns.progress, world.id), true);
@@ -187,8 +190,8 @@ test('Each three-spell mission pays 30 XP only after its last answer; replay pay
 });
 
 test('Every old save keeps XP and profile data; new saves retain 670/700 XP and stable notes without migrations', async () => {
-  const xp = [0, 20, 50, 90, 140, 200, 300, 370, 450, 480, 510, 540, 640, 670, 700];
-  const counts = [0, 5, 10, 15, 20, 25, 30, 35, 40, 43, 46, 49, 54, 57, 60];
+  const xp = [0, 20, 50, 90, 140, 200, 300, 370, 450, 480, 510, 540, 640, 670, 700, 740, 780];
+  const counts = [0, 5, 10, 15, 20, 25, 30, 35, 40, 43, 46, 49, 54, 57, 60, 63, 66];
   const profile = JSON.stringify({ version: 1, nickname: 'Crystal Mage', avatarId: 'wizard' });
   assert.equal(parseSavedProfile(profile).profile.nickname, 'Crystal Mage');
   for (let n = 0; n <= missions.length; n++) {
@@ -226,7 +229,7 @@ test('New references explain exact outputs and map/mission routes keep each worl
   const range = spellbookEntries.find(e => e.id === 'python-range');
   assert.deepEqual([loop.codeExample, loop.expectedOutput], ['for bell in range(2):\n    print("Ring")', 'Ring\nRing']);
   assert.deepEqual([range.codeExample, range.expectedOutput], ['for rune in range(2):\n    print(rune)\nfor rune in range(5, 7):\n    print(rune)', '0\n1\n5\n6']);
-  assert.deepEqual(cavernExercises.map(e => getSpellbookEntryForExercise(e.id).id), ['python-for-loops', 'python-for-loops', 'python-for-loops', 'python-range', 'python-range', 'python-range']);
+  assert.deepEqual(foundationExercises.map(e => getSpellbookEntryForExercise(e.id).id), ['python-for-loops', 'python-for-loops', 'python-for-loops', 'python-range', 'python-range', 'python-range']);
   for (const m of missions) {
     const worldId = chapters.find(c => c.id === m.chapterId).worldId;
     assert.deepEqual(worldMapForMission(m.id), { pathname: '/world-map', params: { worldId } });

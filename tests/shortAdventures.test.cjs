@@ -54,11 +54,11 @@ test('Expansion preserves all 40 exercises, eight missions, old chapters, 21 les
 
 test('The original two short adventures retain their order, six unique tap exercises and 30 XP each', () => {
   assert.equal(worlds.length, 3);
-  assert.equal(chapters.length, 14);
-  assert.equal(missions.length, 14);
-  assert.equal(exercises.length, 60);
+  assert.equal(chapters.length, 16);
+  assert.equal(missions.length, 16);
+  assert.equal(exercises.length, 66);
   for (const items of [worlds, chapters, missions, exercises, lessons, spellbookEntries]) assert.equal(new Set(items.map(item => item.id)).size, items.length);
-  assert.deepEqual(missions.filter(m => !oldIds.includes(m.id)).map(m => m.id), [gatesId, runesId, 'python-valley-mirror-of-truth-01', 'python-valley-decision-keeper-01', 'python-caverns-repeating-road-01', 'python-caverns-lanterns-of-range-01']);
+  assert.deepEqual(missions.filter(m => !oldIds.includes(m.id)).map(m => m.id), [gatesId, runesId, 'python-valley-mirror-of-truth-01', 'python-valley-decision-keeper-01', 'python-caverns-repeating-road-01', 'python-caverns-lanterns-of-range-01', 'python-caverns-echo-bridge-01', 'python-caverns-counting-tower-01']);
   assert.deepEqual(newMissions.map(m => m.title), ['The Three Gates', 'The Twin Runes']);
   assert.deepEqual(newMissions.map(m => m.xpReward), [30, 30]);
   assert.deepEqual(newMissions.map(m => m.exerciseIds.length), [3, 3]);
@@ -288,8 +288,8 @@ test('Goblin King still requires five spells at 20 HP each and all six Forest mi
 
 test('Old and new version-1 saves survive fresh storage instances with exact XP, exercise counts and unchanged Forest achievements', async () => {
   assert.equal(PROGRESSION_STORAGE_KEY, 'devquest.progression');
-  const xp = [0, 20, 50, 90, 140, 200, 300, 370, 450, 480, 510, 540, 640, 670, 700];
-  const counts = [0, 5, 10, 15, 20, 25, 30, 35, 40, 43, 46, 49, 54, 57, 60];
+  const xp = [0, 20, 50, 90, 140, 200, 300, 370, 450, 480, 510, 540, 640, 670, 700, 740, 780];
+  const counts = [0, 5, 10, 15, 20, 25, 30, 35, 40, 43, 46, 49, 54, 57, 60, 63, 66];
   const completedAchievements = getAchievements(allOldComplete);
   for (let n = 0; n <= missions.length; n++) {
     const ids = missions.slice(0, n).map(m => m.id);

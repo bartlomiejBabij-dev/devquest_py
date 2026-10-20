@@ -1,11 +1,13 @@
 import type { ChoiceExercise, Exercise } from './worldTypes';
 import { matchesPythonLines } from './pythonLinesValidation';
+import { isCodeBuilderExercise, isCodeBuilderAnswerCorrect } from './codeBuilder';
 
 export function isChoiceExercise(exercise: Exercise): exercise is ChoiceExercise {
   return exercise.type === 'multiple-choice' || exercise.type === 'missing-token' || exercise.type === 'output-choice';
 }
 
 export function isExerciseAnswerCorrect(exercise: Exercise, answer: string): boolean {
+  if (isCodeBuilderExercise(exercise)) return isCodeBuilderAnswerCorrect(exercise, answer);
   if (isChoiceExercise(exercise)) {
     return exercise.options.some((option) => option.id === answer) && answer === exercise.validation.correctOptionId;
   }

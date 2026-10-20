@@ -168,6 +168,12 @@ export const spellbookEntries: readonly SpellbookEntry[] = [
 
 /** Every exercise links to reference material, never to its answer. */
 export const exerciseSpellbookEntryIds: Readonly<Record<string, string>> = {
+  'python-caverns-bridge-output': 'python-for-loops',
+  'python-caverns-bridge-build': 'python-for-loops',
+  'python-caverns-bridge-crossing': 'python-for-loops',
+  'python-caverns-tower-boundary': 'python-range',
+  'python-caverns-tower-build': 'python-range',
+  'python-caverns-tower-summit': 'python-range',
   'python-caverns-road-echo': 'python-for-loops',
   'python-caverns-road-keyword': 'python-for-loops',
   'python-caverns-road-body': 'python-for-loops',

@@ -83,7 +83,15 @@ export type CodeExercise = ExerciseBase & {
   | { type: 'choose-operator'; options: readonly string[] }
 );
 
-export type Exercise = CodeExercise | ChoiceExercise;
+export type CodeBuilderExercise = ExerciseBase & {
+  type: 'code-builder';
+  /** Authored display order, intentionally different from the answer order. */
+  fragments: readonly { id: string; code: string }[];
+  expectedOutput: string;
+  validation: { kind: 'fragment-sequence'; expectedFragmentIds: readonly string[] };
+};
+
+export type Exercise = CodeExercise | ChoiceExercise | CodeBuilderExercise;
 
 export interface ProgressionState {
   completedMissionIds: readonly string[];

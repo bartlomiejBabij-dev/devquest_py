@@ -5,6 +5,8 @@ import { Alert, Animated, Keyboard, Modal, Pressable, StyleSheet, Text, TextInpu
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useReducedMotion } from 'react-native-reanimated';
 import { AnswerChoices } from '@/components/AnswerChoices';
+import { CodeBuilder } from '@/components/CodeBuilder';
+import { editBuilderAnswer, isCodeBuilderExercise } from '@/game/codeBuilder';
 import { LessonCard } from '@/components/LessonCard';
 import { isChoiceExercise, getIncorrectAnswerFeedback } from '@/game/exerciseValidation';
 import { getLessonForExercise } from '@/game/lessonContent';
@@ -168,7 +170,7 @@ export default function WorldMissionScreen() {
   const spellbookEntry = getSpellbookEntryForExercise(exercise.id);
   const lesson = getLessonForExercise(exercise);
   const lessonView = getVisibleLesson(exercise, attempt.phase, isMissionCompleted(progression, missionId), lessonSession);
-  const multiline = !isChoiceExercise(exercise) && (exercise.type === 'predict-output' || exercise.validation.kind === 'python-lines') && exercise.validation.acceptedAnswers.some((item) => item.includes('\n'));
+  const multiline = !isChoiceExercise(exercise) && !isCodeBuilderExercise(exercise) && (exercise.type === 'predict-output' || exercise.validation.kind === 'python-lines') && exercise.validation.acceptedAnswers.some((item) => item.includes('\n'));
   const solved = attempt.phase === 'solved';
   const result = attempt.result;
   const newlyUnlocked = result?.newlyUnlockedChapterIds.map((id) => chapters.find((item) => item.id === id)?.title).filter(Boolean) ?? [];
@@ -227,7 +229,14 @@ export default function WorldMissionScreen() {
             {lesson ? <Pressable accessibilityRole="button" accessibilityLabel="Review Lesson" onPress={() => { Keyboard.dismiss(); dispatchLesson({ type: 'review' }); }}
               style={({ pressed }) => [styles.reviewLesson, pressed && styles.reviewPressed]}><Text style={styles.reviewLessonText}>{lesson.optionalReview ? '↺  OPTIONAL RECAP' : '↺  REVIEW LESSON'}</Text></Pressable> : null}
             <Text style={styles.prompt}>{exercise.prompt}</Text>
-            <View style={styles.codeBox}><Text style={styles.codeLabel}>PYTHON SPELL</Text><Text selectable style={styles.code}>{exercise.code}</Text></View>
+            <View style={styles.codeBox}><Text style={styles.codeLabel}>{isCodeBuilderExercise(exercise) ? 'TARGET OUTPUT' : 'PYTHON SPELL'}</Text><Text selectable style={styles.code}>{isCodeBuilderExercise(exercise) ? exercise.expectedOutput : exercise.code}</Text></View>
+
+            {isCodeBuilderExercise(exercise) ? <CodeBuilder exercise={exercise} answer={answer} incorrect={incorrect} solved={solved}
+              onEdit={(action) => {
+                if (attemptRef.current?.phase !== 'answering' || attemptRef.current.exerciseIndex !== attempt.exerciseIndex) return;
+                setAnswer(previous => editBuilderAnswer(exercise, previous, action));
+                setIncorrect(false);
+              }} onSubmit={() => submitAnswer(exercise.id)} /> : null}
 
             {solved ? (
               <View accessibilityLiveRegion="polite">
@@ -236,7 +245,7 @@ export default function WorldMissionScreen() {
                 <View style={styles.explanationCard}><Text style={styles.smallLabel}>WHAT YOU LEARNED</Text><Text style={styles.explanation}>{exercise.explanation}</Text></View>
                 <GameButton label={attempt.exerciseIndex === playable.exercises.length - 1 ? 'See Mission Result' : 'Continue'} onPress={continueAfterSpell} disabled={!animationDone} style={styles.continueButton} />
               </View>
-            ) : isChoiceExercise(exercise) ? (
+            ) : isCodeBuilderExercise(exercise) ? null : isChoiceExercise(exercise) ? (
               <AnswerChoices exercise={exercise} selectedId={answer} incorrect={incorrect} onSelect={(optionId) => {
                 if (attemptRef.current?.phase !== 'answering' || attemptRef.current.exerciseIndex !== attempt.exerciseIndex) return;
                 setAnswer(optionId);

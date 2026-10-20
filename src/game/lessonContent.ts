@@ -218,6 +218,20 @@ export const lessons: readonly LessonContent[] = [
     whyItWorks: 'On turn one number is 1; on turn two it is 2; on turn three it is 3. Each turn prints the current number. The loop ends before 4.',
     importantRule: 'With two arguments, the first is the start, not the number of turns. The second is the excluded stop.',
   },
+  {
+    id: 'python-lesson-build-echo', title: 'Build a spell in order',
+    explanation: 'Python reads instructions from top to bottom. A for header ends with a colon. Its indented body repeats; lines outside it run once. Build code by tapping fragments in order. Their spaces are already included. Use Undo Last or Reset to rebuild, then Cast Spell to check.',
+    codeExample: 'print("Start")\nfor glow in range(4):\n    print("Glow")\nprint("Open")', expectedOutput: 'Start\nGlow\nGlow\nGlow\nGlow\nOpen',
+    whyItWorks: 'Start runs first. The header begins four turns, each printing Glow. Open runs after all four turns. The indented line belongs directly under the header.',
+    importantRule: 'Indentation is Python syntax, not decoration. A body cannot come before its header. Outside lines before and after a loop produce different output orders.',
+  },
+  {
+    id: 'python-lesson-build-range', title: 'Assemble a counting spell',
+    explanation: 'range(start, stop) includes the start but excludes the stop. The loop variable receives a new value each turn. Place its print inside the loop to display each value. A line after the body without indentation runs once at the end.',
+    codeExample: 'for n in range(2, 4):\n    print(n)\nprint("Lit")', expectedOutput: '2\n3\nLit',
+    whyItWorks: 'On turn one n holds 2, so 2 prints. On turn two n holds 3, so 3 prints. Four is excluded. Lit prints once after counting finishes.',
+    importantRule: 'The stop is not the last printed number. Keep print(n) indented so it runs during every turn, not once outside the loop.',
+  },
 ];
 
 export function getLessonForExercise(exercise: Exercise): LessonContent | null {

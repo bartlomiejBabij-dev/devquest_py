@@ -1,6 +1,6 @@
 # DevQuest
 
-A local, playable Expo fantasy RPG that teaches beginner Python concepts. Forest of Variables has six five-exercise missions; completing it unlocks six Valley of Decisions missions: two five-exercise adventures, three short adventures with three exercises, and the five-spell Decision Keeper finale. Completing Valley unlocks Loop Caverns, with two three-spell adventures teaching for loops and range(). Progression is saved locally. The original three-spell Goblin battle remains playable from Home.
+A local, playable Expo fantasy RPG that teaches beginner Python concepts. Forest of Variables has six five-exercise missions; completing it unlocks six Valley of Decisions missions: two five-exercise adventures, three short adventures with three exercises, and the five-spell Decision Keeper finale. Completing Valley unlocks Loop Caverns, with four three-spell adventures teaching for loops, range() and assembling Python code. Progression is saved locally. The original three-spell Goblin battle remains playable from Home.
 
 ## Run in Expo Go
 
@@ -121,3 +121,9 @@ Complete all six Valley chapters, including The Decision Keeper, to enter World 
 The shared map adds teal crystal scenery and a responsive three-world selector. Locked world links show their requirement without exposing an enterable chapter path. Mission returns retain the owning world. Completing both Caverns chapters means AVAILABLE CHAPTERS COMPLETE / UP TO DATE; a future final boss is not part of this stage.
 
 Current totals: three worlds, fourteen missions, sixty exercises (58 tap, two typed), 31 lessons, twenty Spellbook references and 700 available XP. Old 640-XP saves unlock Caverns automatically without migration; Forest and Valley content, rewards and bosses are unchanged. See [Stage 3H.1 verification](docs/stage-3h1.md).
+
+### Interactive Code Builder (Stage 3H.2)
+
+Echo Bridge follows Lanterns of Range; Counting Tower follows Echo Bridge. Each adds three exercises and awards 40 XP once, with zero replay XP. Four Code Builder puzzles let players tap prewritten fragments into order, undo or reset, and explicitly Cast Spell. Indentation is preserved, no keyboard is needed, and help/Spellbook views retain the arrangement. Validation checks authored fragment IDs and never executes Python.
+
+Two lessons teach loop assembly, execution order and range boundaries. The existing for/range Spellbook entries support all six new exercises. Current totals are three worlds, sixteen missions, 66 exercises (60 choices, four builders, two typed), 33 lessons, twenty references and 780 available XP. A completed 700-XP save retains its rewards and shows 2/4 available Caverns chapters until the new missions are completed. World 3 still has no final boss and displays UP TO DATE at 4/4. See [Stage 3H.2 verification](docs/stage-3h2.md).
