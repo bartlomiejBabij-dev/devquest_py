@@ -11,16 +11,17 @@ import { getLessonForExercise } from '@/game/lessonContent';
 import { getVisibleLesson, initialLessonSession, lessonSessionReducer } from '@/game/lessonSession';
 import { GameButton } from '@/components/GameButton';
 import { GameScreen } from '@/components/GameScreen';
+import { DecisionKeeperEncounter } from '@/components/DecisionKeeperEncounter';
 import { GoblinKingEncounter } from '@/components/GoblinKingEncounter';
 import { ValleyGuardian } from '@/components/ValleyGuardian';
 import { worldMapForMission, resolveMapWorld } from '@/navigation/worldRoutes';
 import { NavigationButton } from '@/components/NavigationButton';
 import { SpellbookEntryView, type SpellbookEntryHandle } from '@/components/SpellbookEntryView';
-import { getGoblinKingHp, isGoblinKingMission } from '@/game/boss';
+import { getBossHp, getBossEncounter, isWorldCleared } from '@/game/boss';
 import { useGame } from '@/game/GameContext';
 import { getTotalEarnedXp, getWorldProgress, isMissionCompleted } from '@/game/progression';
 import { getSpellbookEntryForExercise } from '@/game/spellbookContent';
-import { chapters, forestOfVariables, missions } from '@/game/worldContent';
+import { chapters, worlds, missions } from '@/game/worldContent';
 import { continueMissionAttempt, getPlayableMission, startMissionAttempt, submitMissionAnswer, type MissionAttempt } from '@/game/worldMission';
 import { hasUnfinishedMissionProgress } from '@/navigation/navigationActions';
 import { useScreenBack, useScreenNavigation } from '@/navigation/useScreenNavigation';
@@ -50,7 +51,8 @@ export default function WorldMissionScreen() {
   const [spellPulse] = useState(() => new Animated.Value(0));
   const playable = getPlayableMission(progression, missionId);
   const knownMission = missions.find((item) => item.id === missionId);
-  const bossMission = isGoblinKingMission(missionId);
+  const boss = getBossEncounter(missionId);
+  const bossMission = boss !== null;
 
   useEffect(() => { currentProgress.current = progression; }, [progression]);
   useEffect(() => {
@@ -115,7 +117,7 @@ export default function WorldMissionScreen() {
         Animated.timing(spellPulse, { toValue: 0.55, duration: 370, useNativeDriver: true }),
       ]).start();
     }
-    const bossDefeated = bossMission && getGoblinKingHp(submission.attempt) === 0;
+    const bossDefeated = bossMission && getBossHp(submission.attempt) === 0;
     revealTimer.current = setTimeout(() => setAnimationDone(true), reduceMotion ? 150 : bossDefeated ? 880 : 690);
   }
 
@@ -170,8 +172,9 @@ export default function WorldMissionScreen() {
   const solved = attempt.phase === 'solved';
   const result = attempt.result;
   const newlyUnlocked = result?.newlyUnlockedChapterIds.map((id) => chapters.find((item) => item.id === id)?.title).filter(Boolean) ?? [];
-  const bossHp = bossMission ? getGoblinKingHp(attempt) : null;
-  const worldCompletion = bossMission ? getWorldProgress(progression, forestOfVariables.id) : null;
+  const bossHp = bossMission ? getBossHp(attempt) : null;
+  const worldNumber = worlds.findIndex(world => world.id === chapter.worldId) + 1;
+  const worldCompletion = bossMission ? getWorldProgress(progression, chapter.worldId) : null;
 
   return (
     <GameScreen compact scrollToEndOnKeyboard scrollResetKey={lesson ? `${missionId}:${attempt.exerciseIndex}:${lessonView ? 'lesson' : 'challenge'}` : undefined} header={
@@ -184,14 +187,14 @@ export default function WorldMissionScreen() {
         <View style={[styles.resultCard, bossMission && styles.bossResultCard]}>
           <Text style={styles.resultGlyph}>{bossMission ? '♛' : '✦'}</Text>
           <Text style={styles.overline}>{bossMission ? 'FIVE SPELLS CAST' : `${attempt.solvedExerciseIds.length} / ${playable.exercises.length} SPELLS CAST`}</Text>
-          <Text style={[styles.resultTitle, bossMission && styles.bossResultTitle]}>{bossMission ? 'GOBLIN KING DEFEATED!' : 'MISSION COMPLETE!'}</Text>
-          {bossMission ? <Text style={styles.worldClear}>WORLD 1 CLEARED!</Text> : null}
+          <Text style={[styles.resultTitle, bossMission && styles.bossResultTitle]}>{boss ? `${boss.name.toUpperCase()} DEFEATED!` : 'MISSION COMPLETE!'}</Text>
+          {bossMission && isWorldCleared(progression, chapter.worldId) ? <Text style={styles.worldClear}>WORLD {worldNumber} CLEARED!</Text> : null}
           <Text style={styles.body}>{mission.title}</Text>
           <View style={styles.rewardRow}>
             <View style={styles.rewardStat}><Text style={styles.rewardValue}>+{result.xpAwarded}</Text><Text style={styles.rewardLabel}>XP EARNED</Text></View>
             <View style={styles.rewardStat}><Text style={styles.rewardValue}>{result.totalXp}</Text><Text style={styles.rewardLabel}>TOTAL XP</Text></View>
           </View>
-          {bossMission ? <Text style={styles.worldCompletion}>WORLD 1 COMPLETION  ·  {worldCompletion?.percent ?? 0}%</Text> : null}
+          {bossMission ? <Text style={styles.worldCompletion}>WORLD {worldNumber} COMPLETION  ·  {worldCompletion?.percent ?? 0}%</Text> : null}
           {result.xpAwarded === 0 ? <Text style={styles.replayNote}>Replay complete. XP was already earned.</Text> : null}
           {newlyUnlocked.length ? <Text style={styles.unlockText}>✦  New chapter unlocked: {newlyUnlocked.join(', ')}</Text> : null}
           <GameButton label="Return to World Map" onPress={returnToMap} style={styles.resultButton} />
@@ -199,7 +202,8 @@ export default function WorldMissionScreen() {
         </View>
       ) : (
         <>
-          {bossMission && bossHp !== null ? <GoblinKingEncounter hp={bossHp} hitCount={attempt.solvedExerciseIds.length} showDamage={solved} reducedMotion={!!reduceMotion} /> : null}
+          {boss?.kind === 'goblin-king' && bossHp !== null ? <GoblinKingEncounter hp={bossHp} hitCount={attempt.solvedExerciseIds.length} showDamage={solved} reducedMotion={!!reduceMotion} /> : null}
+          {boss?.kind === 'decision-keeper' && bossHp !== null ? <DecisionKeeperEncounter hp={bossHp} hitCount={attempt.solvedExerciseIds.length} showDamage={solved} reducedMotion={!!reduceMotion} /> : null}
           {mission.encounter === 'guardian' ? <ValleyGuardian solvedCount={attempt.solvedExerciseIds.length} totalCount={playable.exercises.length} /> : null}
           <View style={[styles.headerCard, bossMission && styles.bossHeaderCard, lesson && styles.learningHeader]}>
             <Text style={styles.overline}>{chapter.title.toUpperCase()}  ·  PYTHON MISSION</Text>

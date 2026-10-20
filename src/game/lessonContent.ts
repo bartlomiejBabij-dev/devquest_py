@@ -183,6 +183,13 @@ export const lessons: readonly LessonContent[] = [
     whyItWorks: 'The door is already open. not True is False, so Python skips Unlock and prints Step inside. If door_open were False, the reminder to unlock would run.',
     importantRule: 'Do not choose a branch from the variable alone: include not. The colon and indented blocks still follow the usual if/else rules.',
   },
+  {
+    id: 'python-lesson-valley-mastery', title: 'The logic of the valley', optionalReview: true,
+    explanation: 'Comparisons produce True or False: == means equal, != different, < less, > greater; <= and >= include equality. Check if/elif/else from the top: only the first matching branch runs. Indentation marks its block.',
+    codeExample: 'charge = 3\nsealed = True\nif charge >= 4:\n    print("Strong")\nelif (charge == 3) and sealed:\n    print("Steady")\nelse:\n    print("Rest")', expectedOutput: 'Steady',
+    whyItWorks: 'Three is below four. The elif condition requires both charge == 3 and sealed to be True. Both are, so Steady prints and else is skipped.',
+    importantRule: 'and needs both; or needs at least one; not reverses a Boolean. Evaluate parenthesized parts together. Code outside a skipped block can still run.',
+  },
 ];
 
 export function getLessonForExercise(exercise: Exercise): LessonContent | null {

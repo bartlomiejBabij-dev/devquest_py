@@ -47,18 +47,18 @@ test('Expansion preserves all 40 exercises, eight missions, old chapters, 21 les
   }
   for (const [id, entry] of Object.entries(baseline.spellbookLinks)) assert.equal(exerciseSpellbookEntryIds[id], entry);
   assert.deepEqual(forestOfVariables, baseline.worlds[0]);
-  assert.deepEqual(valleyOfDecisions, { ...baseline.worlds[1], chapterIds: [...baseline.worlds[1].chapterIds, 'python-valley-three-gates', 'python-valley-twin-runes', 'python-valley-mirror-of-truth'], xpReward: 240 });
+  assert.deepEqual(valleyOfDecisions, { ...baseline.worlds[1], chapterIds: [...baseline.worlds[1].chapterIds, 'python-valley-three-gates', 'python-valley-twin-runes', 'python-valley-mirror-of-truth', 'python-valley-decision-keeper'], xpReward: 340 });
   assert.deepEqual(missions.filter(m => oldIds.includes(m.id)).map(m => m.exerciseIds.length), Array(8).fill(5));
   assert.deepEqual(missions.filter(m => oldIds.includes(m.id)).map(m => m.xpReward), [20, 30, 40, 50, 60, 100, 70, 80]);
 });
 
 test('The original two short adventures retain their order, six unique tap exercises and 30 XP each', () => {
   assert.equal(worlds.length, 2);
-  assert.equal(chapters.length, 11);
-  assert.equal(missions.length, 11);
-  assert.equal(exercises.length, 49);
+  assert.equal(chapters.length, 12);
+  assert.equal(missions.length, 12);
+  assert.equal(exercises.length, 54);
   for (const items of [worlds, chapters, missions, exercises, lessons, spellbookEntries]) assert.equal(new Set(items.map(item => item.id)).size, items.length);
-  assert.deepEqual(missions.filter(m => !oldIds.includes(m.id)).map(m => m.id), [gatesId, runesId, 'python-valley-mirror-of-truth-01']);
+  assert.deepEqual(missions.filter(m => !oldIds.includes(m.id)).map(m => m.id), [gatesId, runesId, 'python-valley-mirror-of-truth-01', 'python-valley-decision-keeper-01']);
   assert.deepEqual(newMissions.map(m => m.title), ['The Three Gates', 'The Twin Runes']);
   assert.deepEqual(newMissions.map(m => m.xpReward), [30, 30]);
   assert.deepEqual(newMissions.map(m => m.exerciseIds.length), [3, 3]);
@@ -71,7 +71,7 @@ test('The original two short adventures retain their order, six unique tap exerc
     assert.deepEqual(chapter.missionIds, [m.id]);
     for (const id of m.exerciseIds) assert.equal(exercises.find(e => e.id === id).chapterId, chapter.id);
   }
-  assert.equal(missions.filter(m => valleyOfDecisions.chapterIds.includes(m.chapterId)).reduce((xp, m) => xp + m.xpReward, 0), 240);
+  assert.equal(missions.filter(m => valleyOfDecisions.chapterIds.includes(m.chapterId)).reduce((xp, m) => xp + m.xpReward, 0), 340);
 });
 
 test('Every new question matches reviewed source/choices, accepts exactly one stable ID and rejects labels, invalid IDs and other options', () => {
@@ -204,14 +204,14 @@ function play(progress, missionId, reward) {
 
 test('Three-spell missions require three validated answers, pay 30 XP once, replay for zero and update real world/profile counts', () => {
   let progress = allOldComplete;
-  assert.deepEqual(getWorldProgress(progress, valleyOfDecisions.id), { completed: 2, total: 5, percent: 40 });
+  assert.deepEqual(getWorldProgress(progress, valleyOfDecisions.id), { completed: 2, total: 6, percent: 33 });
   newMissions.forEach((mission, index) => {
     const completed = play(progress, mission.id, 30);
     assert.equal(completed.attempt.solvedExerciseIds.length, 3);
     assert.equal(completed.attempt.exerciseIndex, 2);
     progress = completed.progress;
     assert.equal(getTotalEarnedXp(progress), 480 + index * 30);
-    assert.deepEqual(getWorldProgress(progress, valleyOfDecisions.id), { completed: 3 + index, total: 5, percent: 60 + index * 20 });
+    assert.deepEqual(getWorldProgress(progress, valleyOfDecisions.id), { completed: 3 + index, total: 6, percent: index === 0 ? 50 : 67 });
     const stats = getPlayerStatistics(progress);
     assert.equal(stats.completedExercises, 43 + index * 3);
     assert.equal(stats.completedMissions, 9 + index);
@@ -288,8 +288,8 @@ test('Goblin King still requires five spells at 20 HP each and all six Forest mi
 
 test('Old and new version-1 saves survive fresh storage instances with exact XP, exercise counts and unchanged Forest achievements', async () => {
   assert.equal(PROGRESSION_STORAGE_KEY, 'devquest.progression');
-  const xp = [0, 20, 50, 90, 140, 200, 300, 370, 450, 480, 510, 540];
-  const counts = [0, 5, 10, 15, 20, 25, 30, 35, 40, 43, 46, 49];
+  const xp = [0, 20, 50, 90, 140, 200, 300, 370, 450, 480, 510, 540, 640];
+  const counts = [0, 5, 10, 15, 20, 25, 30, 35, 40, 43, 46, 49, 54];
   const completedAchievements = getAchievements(allOldComplete);
   for (let n = 0; n <= missions.length; n++) {
     const ids = missions.slice(0, n).map(m => m.id);

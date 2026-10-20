@@ -1,6 +1,6 @@
 # DevQuest
 
-A local, playable Expo fantasy RPG that teaches beginner Python concepts. Forest of Variables has six five-exercise missions; completing it unlocks five Valley of Decisions missions: two with five exercises and three short adventures with three. Progression is saved locally. The original three-spell Goblin battle remains playable from Home.
+A local, playable Expo fantasy RPG that teaches beginner Python concepts. Forest of Variables has six five-exercise missions; completing it unlocks six Valley of Decisions missions: two five-exercise adventures, three short adventures with three exercises, and the five-spell Decision Keeper finale. Progression is saved locally. The original three-spell Goblin battle remains playable from Home.
 
 ## Run in Expo Go
 
@@ -27,7 +27,7 @@ The Spellbook on Home contains eighteen short Python references. Each world miss
 
 My Profile saves only a trimmed 3–20 character nickname and one of five local avatars under `devquest.profile.v1`. Saves are explicit and queued. Missing or damaged profiles fall back to Python Apprentice/Mage; unreadable or future-version saves are protected from replacement. Profile editing never writes to progression, notes, or onboarding.
 
-Profile and Home XP come from completed mission IDs using the existing XP selector. Completed exercises count unique exercises belonging to completed missions; unfinished attempts and prototype battles do not count. Boss victories count the completed Goblin King mission. Display-only level is `1 + floor(total XP / 100)`, with progress toward the next 100 XP. Achievements require completing the first mission, three Forest chapters, Broken Spells, and the Goblin King respectively; they grant no rewards.
+Profile and Home XP come from completed mission IDs using the existing XP selector. Completed exercises count unique exercises belonging to completed missions; unfinished attempts and prototype battles do not count. Boss victories count the completed Goblin King and Decision Keeper missions. Display-only level is `1 + floor(total XP / 100)`, with progress toward the next 100 XP. Achievements require completing the first mission, three Forest chapters, Broken Spells, and the Goblin King respectively; they grant no rewards.
 
 Initial adventure hydration and profile hydration use reusable, reduced-motion-aware skeletons. The placeholder shapes appear only if loading is still unresolved after 120 ms, and disappear as soon as data arrives. Data is never delayed; navigation and background saves do not trigger new skeletons.
 
@@ -103,3 +103,12 @@ Existing saves retain their IDs, XP, notes and settings without migration. Valle
 After The Twin Runes, Mirror of Truth teaches Boolean `not` through three tap questions: predict a reversed Boolean, choose the missing keyword, and reveal the mirror passage with an `if not` condition. Two concise lessons introduce reversal and checking for absence, with automatic introductions skipped on completed replays. A new Spellbook reference explains both Boolean reversals and why `not` does not change the stored variable.
 
 The mission awards 30 XP once; replay awards zero. Existing IDs, content, rewards, saves, notes and settings remain unchanged. The map uses five available Valley chapters; a completed Stage 3G.3A save keeps 510 XP and 46 completed exercises while showing 4/5 (80%) Valley progress. Completing Mirror brings the available totals to 540 XP, eleven missions and 49 exercises (47 tap and two short typed answers), with 26 lessons and eighteen Spellbook references. See [Stage 3G.3B verification](docs/stage-3g3b.md).
+
+
+### The Decision Keeper (Stage 3G.3C)
+
+The sixth Valley chapter is a final boss unlocked after Mirror of Truth. Five tap trials assess comparison boundaries, first-match branches, and/or, not with indentation, and a final repaired condition. One optional recap is available throughout the encounter; it is never a mandatory introduction. The existing Spellbook entries and notes support all five exercises.
+
+The original stone guardian has 100 HP, loses 20 per validated correct spell, and awards 100 XP once. Replays award zero. Victory reveals WORLD 2 CLEARED; map clear status requires the boss and all registered Valley chapters. Goblin King retains its original artwork, animations, five spells and 100/20 balance.
+
+There are now twelve missions, 54 exercises (52 tap and two short typed answers), 27 lessons, eighteen Spellbook references and 640 available XP. A completed Stage 3G.3B save keeps 540 XP, 49 exercises and one boss, with Valley showing 5/6 (83%) until the Keeper is defeated. Afterward Profile shows 54 exercises, twelve missions and two bosses. No save migration is required. See [Stage 3G.3C verification](docs/stage-3g3c.md).

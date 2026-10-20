@@ -5,7 +5,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useReducedMotion } from 'react-native-reanimated';
 import { GameScreen } from '@/components/GameScreen';
 import { NavigationButton } from '@/components/NavigationButton';
-import { isGoblinKingMission } from '@/game/boss';
+import { getBossEncounter, isBossMission, isWorldCleared } from '@/game/boss';
 import { useGame } from '@/game/GameContext';
 import { getChapterProgress, getTotalEarnedXp, getWorldProgress, isChapterCompleted, isChapterUnlocked, isMissionCompleted, isMissionUnlocked, isWorldUnlocked } from '@/game/progression';
 import { chapters, forestOfVariables, missions, worlds } from '@/game/worldContent';
@@ -30,7 +30,7 @@ function getChapterState(progress: ProgressionState, chapter: Chapter): ChapterS
 function ChapterNode({ chapter, index, state, onPress, pulse }: {
   chapter: Chapter; index: number; state: ChapterState; onPress: () => void; pulse: Animated.Value;
 }) {
-  const boss = chapter.missionIds.some(isGoblinKingMission);
+  const boss = chapter.missionIds.map(getBossEncounter).find(Boolean);
   return (
     <View style={[styles.stopRow, index % 2 === 1 && styles.stopRowRight]}>
       <Pressable onPress={onPress} accessibilityRole="button" accessibilityLabel={`Chapter ${index + 1}: ${chapter.title}, ${state}`}
@@ -51,7 +51,7 @@ function ChapterNode({ chapter, index, state, onPress, pulse }: {
           <View style={styles.statusRow}>
             {state === 'locked' ? <LockMark /> : null}
             <Text style={[styles.statusText, state === 'available' && styles.availableText, state === 'completed' && styles.completedText]}>
-              {state === 'completed' ? boss ? '♛  KING DEFEATED' : '✓  COMPLETED' : state === 'available' ? boss ? '♛  FACE THE KING' : '●  AVAILABLE' : 'LOCKED'}
+              {state === 'completed' ? boss ? boss.kind === 'goblin-king' ? '♛  KING DEFEATED' : '✧  KEEPER DEFEATED' : '✓  COMPLETED' : state === 'available' ? boss ? boss.kind === 'goblin-king' ? '♛  FACE THE KING' : '✧  FACE THE KEEPER' : '●  AVAILABLE' : 'LOCKED'}
             </Text>
           </View>
         </View>
@@ -64,6 +64,7 @@ function ChapterDetails({ chapter, index, progress, onClose, onOpenMission }: {
   chapter: Chapter; index: number; progress: ProgressionState; onClose: () => void; onOpenMission: (missionId: string) => void;
 }) {
   const state = getChapterState(progress, chapter);
+  const boss = chapter.missionIds.map(getBossEncounter).find(Boolean);
   const world = resolveMapWorld(chapter.worldId);
   const completion = getChapterProgress(progress, chapter.id);
   const unmetPrerequisites = chapter.prerequisiteMissionIds.filter((id) => !isMissionCompleted(progress, id));
@@ -79,7 +80,7 @@ function ChapterDetails({ chapter, index, progress, onClose, onOpenMission }: {
         <View style={styles.sheetHandle} />
         <View style={styles.sheetHeading}>
           <NavigationButton label="Close" icon="close" accessibilityLabel="Close chapter details" onPress={onClose} />
-          <Text style={styles.sheetEyebrow}>{chapter.missionIds.some(isGoblinKingMission) ? 'GOBLIN KING · FINAL BOSS' : `CHAPTER ${String(index + 1).padStart(2, '0')}`}</Text>
+          <Text style={styles.sheetEyebrow}>{boss ? `${boss.name.toUpperCase()} · FINAL BOSS` : `CHAPTER ${String(index + 1).padStart(2, '0')}`}</Text>
         </View>
         <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.sheetScroll}>
           <Text style={styles.sheetTitle}>{chapter.title}</Text>
@@ -116,13 +117,13 @@ function ChapterDetails({ chapter, index, progress, onClose, onOpenMission }: {
               {chapterMissions.map((mission) => (
                 <View key={mission.id} style={styles.missionPreview}>
                   <View style={styles.missionPreviewTop}><Text style={styles.missionTitle}>{mission.title}</Text><Text style={styles.missionXp}>+{mission.xpReward} XP</Text></View>
-                  <Text style={styles.missionDescription}>{isGoblinKingMission(mission.id) ? 'Defeat the Goblin King with five Python spells. ' : ''}{mission.description}</Text>
+                  <Text style={styles.missionDescription}>{getBossEncounter(mission.id)?.kind === 'goblin-king' ? 'Defeat the Goblin King with five Python spells. ' : ''}{mission.description}</Text>
                   {chapter.worldId !== forestOfVariables.id ? <Text style={styles.chapterMeta}>{mission.exerciseIds.length} PYTHON SPELLS</Text> : null}
                   {isMissionCompleted(progress, mission.id) ? <Text style={styles.missionComplete}>✓  COMPLETED</Text> : null}
                   {isMissionUnlocked(progress, mission.id) ? (
                     <Pressable onPress={() => onOpenMission(mission.id)} accessibilityRole="button" accessibilityLabel={`${isMissionCompleted(progress, mission.id) ? 'Replay' : 'Start'} ${mission.title}`}
                       style={({ pressed }) => [styles.missionAction, pressed && styles.pressed]}>
-                      <Text style={styles.missionActionText}>{isGoblinKingMission(mission.id) ? isMissionCompleted(progress, mission.id) ? 'REPLAY BOSS' : 'FACE GOBLIN KING' : isMissionCompleted(progress, mission.id) ? 'REPLAY MISSION' : 'START MISSION'}  ›</Text>
+                      <Text style={styles.missionActionText}>{isBossMission(mission.id) ? isMissionCompleted(progress, mission.id) ? 'REPLAY BOSS' : boss?.kind === 'goblin-king' ? 'FACE GOBLIN KING' : 'FACE THE KEEPER' : isMissionCompleted(progress, mission.id) ? 'REPLAY MISSION' : 'START MISSION'}  ›</Text>
                     </Pressable>
                   ) : <Text style={styles.missionComplete}>LOCKED</Text>}
                 </View>
@@ -186,7 +187,7 @@ export default function WorldMapScreen() {
               accessibilityLabel={`World ${index + 1}: ${item.title}, ${completed ? 'available chapters completed' : unlocked ? 'unlocked' : 'locked'}`}
               onPress={() => { setSelectedId(null); router.setParams({ worldId: item.id }); }}
               style={({ pressed }) => [styles.worldChoice, item.id === world.id && styles.worldChoiceSelected, pressed && styles.pressed]}>
-              <Text style={styles.worldChoiceLabel}>WORLD {index + 1} · {completed ? item.id === forestOfVariables.id ? '✓ COMPLETE' : '✓ UP TO DATE' : unlocked ? 'AVAILABLE' : 'LOCKED'}</Text>
+              <Text style={styles.worldChoiceLabel}>WORLD {index + 1} · {completed ? isWorldCleared(progression, item.id) ? item.id === forestOfVariables.id ? '✓ COMPLETE' : '✓ CLEARED' : '✓ UP TO DATE' : unlocked ? 'AVAILABLE' : 'LOCKED'}</Text>
               <Text style={styles.worldChoiceTitle}>{item.title}</Text>
             </Pressable>;
           })}
@@ -227,7 +228,7 @@ export default function WorldMapScreen() {
               ) : null}
             </View>
           ))}
-          <Text style={styles.mapFooter}>{worldProgress.percent === 100 ? valley ? 'AVAILABLE CHAPTERS COMPLETE' : 'FOREST OF VARIABLES CLEARED' : valley ? 'CHOOSE YOUR PATH THROUGH THE VALLEY' : 'MORE OF THE FOREST AWAITS'}</Text>
+          <Text style={styles.mapFooter}>{worldProgress.percent === 100 ? isWorldCleared(progression, world.id) ? `${world.title.toUpperCase()} CLEARED` : 'AVAILABLE CHAPTERS COMPLETE' : valley ? 'CHOOSE YOUR PATH THROUGH THE VALLEY' : 'MORE OF THE FOREST AWAITS'}</Text>
         </View>
       </GameScreen>
 

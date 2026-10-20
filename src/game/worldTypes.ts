@@ -30,7 +30,7 @@ export interface Mission {
   exerciseIds: readonly string[];
   prerequisiteMissionIds: readonly string[];
   xpReward: number;
-  encounter?: 'guardian';
+  encounter?: 'guardian' | 'decision-keeper';
 }
 
 interface ExerciseBase {

@@ -3,12 +3,12 @@ import type { Chapter, Exercise, Mission, World } from './worldTypes';
 export const valleyOfDecisions: World = {
   id: 'python-valley-of-decisions', languageId: 'python', title: 'Valley of Decisions',
   description: 'Beyond the forest, ancient gates respond to your choices. Turn conditions into Python spells.',
-  chapterIds: ['python-valley-crossroads', 'python-valley-guardian', 'python-valley-three-gates', 'python-valley-twin-runes', 'python-valley-mirror-of-truth'],
+  chapterIds: ['python-valley-crossroads', 'python-valley-guardian', 'python-valley-three-gates', 'python-valley-twin-runes', 'python-valley-mirror-of-truth', 'python-valley-decision-keeper'],
   prerequisiteMissionIds: [
     'python-forest-awakening-01', 'python-forest-fire-essence-01', 'python-forest-mana-stones-01',
     'python-forest-talking-trees-01', 'python-forest-broken-spells-01', 'python-forest-goblin-king-01',
   ],
-  xpReward: 240,
+  xpReward: 340,
   unlockRequirement: 'Complete all six chapters of Forest of Variables, including the Goblin King.',
 };
 
@@ -43,6 +43,12 @@ export const valleyChapters: readonly Chapter[] = [
     learningObjective: 'Use not to reverse True and False and check when something is absent.',
     missionIds: ['python-valley-mirror-of-truth-01'], prerequisiteMissionIds: ['python-valley-twin-runes-01'], xpReward: 30,
   },
+  {
+    id: 'python-valley-decision-keeper', worldId: valleyOfDecisions.id, title: 'The Decision Keeper',
+    description: 'The ancient keeper guards the heart of the valley. Five trials of logic will restore its light.',
+    learningObjective: 'Combine comparisons, branches and Boolean operators to master the Valley of Decisions.',
+    missionIds: ['python-valley-decision-keeper-01'], prerequisiteMissionIds: ['python-valley-mirror-of-truth-01'], xpReward: 100,
+  },
 ];
 
 export const valleyMissions: readonly Mission[] = [
@@ -75,6 +81,12 @@ export const valleyMissions: readonly Mission[] = [
     description: 'Cast three reversal spells with not to clear the enchanted mirror.', encounter: 'guardian',
     exerciseIds: ['python-valley-mirror-reversal', 'python-valley-mirror-keyword', 'python-valley-mirror-passage'],
     prerequisiteMissionIds: [], xpReward: 30,
+  },
+  {
+    id: 'python-valley-decision-keeper-01', chapterId: 'python-valley-decision-keeper', title: 'The Decision Keeper',
+    description: 'Face the ancient guardian in five final trials. Each correct spell breaks one of its five seals.', encounter: 'decision-keeper',
+    exerciseIds: ['python-valley-keeper-comparison', 'python-valley-keeper-branch', 'python-valley-keeper-runes', 'python-valley-keeper-mirror', 'python-valley-keeper-mastery'],
+    prerequisiteMissionIds: [], xpReward: 100,
   },
 ];
 
@@ -562,5 +574,76 @@ export const valleyExercises: readonly Exercise[] = [
       { id: 'python-valley-mirror-passage-c', label: 'Mirror cleared!', feedback: 'not False is True. The if branch runs once, revealing the clear passage.' },
     ],
     validation: { kind: 'option-id', correctOptionId: 'python-valley-mirror-passage-c' },
+  },
+  {
+    id: 'python-valley-keeper-comparison', chapterId: 'python-valley-decision-keeper', languageId: 'python', difficulty: 'challenge',
+    type: 'output-choice', concept: 'comparison trial', lessonId: 'python-lesson-valley-mastery',
+    prompt: 'The first seal needs at least four crystals. Which message does this boundary value choose?',
+    code: 'crystals = 4\nif crystals >= 4:\n    print("Ready")\nelse:\n    print("Gather")',
+    hint: 'The equals part of >= includes the exact requirement.',
+    explanation: '4 >= 4 is True because >= includes equality. The indented if block prints Ready; else is skipped.',
+    options: [
+      { id: 'python-valley-keeper-comparison-a', label: 'Gather', feedback: 'Four meets an at-least-four requirement. >= accepts equality, unlike >.' },
+      { id: 'python-valley-keeper-comparison-b', label: 'Ready', feedback: 'The boundary value is included, so the True condition selects Ready.' },
+      { id: 'python-valley-keeper-comparison-c', label: 'True', feedback: 'The comparison produces True, but print() displays the message inside the selected branch.' },
+    ],
+    validation: { kind: 'option-id', correctOptionId: 'python-valley-keeper-comparison-b' },
+  },
+  {
+    id: 'python-valley-keeper-branch', chapterId: 'python-valley-decision-keeper', languageId: 'python', difficulty: 'challenge',
+    type: 'output-choice', concept: 'branch trial', lessonId: 'python-lesson-valley-mastery',
+    prompt: 'Two comparisons could match. Which rune does this chain actually reveal?',
+    code: 'power = 8\nif power >= 6:\n    print("Emerald")\nelif power >= 3:\n    print("Amber")\nelse:\n    print("Stone")',
+    hint: 'Follow the chain from the top and stop at its first True condition.',
+    explanation: '8 >= 6 is True, so Emerald prints. The chain skips elif and else, even though 8 >= 3 would also be True.',
+    options: [
+      { id: 'python-valley-keeper-branch-a', label: 'Emerald', feedback: 'The first condition matches, so its branch runs and the remaining branches are skipped.' },
+      { id: 'python-valley-keeper-branch-b', label: 'Amber', feedback: 'elif is considered only when the earlier if fails. Here the first condition already matches.' },
+      { id: 'python-valley-keeper-branch-c', label: 'Emerald\nAmber', feedback: 'One if/elif/else chain selects only one branch. These are not separate if statements.' },
+    ],
+    validation: { kind: 'option-id', correctOptionId: 'python-valley-keeper-branch-a' },
+  },
+  {
+    id: 'python-valley-keeper-runes', chapterId: 'python-valley-decision-keeper', languageId: 'python', difficulty: 'challenge',
+    type: 'output-choice', concept: 'twin runes trial', lessonId: 'python-lesson-valley-mastery',
+    prompt: 'Read the two rune results in order. The first needs both ways in; the second needs at least one.',
+    code: 'has_key = False\nknows_rune = True\nprint(has_key and knows_rune)\nprint(has_key or knows_rune)',
+    hint: 'Evaluate each line separately: and needs both, while or accepts either or both.',
+    explanation: 'False and True is False because one requirement is missing. False or True is True because knowing the rune is enough. The output is False, then True.',
+    options: [
+      { id: 'python-valley-keeper-runes-a', label: 'True\nFalse', feedback: 'This reverses the rules: and needs both conditions, while or needs only one.' },
+      { id: 'python-valley-keeper-runes-b', label: 'True\nTrue', feedback: 'The key is missing. That makes and False even though knowing the rune makes or True.' },
+      { id: 'python-valley-keeper-runes-c', label: 'False\nTrue', feedback: 'One missing requirement fails and, but the one available route satisfies or.' },
+    ],
+    validation: { kind: 'option-id', correctOptionId: 'python-valley-keeper-runes-c' },
+  },
+  {
+    id: 'python-valley-keeper-mirror', chapterId: 'python-valley-decision-keeper', languageId: 'python', difficulty: 'challenge',
+    type: 'output-choice', concept: 'mirror trial and indentation', lessonId: 'python-lesson-valley-mastery',
+    prompt: 'The shield is already active. Which lines are printed after Python checks the reversed condition?',
+    code: 'shield_active = True\nif not shield_active:\n    print("Raise shield")\nprint("Advance")',
+    hint: 'not True is False. Only the indented line belongs to the if block.',
+    explanation: 'not True is False, so Raise shield is skipped. The final print() is outside the block and still prints Advance.',
+    options: [
+      { id: 'python-valley-keeper-mirror-a', label: 'Raise shield\nAdvance', feedback: 'The condition includes not. It reverses True to False, so the shield reminder is skipped.' },
+      { id: 'python-valley-keeper-mirror-b', label: 'Advance', feedback: 'The False condition skips its indented block; the unindented final line still runs.' },
+      { id: 'python-valley-keeper-mirror-c', label: 'No output', feedback: 'A False condition skips only its block. The final print() is unindented and still runs.' },
+    ],
+    validation: { kind: 'option-id', correctOptionId: 'python-valley-keeper-mirror-b' },
+  },
+  {
+    id: 'python-valley-keeper-mastery', chapterId: 'python-valley-decision-keeper', languageId: 'python', difficulty: 'challenge',
+    type: 'multiple-choice', optionFormat: 'code', concept: 'master of decisions', lessonId: 'python-lesson-valley-mastery',
+    prompt: 'Final spell: choose valid code that restores the valley only with at least 5 mana points (mp) AND an open gate. It must obey both requirements for any values.',
+    code: 'mp = 5\nshut = False',
+    hint: 'Combine both requirements, include the boundary value, reverse shut, and indent the spell.',
+    explanation: 'mp >= 5 includes five. (not shut) is True when the gate is open. and requires both, so the indented spell prints Free! for these values.',
+    options: [
+      { id: 'python-valley-keeper-mastery-a', label: 'if mp>=5 or (not shut):\n    print("Free!")', feedback: 'or would allow either requirement alone, such as an open gate with too little mana. Both are required.' },
+      { id: 'python-valley-keeper-mastery-b', label: 'if mp>=5 and(not shut):\nprint("Free!")', feedback: 'The condition is right, but Python requires an indented block after the colon. This version has a syntax error.' },
+      { id: 'python-valley-keeper-mastery-c', label: 'if mp>=5 and(not shut):\n    print("Free!")', feedback: 'This includes five mana, requires an open gate and correctly indents the spell.' },
+      { id: 'python-valley-keeper-mastery-d', label: 'if mp>5 and(not shut):\n    print("Free!")', feedback: '> excludes exactly five mana. The requirement says at least five, so use >=.' },
+    ],
+    validation: { kind: 'option-id', correctOptionId: 'python-valley-keeper-mastery-c' },
   },
 ];

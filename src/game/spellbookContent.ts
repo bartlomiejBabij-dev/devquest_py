@@ -154,6 +154,11 @@ export const spellbookEntries: readonly SpellbookEntry[] = [
 
 /** Every exercise links to reference material, never to its answer. */
 export const exerciseSpellbookEntryIds: Readonly<Record<string, string>> = {
+  'python-valley-keeper-comparison': 'python-comparisons',
+  'python-valley-keeper-branch': 'python-elif',
+  'python-valley-keeper-runes': 'python-and',
+  'python-valley-keeper-mirror': 'python-not',
+  'python-valley-keeper-mastery': 'python-and',
   'python-valley-mirror-reversal': 'python-not',
   'python-valley-mirror-keyword': 'python-not',
   'python-valley-mirror-passage': 'python-not',

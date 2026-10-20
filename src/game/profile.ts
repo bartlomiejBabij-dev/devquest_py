@@ -1,4 +1,4 @@
-import { isGoblinKingMission } from './boss';
+import { isBossMission, isGoblinKingMission } from './boss';
 import { getTotalEarnedXp, getWorldProgress, isChapterCompleted, isMissionCompleted } from './progression';
 import { chapters, exercises, forestOfVariables, missions, worlds } from './worldContent';
 import type { ProgressionState } from './worldTypes';
@@ -45,7 +45,7 @@ export function getPlayerStatistics(progress: ProgressionState) {
     totalXp, ...getPlayerLevel(totalXp),
     completedMissions: completedMissions.length,
     completedExercises: completedExercises.size,
-    defeatedBosses: completedMissions.filter((mission) => isGoblinKingMission(mission.id)).length,
+    defeatedBosses: completedMissions.filter((mission) => isBossMission(mission.id)).length,
     currentWorld: currentWorld.title,
     worldProgress: getWorldProgress(progress, currentWorld.id),
   };
