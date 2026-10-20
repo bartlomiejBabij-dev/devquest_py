@@ -150,10 +150,30 @@ export const spellbookEntries: readonly SpellbookEntry[] = [
     whyItWorks: 'The lantern is missing, so has_lantern is False. not False becomes True and the if block prints the reminder. The else block is skipped.',
     commonMistake: 'Thinking not changes the variable itself. It produces the opposite Boolean for this expression; has_lantern still stores False.',
   },
+  {
+    id: 'python-for-loops', title: 'for loops', chapterId: 'python-caverns-repeating-road',
+    explanation: 'A loop repeats its body for each value in a sequence. for takes the next value, gives it the loop variable name, and runs the indented instructions. This avoids copying repeated code.',
+    codeExample: 'for bell in range(2):\n    print("Ring")', expectedOutput: 'Ring\nRing',
+    whyItWorks: 'range(2) supplies two values. Each turn runs the indented print(), so Ring appears twice on separate lines.',
+    commonMistake: 'Leaving the body unindented, omitting the colon, or expecting code outside the body to repeat.',
+  },
+  {
+    id: 'python-range', title: 'range()', chapterId: 'python-caverns-lanterns-of-range',
+    explanation: 'range(stop) starts at 0. range(start, stop) starts at the given start. Both increase by 1 and exclude the stop. The loop variable takes each value in order.',
+    codeExample: 'for rune in range(2):\n    print(rune)\nfor rune in range(5, 7):\n    print(rune)', expectedOutput: '0\n1\n5\n6',
+    whyItWorks: 'The first loop prints 0 then 1. After it finishes, the second prints 5 then 6. Neither loop prints its stop value.',
+    commonMistake: 'Including the stop value, or treating the first argument of range(start, stop) as the number of turns.',
+  },
 ];
 
 /** Every exercise links to reference material, never to its answer. */
 export const exerciseSpellbookEntryIds: Readonly<Record<string, string>> = {
+  'python-caverns-road-echo': 'python-for-loops',
+  'python-caverns-road-keyword': 'python-for-loops',
+  'python-caverns-road-body': 'python-for-loops',
+  'python-caverns-range-zero': 'python-range',
+  'python-caverns-range-stop': 'python-range',
+  'python-caverns-range-start': 'python-range',
   'python-valley-keeper-comparison': 'python-comparisons',
   'python-valley-keeper-branch': 'python-elif',
   'python-valley-keeper-runes': 'python-and',

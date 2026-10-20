@@ -1,6 +1,6 @@
 # DevQuest
 
-A local, playable Expo fantasy RPG that teaches beginner Python concepts. Forest of Variables has six five-exercise missions; completing it unlocks six Valley of Decisions missions: two five-exercise adventures, three short adventures with three exercises, and the five-spell Decision Keeper finale. Progression is saved locally. The original three-spell Goblin battle remains playable from Home.
+A local, playable Expo fantasy RPG that teaches beginner Python concepts. Forest of Variables has six five-exercise missions; completing it unlocks six Valley of Decisions missions: two five-exercise adventures, three short adventures with three exercises, and the five-spell Decision Keeper finale. Completing Valley unlocks Loop Caverns, with two three-spell adventures teaching for loops and range(). Progression is saved locally. The original three-spell Goblin battle remains playable from Home.
 
 ## Run in Expo Go
 
@@ -23,7 +23,7 @@ Answers are checked against local challenge data; no Python code is executed. Co
 
 New players see a three-screen Python introduction. Skip and Start Adventure save its completion under a separate local key; players with completed missions bypass it. Learn Python on Home reopens it.
 
-The Spellbook on Home contains eighteen short Python references. Each world mission can open the relevant entry without leaving the current exercise. Personal notes are tied to exercise IDs and saved locally with an explicit Save Note action; they can be edited or deleted and do not affect XP or progression.
+The Spellbook on Home contains twenty short Python references. Each world mission can open the relevant entry without leaving the current exercise. Personal notes are tied to exercise IDs and saved locally with an explicit Save Note action; they can be edited or deleted and do not affect XP or progression.
 
 My Profile saves only a trimmed 3–20 character nickname and one of five local avatars under `devquest.profile.v1`. Saves are explicit and queued. Missing or damaged profiles fall back to Python Apprentice/Mage; unreadable or future-version saves are protected from replacement. Profile editing never writes to progression, notes, or onboarding.
 
@@ -112,3 +112,12 @@ The sixth Valley chapter is a final boss unlocked after Mirror of Truth. Five ta
 The original stone guardian has 100 HP, loses 20 per validated correct spell, and awards 100 XP once. Replays award zero. Victory reveals WORLD 2 CLEARED; map clear status requires the boss and all registered Valley chapters. Goblin King retains its original artwork, animations, five spells and 100/20 balance.
 
 There are now twelve missions, 54 exercises (52 tap and two short typed answers), 27 lessons, eighteen Spellbook references and 640 available XP. A completed Stage 3G.3B save keeps 540 XP, 49 exercises and one boss, with Valley showing 5/6 (83%) until the Keeper is defeated. Afterward Profile shows 54 exercises, twelve missions and two bosses. No save migration is required. See [Stage 3G.3C verification](docs/stage-3g3c.md).
+
+
+### Loop Caverns foundation (Stage 3H.1)
+
+Complete all six Valley chapters, including The Decision Keeper, to enter World 3. The Repeating Road teaches repeated actions and the indented `for` body; Lanterns of Range teaches zero-based values, the excluded stop and `range(start, stop)`. Each has three tap questions and awards 30 XP once, with zero replay XP. Four concise lessons introduce concepts before practice, and two Spellbook references support review and exercise notes.
+
+The shared map adds teal crystal scenery and a responsive three-world selector. Locked world links show their requirement without exposing an enterable chapter path. Mission returns retain the owning world. Completing both Caverns chapters means AVAILABLE CHAPTERS COMPLETE / UP TO DATE; a future final boss is not part of this stage.
+
+Current totals: three worlds, fourteen missions, sixty exercises (58 tap, two typed), 31 lessons, twenty Spellbook references and 700 available XP. Old 640-XP saves unlock Caverns automatically without migration; Forest and Valley content, rewards and bosses are unchanged. See [Stage 3H.1 verification](docs/stage-3h1.md).

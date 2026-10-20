@@ -8,10 +8,10 @@ import { NavigationButton } from '@/components/NavigationButton';
 import { getBossEncounter, isBossMission, isWorldCleared } from '@/game/boss';
 import { useGame } from '@/game/GameContext';
 import { getChapterProgress, getTotalEarnedXp, getWorldProgress, isChapterCompleted, isChapterUnlocked, isMissionCompleted, isMissionUnlocked, isWorldUnlocked } from '@/game/progression';
-import { chapters, forestOfVariables, missions, worlds } from '@/game/worldContent';
+import { chapters, forestOfVariables, valleyOfDecisions, loopCaverns, missions, worlds } from '@/game/worldContent';
 import type { Chapter, ProgressionState } from '@/game/worldTypes';
 import { useScreenBack, useScreenNavigation } from '@/navigation/useScreenNavigation';
-import { resolveMapWorld } from '@/navigation/worldRoutes';
+import { getAccessibleMapChapters, resolveMapWorld } from '@/navigation/worldRoutes';
 import { colors } from '@/theme';
 
 type ChapterState = 'completed' | 'available' | 'locked';
@@ -35,6 +35,7 @@ function ChapterNode({ chapter, index, state, onPress, pulse }: {
     <View style={[styles.stopRow, index % 2 === 1 && styles.stopRowRight]}>
       <Pressable onPress={onPress} accessibilityRole="button" accessibilityLabel={`Chapter ${index + 1}: ${chapter.title}, ${state}`}
         accessibilityHint="Opens chapter details" style={({ pressed }) => [styles.chapterCard, state === 'available' && styles.chapterCardAvailable,
+          chapter.worldId === loopCaverns.id && state !== 'locked' && styles.cavernCard,
           state === 'completed' && styles.chapterCardCompleted, boss && styles.bossCard, boss && state === 'available' && styles.bossCardAvailable,
           boss && state === 'completed' && styles.bossCardCompleted, pressed && styles.pressed]}>
         <View style={[styles.glyphFrame, state === 'available' && styles.glyphFrameAvailable, state === 'completed' && styles.glyphFrameCompleted, boss && styles.bossGlyphFrame, boss && state === 'completed' && styles.bossGlyphFrameCompleted]}>
@@ -141,16 +142,16 @@ export default function WorldMapScreen() {
   const router = useRouter();
   const { worldId } = useLocalSearchParams<{ worldId?: string }>();
   const world = resolveMapWorld(worldId);
-  const valley = world.id !== forestOfVariables.id;
+  const valley = world.id === valleyOfDecisions.id;
+  const caverns = world.id === loopCaverns.id;
+  const expandedWorld = world.id !== forestOfVariables.id;
   const { progression } = useGame();
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const reduceMotion = useReducedMotion();
   const [pulse] = useState(() => new Animated.Value(0.55));
   const worldProgress = getWorldProgress(progression, world.id);
-  const chapterList = world.chapterIds.flatMap((id) => {
-    const chapter = chapters.find((item) => item.id === id);
-    return chapter ? [chapter] : [];
-  });
+  const worldUnlocked = isWorldUnlocked(progression, world.id);
+  const chapterList = getAccessibleMapChapters(progression, world.id);
   const exerciseCount = missions.filter((mission) => world.chapterIds.includes(mission.chapterId))
     .reduce((count, mission) => count + mission.exerciseIds.length, 0);
   const selectedChapter = chapterList.find((chapter) => chapter.id === selectedId);
@@ -192,30 +193,32 @@ export default function WorldMapScreen() {
             </Pressable>;
           })}
         </View>
-        <View style={[styles.banner, valley && styles.valleyBanner]}>
+        <View style={[styles.banner, valley && styles.valleyBanner, caverns && styles.cavernBanner]}>
           <Text style={styles.bannerStars}>✦  ·  ✧  ·  ✦</Text>
-          <Text style={styles.bannerEyebrow}>{valley ? 'EVERY CHOICE IS A SPELL' : 'THE ADVENTURE BEGINS'}</Text>
-          <Text style={styles.bannerTitle}>{valley ? 'Valley of' : 'Forest of'}{'\n'}<Text style={styles.bannerAccent}>{valley ? 'Decisions' : 'Variables'}</Text></Text>
+          <Text style={styles.bannerEyebrow}>{caverns ? 'ONE SPELL · MANY ECHOES' : valley ? 'EVERY CHOICE IS A SPELL' : 'THE ADVENTURE BEGINS'}</Text>
+          <Text style={styles.bannerTitle}>{caverns ? 'Loop' : valley ? 'Valley of' : 'Forest of'}{'\n'}<Text style={[styles.bannerAccent, caverns && styles.crystalText]}>{caverns ? 'Caverns' : valley ? 'Decisions' : 'Variables'}</Text></Text>
           <Text style={styles.bannerDescription}>{world.description}</Text>
-          {valley ? <Text style={styles.valleyPeaks} accessible={false}>◇  △  ◈  △  ◇</Text> : <View style={styles.treeLine}><Text style={styles.treeGlyph}>♠</Text><Text style={styles.treeGlyphSmall}>♠</Text><Text style={styles.treeGlyph}>♠</Text><Text style={styles.treeGlyphSmall}>♠</Text><Text style={styles.treeGlyph}>♠</Text></View>}
+          {caverns ? <View style={styles.crystalRow} accessible={false}>{[0, 1, 2].map(index => <Animated.View key={index} style={[styles.crystal, { opacity: pulse }]}><Text style={styles.crystalRune}>✧</Text></Animated.View>)}</View>
+            : valley ? <Text style={styles.valleyPeaks} accessible={false}>◇  △  ◈  △  ◇</Text> : <View style={styles.treeLine}><Text style={styles.treeGlyph}>♠</Text><Text style={styles.treeGlyphSmall}>♠</Text><Text style={styles.treeGlyph}>♠</Text><Text style={styles.treeGlyphSmall}>♠</Text><Text style={styles.treeGlyph}>♠</Text></View>}
         </View>
 
-        {!isWorldUnlocked(progression, world.id) ? <View style={styles.noticeCard}>
+        {!worldUnlocked ? <View style={styles.noticeCard}>
           <Text style={styles.noticeTitle}>WORLD LOCKED</Text><Text style={styles.noticeText}>{world.unlockRequirement}</Text>
         </View> : null}
-        {valley ? <Text style={styles.availableChapters}>{chapterList.length} CHAPTERS AVAILABLE · {exerciseCount} PYTHON SPELLS</Text> : null}
+        {expandedWorld && worldUnlocked ? <Text style={styles.availableChapters}>{chapterList.length} CHAPTERS AVAILABLE · {exerciseCount} PYTHON SPELLS</Text> : null}
         <View style={styles.playerPanel}>
           <View style={styles.playerIcon}><Text style={styles.playerIconText}>✦</Text></View>
           <View style={styles.playerInfo}><Text style={styles.playerLabel}>YOUR HERO</Text><Text style={styles.playerName}>Python Pyromancer</Text></View>
           <View style={styles.playerXp}><Text style={styles.playerXpValue}>{getTotalEarnedXp(progression)}</Text><Text style={styles.playerXpLabel}>TOTAL XP</Text></View>
         </View>
-        <View style={styles.worldProgressRow}><Text style={styles.progressLabel}>{valley ? 'AVAILABLE CHAPTERS' : 'WORLD COMPLETION'}</Text><Text style={styles.progressPercent}>{worldProgress.percent}%</Text></View>
+        <View style={styles.worldProgressRow}><Text style={styles.progressLabel}>{expandedWorld ? 'AVAILABLE CHAPTERS' : 'WORLD COMPLETION'}</Text><Text style={styles.progressPercent}>{worldProgress.percent}%</Text></View>
         <View style={styles.progressTrack} accessibilityRole="progressbar" accessibilityValue={{ min: 0, max: 100, now: worldProgress.percent }}>
           <View style={[styles.progressFill, { width: `${worldProgress.percent}%` }]} />
         </View>
 
-        <View style={styles.sectionHeading}><Text style={styles.sectionTitle}>{valley ? 'THE DIVIDED PATH' : 'THE ENCHANTED PATH'}</Text><Text style={styles.sectionHint}>{worldProgress.completed} / {worldProgress.total} CLEARED</Text></View>
-        <View style={[styles.mapSurface, valley && styles.valleyMap]}>
+        {worldUnlocked ? <>
+        <View style={styles.sectionHeading}><Text style={styles.sectionTitle}>{caverns ? 'THE ECHOING PATH' : valley ? 'THE DIVIDED PATH' : 'THE ENCHANTED PATH'}</Text><Text style={styles.sectionHint}>{worldProgress.completed} / {worldProgress.total} CLEARED</Text></View>
+        <View style={[styles.mapSurface, valley && styles.valleyMap, caverns && styles.cavernMap]}>
           <View style={styles.mapCaption}><Text style={styles.mapCaptionText}>✧  FOLLOW THE RUNES  ✧</Text></View>
           {chapterList.map((chapter, index) => (
             <View key={chapter.id}>
@@ -228,8 +231,9 @@ export default function WorldMapScreen() {
               ) : null}
             </View>
           ))}
-          <Text style={styles.mapFooter}>{worldProgress.percent === 100 ? isWorldCleared(progression, world.id) ? `${world.title.toUpperCase()} CLEARED` : 'AVAILABLE CHAPTERS COMPLETE' : valley ? 'CHOOSE YOUR PATH THROUGH THE VALLEY' : 'MORE OF THE FOREST AWAITS'}</Text>
+          <Text style={styles.mapFooter}>{worldProgress.percent === 100 ? isWorldCleared(progression, world.id) ? `${world.title.toUpperCase()} CLEARED` : 'AVAILABLE CHAPTERS COMPLETE' : caverns ? 'FOLLOW THE CRYSTAL ECHOES' : valley ? 'CHOOSE YOUR PATH THROUGH THE VALLEY' : 'MORE OF THE FOREST AWAITS'}</Text>
         </View>
+        </> : null}
       </GameScreen>
 
       <Modal transparent visible={!!selectedChapter} animationType="fade" onRequestClose={() => setSelectedId(null)} statusBarTranslucent>
@@ -245,8 +249,15 @@ export default function WorldMapScreen() {
 }
 
 const styles = StyleSheet.create({
-  worldPicker: { flexDirection: 'row', gap: 8, marginBottom: 12 },
-  worldChoice: { flex: 1, minHeight: 72, padding: 11, borderRadius: 14, borderWidth: 1, borderColor: colors.border, backgroundColor: colors.panel, justifyContent: 'center' },
+  worldPicker: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginBottom: 12 },
+  worldChoice: { flex: 1, flexBasis: '45%', minWidth: 130, minHeight: 72, padding: 11, borderRadius: 14, borderWidth: 1, borderColor: colors.border, backgroundColor: colors.panel, justifyContent: 'center' },
+  cavernBanner: { backgroundColor: '#132C40', borderColor: '#54BECB' },
+  cavernMap: { backgroundColor: '#112435', borderColor: '#3A8C9E' },
+  cavernCard: { backgroundColor: '#193747', borderColor: '#64D4D0' },
+  crystalText: { color: '#8CE9EB' },
+  crystalRow: { flexDirection: 'row', gap: 28, marginTop: 23, marginBottom: 8 },
+  crystal: { width: 34, height: 46, borderRadius: 8, borderWidth: 2, borderColor: '#8CE9EB', backgroundColor: '#27617B', transform: [{ rotate: '15deg' }], alignItems: 'center', justifyContent: 'center' },
+  crystalRune: { color: '#C8FFFF', fontSize: 25 },
   worldChoiceSelected: { borderColor: colors.gold, backgroundColor: '#352C4B' },
   worldChoiceLabel: { color: colors.gold, fontSize: 9, fontWeight: '800' },
   worldChoiceTitle: { color: colors.text, fontSize: 13, fontWeight: '800', marginTop: 5 },

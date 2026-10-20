@@ -6,7 +6,7 @@ const { exerciseSpellbookEntryIds } = require('../../src/game/spellbookContent.t
 const baseline = require('../fixtures/short-adventures-compatibility.json');
 const existing = (items, hashes) => items.filter(item => Object.hasOwn(hashes, item.id));
 module.exports = {
-  worlds: current.worlds.map(world => world.id === 'python-valley-of-decisions'
+  worlds: current.worlds.filter(world => ['python-forest-of-variables', 'python-valley-of-decisions'].includes(world.id)).map(world => world.id === 'python-valley-of-decisions'
     ? { ...world, chapterIds: world.chapterIds.filter(id => Object.hasOwn(baseline.chapters, id)), xpReward: 150 }
     : world),
   chapters: existing(current.chapters, baseline.chapters),

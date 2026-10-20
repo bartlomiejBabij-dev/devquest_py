@@ -190,6 +190,34 @@ export const lessons: readonly LessonContent[] = [
     whyItWorks: 'Three is below four. The elif condition requires both charge == 3 and sealed to be True. Both are, so Steady prints and else is skipped.',
     importantRule: 'and needs both; or needs at least one; not reverses a Boolean. Evaluate parenthesized parts together. Code outside a skipped block can still run.',
   },
+  {
+    id: 'python-lesson-loop-repeat', title: 'One spell, many turns',
+    explanation: 'A loop repeats instructions, so you do not need to copy the same code. for takes each value from a sequence. range(3) supplies three values, giving this loop three turns. step is the name that holds each value; this spell only needs the repeated action.',
+    codeExample: 'for step in range(3):\n    print("Walk")', expectedOutput: 'Walk\nWalk\nWalk',
+    whyItWorks: 'On the first turn print() shows Walk. On the second it shows Walk again. On the third it shows Walk once more, then the loop finishes.',
+    importantRule: 'Use for, a name, in, a sequence and a colon. Indent the instructions to repeat. This indented part is the loop body.',
+  },
+  {
+    id: 'python-lesson-loop-body', title: 'Inside the repeating spell',
+    explanation: 'Indentation tells Python which instructions belong to the loop. The body repeats on every turn. A line after the body with no indentation runs once after the loop finishes.',
+    codeExample: 'for flash in range(2):\n    print("Glow")\nprint("Done")', expectedOutput: 'Glow\nGlow\nDone',
+    whyItWorks: 'The indented print runs on both turns, producing two Glows. Done is outside the loop, so it prints once after both turns.',
+    importantRule: 'Moving a line into or out of the indented body changes whether it repeats. Keep indentation consistent.',
+  },
+  {
+    id: 'python-lesson-range-zero', title: 'Meet each number',
+    explanation: 'range(stop) supplies whole numbers starting at 0 and increasing by 1. It stops before the stop value. In a for loop, the named variable holds a new value on each turn. A turn is also called an iteration.',
+    codeExample: 'for number in range(3):\n    print(number)', expectedOutput: '0\n1\n2',
+    whyItWorks: 'First number holds 0, and 0 prints. Then it holds 1, and 1 prints. Finally it holds 2, and 2 prints. The loop stops before 3.',
+    importantRule: 'range(3) gives three values, but the last is 2. Do not include the stop value or start counting at 1.',
+  },
+  {
+    id: 'python-lesson-range-bounds', title: 'Choose where to begin',
+    explanation: 'range(start, stop) lets you choose the first number. The start is included. Values increase by 1 until just before the stop, which is still excluded.',
+    codeExample: 'for number in range(1, 4):\n    print(number)', expectedOutput: '1\n2\n3',
+    whyItWorks: 'On turn one number is 1; on turn two it is 2; on turn three it is 3. Each turn prints the current number. The loop ends before 4.',
+    importantRule: 'With two arguments, the first is the start, not the number of turns. The second is the excluded stop.',
+  },
 ];
 
 export function getLessonForExercise(exercise: Exercise): LessonContent | null {
