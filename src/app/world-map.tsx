@@ -3,12 +3,13 @@ import { useEffect, useState } from 'react';
 import { Animated, Modal, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useReducedMotion } from 'react-native-reanimated';
+import { ArchipelagoScenery } from '@/components/ArchipelagoScenery';
 import { GameScreen } from '@/components/GameScreen';
 import { NavigationButton } from '@/components/NavigationButton';
 import { getBossEncounter, isBossMission, isWorldCleared } from '@/game/boss';
 import { useGame } from '@/game/GameContext';
 import { getChapterProgress, getTotalEarnedXp, getWorldProgress, isChapterCompleted, isChapterUnlocked, isMissionCompleted, isMissionUnlocked, isWorldUnlocked } from '@/game/progression';
-import { chapters, forestOfVariables, valleyOfDecisions, loopCaverns, missions, worlds } from '@/game/worldContent';
+import { chapters, forestOfVariables, valleyOfDecisions, loopCaverns, listArchipelago, missions, worlds } from '@/game/worldContent';
 import type { Chapter, ProgressionState } from '@/game/worldTypes';
 import { useScreenBack, useScreenNavigation } from '@/navigation/useScreenNavigation';
 import { getAccessibleMapChapters, resolveMapWorld } from '@/navigation/worldRoutes';
@@ -36,6 +37,7 @@ function ChapterNode({ chapter, index, state, onPress, pulse }: {
       <Pressable onPress={onPress} accessibilityRole="button" accessibilityLabel={`Chapter ${index + 1}: ${chapter.title}, ${state}`}
         accessibilityHint="Opens chapter details" style={({ pressed }) => [styles.chapterCard, state === 'available' && styles.chapterCardAvailable,
           chapter.worldId === loopCaverns.id && state !== 'locked' && styles.cavernCard,
+          chapter.worldId === listArchipelago.id && state !== 'locked' && styles.islandCard,
           state === 'completed' && styles.chapterCardCompleted, boss && styles.bossCard, boss && state === 'available' && styles.bossCardAvailable,
           boss && state === 'completed' && styles.bossCardCompleted, boss?.kind === 'loop-warden' && state !== 'locked' && styles.wardenCard, pressed && styles.pressed]}>
         <View style={[styles.glyphFrame, state === 'available' && styles.glyphFrameAvailable, state === 'completed' && styles.glyphFrameCompleted, boss && styles.bossGlyphFrame, boss && state === 'completed' && styles.bossGlyphFrameCompleted]}>
@@ -144,6 +146,7 @@ export default function WorldMapScreen() {
   const world = resolveMapWorld(worldId);
   const valley = world.id === valleyOfDecisions.id;
   const caverns = world.id === loopCaverns.id;
+  const archipelago = world.id === listArchipelago.id;
   const expandedWorld = world.id !== forestOfVariables.id;
   const { progression } = useGame();
   const [selectedId, setSelectedId] = useState<string | null>(null);
@@ -193,12 +196,12 @@ export default function WorldMapScreen() {
             </Pressable>;
           })}
         </View>
-        <View style={[styles.banner, valley && styles.valleyBanner, caverns && styles.cavernBanner]}>
+        <View style={[styles.banner, valley && styles.valleyBanner, caverns && styles.cavernBanner, archipelago && styles.islandBanner]}>
           <Text style={styles.bannerStars}>✦  ·  ✧  ·  ✦</Text>
-          <Text style={styles.bannerEyebrow}>{caverns ? 'ONE SPELL · MANY ECHOES' : valley ? 'EVERY CHOICE IS A SPELL' : 'THE ADVENTURE BEGINS'}</Text>
-          <Text style={styles.bannerTitle}>{caverns ? 'Loop' : valley ? 'Valley of' : 'Forest of'}{'\n'}<Text style={[styles.bannerAccent, caverns && styles.crystalText]}>{caverns ? 'Caverns' : valley ? 'Decisions' : 'Variables'}</Text></Text>
+          <Text style={styles.bannerEyebrow}>{archipelago ? 'GATHER · ORDER · DISCOVER' : caverns ? 'ONE SPELL · MANY ECHOES' : valley ? 'EVERY CHOICE IS A SPELL' : 'THE ADVENTURE BEGINS'}</Text>
+          <Text style={[styles.bannerTitle, archipelago && styles.islandTitle]}>{archipelago ? 'List' : caverns ? 'Loop' : valley ? 'Valley of' : 'Forest of'}{'\n'}<Text style={[styles.bannerAccent, (caverns || archipelago) && styles.crystalText]}>{archipelago ? 'Archipelago' : caverns ? 'Caverns' : valley ? 'Decisions' : 'Variables'}</Text></Text>
           <Text style={styles.bannerDescription}>{world.description}</Text>
-          {caverns ? <View style={styles.crystalRow} accessible={false}>{[0, 1, 2].map(index => <Animated.View key={index} style={[styles.crystal, { opacity: pulse }]}><Text style={styles.crystalRune}>✧</Text></Animated.View>)}</View>
+          {archipelago ? <ArchipelagoScenery /> : caverns ? <View style={styles.crystalRow} accessible={false}>{[0, 1, 2].map(index => <Animated.View key={index} style={[styles.crystal, { opacity: pulse }]}><Text style={styles.crystalRune}>✧</Text></Animated.View>)}</View>
             : valley ? <Text style={styles.valleyPeaks} accessible={false}>◇  △  ◈  △  ◇</Text> : <View style={styles.treeLine}><Text style={styles.treeGlyph}>♠</Text><Text style={styles.treeGlyphSmall}>♠</Text><Text style={styles.treeGlyph}>♠</Text><Text style={styles.treeGlyphSmall}>♠</Text><Text style={styles.treeGlyph}>♠</Text></View>}
         </View>
 
@@ -217,21 +220,21 @@ export default function WorldMapScreen() {
         </View>
 
         {worldUnlocked ? <>
-        <View style={styles.sectionHeading}><Text style={styles.sectionTitle}>{caverns ? 'THE ECHOING PATH' : valley ? 'THE DIVIDED PATH' : 'THE ENCHANTED PATH'}</Text><Text style={styles.sectionHint}>{worldProgress.completed} / {worldProgress.total} CLEARED</Text></View>
-        <View style={[styles.mapSurface, valley && styles.valleyMap, caverns && styles.cavernMap]}>
-          <View style={styles.mapCaption}><Text style={styles.mapCaptionText}>✧  FOLLOW THE RUNES  ✧</Text></View>
+        <View style={styles.sectionHeading}><Text style={styles.sectionTitle}>{archipelago ? 'THE TREASURE TRAIL' : caverns ? 'THE ECHOING PATH' : valley ? 'THE DIVIDED PATH' : 'THE ENCHANTED PATH'}</Text><Text style={styles.sectionHint}>{worldProgress.completed} / {worldProgress.total} {archipelago ? 'COMPLETE' : 'CLEARED'}</Text></View>
+        <View style={[styles.mapSurface, valley && styles.valleyMap, caverns && styles.cavernMap, archipelago && styles.islandMap]}>
+          <View style={styles.mapCaption}><Text style={styles.mapCaptionText}>{archipelago ? '◇  CHART YOUR COURSE  ◇' : '✧  FOLLOW THE RUNES  ✧'}</Text></View>
           {chapterList.map((chapter, index) => (
             <View key={chapter.id}>
               <ChapterNode chapter={chapter} index={index} state={getChapterState(progression, chapter)} onPress={() => setSelectedId(chapter.id)} pulse={pulse} />
               {index < chapterList.length - 1 ? (
                 <View style={[styles.trailRow, index % 2 === 1 && styles.trailRowReverse]} pointerEvents="none">
-                  <View style={[styles.trailCurve, index % 2 === 1 && styles.trailCurveReverse]} />
+                  <View style={[styles.trailCurve, index % 2 === 1 && styles.trailCurveReverse, archipelago && styles.bridgeTrail]} />
                   <Text style={styles.trailSparkle}>✧</Text>
                 </View>
               ) : null}
             </View>
           ))}
-          <Text style={styles.mapFooter}>{worldProgress.percent === 100 ? isWorldCleared(progression, world.id) ? `${world.title.toUpperCase()} CLEARED` : 'AVAILABLE CHAPTERS COMPLETE' : caverns ? 'FOLLOW THE CRYSTAL ECHOES' : valley ? 'CHOOSE YOUR PATH THROUGH THE VALLEY' : 'MORE OF THE FOREST AWAITS'}</Text>
+          <Text style={styles.mapFooter}>{worldProgress.percent === 100 ? isWorldCleared(progression, world.id) ? `${world.title.toUpperCase()} CLEARED` : 'AVAILABLE CHAPTERS COMPLETE' : archipelago ? 'NEW DISCOVERIES ACROSS THE SEA' : caverns ? 'FOLLOW THE CRYSTAL ECHOES' : valley ? 'CHOOSE YOUR PATH THROUGH THE VALLEY' : 'MORE OF THE FOREST AWAITS'}</Text>
         </View>
         </> : null}
       </GameScreen>
@@ -251,6 +254,11 @@ export default function WorldMapScreen() {
 const styles = StyleSheet.create({
   worldPicker: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginBottom: 12 },
   worldChoice: { flex: 1, flexBasis: '45%', minWidth: 130, minHeight: 72, padding: 11, borderRadius: 14, borderWidth: 1, borderColor: colors.border, backgroundColor: colors.panel, justifyContent: 'center' },
+  islandBanner: { backgroundColor: '#123F4B', borderColor: '#72D3C6' },
+  islandTitle: { fontSize: 30, lineHeight: 35 },
+  islandMap: { backgroundColor: '#10333E', borderColor: '#438C98' },
+  islandCard: { backgroundColor: '#20504C', borderColor: '#C7B47A' },
+  bridgeTrail: { borderColor: '#C89B69', borderBottomWidth: 4 },
   cavernBanner: { backgroundColor: '#132C40', borderColor: '#54BECB' },
   cavernMap: { backgroundColor: '#112435', borderColor: '#3A8C9E' },
   cavernCard: { backgroundColor: '#193747', borderColor: '#64D4D0' },

@@ -171,10 +171,36 @@ export const spellbookEntries: readonly SpellbookEntry[] = [
     whyItWorks: 'steps is 1 on the first turn and 2 on the second. Each turn prints Shine and increases steps by 1. When steps reaches 3, the check 3 < 3 is False and the loop stops.',
     commonMistake: 'Forgetting the update, resetting the counter, or changing it away from the stopping point can leave the condition always True. print() does not update the counter. Read such examples as text; never run a loop that cannot stop.',
   },
+  {
+    "id": "python-lists",
+    "title": "Python lists",
+    "explanation": "A list stores multiple items in order under one variable name. Use square brackets, commas between items and quotes around text items. Assign the list before using it.",
+    "codeExample": "chest = [\"pearl\", \"shell\"]\nprint(chest)",
+    "expectedOutput": "['pearl', 'shell']",
+    "whyItWorks": "chest stores two strings. print(chest) displays the whole list in order, with brackets, a comma and quotes around each string. These simple strings are displayed with single quotes.",
+    "commonMistake": "\"pearl, shell\" is one string, not a list. [pearl, shell] reads variable names rather than the two text values. Use [\"pearl\", \"shell\"].",
+    "chapterId": "python-archipelago-treasure-inventory"
+  },
+  {
+    "id": "python-list-indexing",
+    "title": "List indexing and length",
+    "explanation": "Indexes select items by position, starting at zero. [0] is first, [1] is second. len() counts all items; for a nonempty list, its last valid nonnegative index is one less than its length.",
+    "codeExample": "cargo = [\"sail\", \"anchor\"]\nprint(cargo[0])\nprint(len(cargo))",
+    "expectedOutput": "sail\n2",
+    "whyItWorks": "sail is at position 0 and anchor at position 1. Printing cargo[0] shows one string without quotes; len(cargo) counts two items.",
+    "commonMistake": "Do not use the length as an index: cargo[2] has no existing item here and would raise an IndexError. This out-of-range example is text only.",
+    "chapterId": "python-archipelago-index-island"
+  },
 ];
 
 /** Every exercise links to reference material, never to its answer. */
 export const exerciseSpellbookEntryIds: Readonly<Record<string, string>> = {
+  'python-archipelago-list-purpose': 'python-lists',
+  'python-archipelago-list-syntax': 'python-lists',
+  'python-archipelago-list-build': 'python-lists',
+  'python-archipelago-index-output': 'python-list-indexing',
+  'python-archipelago-index-length': 'python-list-indexing',
+  'python-archipelago-index-build': 'python-list-indexing',
   'python-caverns-warden-rune': 'python-range',
   'python-caverns-warden-path': 'python-for-loops',
   'python-caverns-warden-counter': 'python-while-loops',

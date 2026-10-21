@@ -23,6 +23,7 @@ const { getAccessibleMapChapters, worldMapForMission } = require('../src/navigat
 const { isWorldCleared, getBossHp } = require('../src/game/boss.ts');
 const { hasUnfinishedMissionProgress } = require('../src/navigation/navigationActions.ts');
 const { eternalLoopChapter, eternalLoopMission } = require('../src/game/cavernBossContent.ts');
+const { archipelagoMissions } = require('../src/game/archipelagoContent.ts');
 const baseline = require('./fixtures/code-builder-compatibility.json');
 const before = { completedMissionIds: Object.keys(baseline.missions) };
 const builders = builderExercises.filter(isCodeBuilderExercise);
@@ -42,12 +43,12 @@ test('Stage 3H.2 preserves all 60 prior exercises, 14 missions, lessons, referen
 });
 
 test('Builder missions retain three spells and 40 XP within the expanded registry', () => {
-  assert.deepEqual([worlds.length, chapters.length, missions.length, exercises.length, lessons.length, spellbookEntries.length], [3, 19, 19, 77, 38, 21]);
-  assert.deepEqual([exercises.filter(isChoiceExercise).length, exercises.filter(isCodeBuilderExercise).length], [67, 8]);
+  assert.deepEqual([worlds.length, chapters.length, missions.length, exercises.length, lessons.length, spellbookEntries.length], [4, 21, 21, 83, 42, 23]);
+  assert.deepEqual([exercises.filter(isChoiceExercise).length, exercises.filter(isCodeBuilderExercise).length], [71, 10]);
   assert.equal(exercises.filter(e => !isChoiceExercise(e) && !isCodeBuilderExercise(e)).length, 2);
-  assert.deepEqual(missions.filter(m => !Object.hasOwn(baseline.missions, m.id)), [...builderMissions, ...whileMissions, eternalLoopMission]);
+  assert.deepEqual(missions.filter(m => !Object.hasOwn(baseline.missions, m.id)), [...builderMissions, ...whileMissions, eternalLoopMission, ...archipelagoMissions]);
   assert.deepEqual(builderMissions.map(m => [m.title, m.exerciseIds.length, m.xpReward, m.encounter]), [['Echo Bridge', 3, 40, undefined], ['Counting Tower', 3, 40, undefined]]);
-  assert.equal(missions.reduce((xp, m) => xp + m.xpReward, 0), 960);
+  assert.equal(missions.reduce((xp, m) => xp + m.xpReward, 0), 1020);
   const ids = [...worlds, ...chapters, ...missions, ...exercises, ...lessons, ...spellbookEntries,
     ...exercises.filter(isChoiceExercise).flatMap(e => e.options), ...builders.flatMap(e => e.fragments)].map(v => v.id);
   assert.equal(new Set(ids).size, ids.length);

@@ -1,6 +1,6 @@
 # DevQuest
 
-A local, playable Expo fantasy RPG that teaches beginner Python concepts. Forest of Variables has six five-exercise missions; completing it unlocks six Valley of Decisions missions: two five-exercise adventures, three short adventures with three exercises, and the five-spell Decision Keeper finale. Completing Valley unlocks Loop Caverns, with six three-spell adventures teaching for loops, range(), while loops and assembling Python code, followed by The Loop Warden five-spell finale. Progression is saved locally. The original three-spell Goblin battle remains playable from Home.
+A local, playable Expo fantasy RPG that teaches beginner Python concepts. Forest of Variables has six five-exercise missions; completing it unlocks six Valley of Decisions missions: two five-exercise adventures, three short adventures with three exercises, and the five-spell Decision Keeper finale. Completing Valley unlocks Loop Caverns, with six three-spell adventures teaching for loops, range(), while loops and assembling Python code, followed by The Loop Warden five-spell finale. Completing it unlocks List Archipelago, with two short adventures introducing lists and indexing. Progression is saved locally. The original three-spell Goblin battle remains playable from Home.
 
 ## Run in Expo Go
 
@@ -142,3 +142,10 @@ The seventh Loop Caverns chapter unlocks after The Stopping Crystal. The Loop Wa
 Original cyan crystal and stone artwork accompanies HP derived from validated answers: 100 → 80 → 60 → 40 → 20 → 0. Explicit successful casts trigger damage; editing fragments, wrong answers and duplicate taps do not. First completion awards 100 XP, replay zero. Completing all seven chapters displays WORLD 3 CLEARED and adds the third defeated boss to Profile.
 
 Current totals: three worlds, nineteen missions, 77 exercises (67 choices, eight builders, two typed), 38 lessons, 21 Spellbook references and 960 available XP. A completed 860-XP save retains all progress and shows 6/7 (86%) Caverns completion until the Warden is defeated. No save migration or dependency change is required. See [Stage 3H.4 verification and physical-device checklist](docs/stage-3h4.md).
+
+
+### List Archipelago foundation (Stage 3I.1)
+
+World 4 unlocks after all seven Loop Caverns missions, including The Loop Warden. The shared four-world map adds turquoise sea, original island/chest/bridge artwork and a wrapping selector. Treasure Inventory teaches list syntax and displaying a collection; Index Island teaches zero-based positions and len(). Each mission has three touch exercises, including a three-fragment Code Builder, and pays 30 XP once, zero on replay. Four short lessons introduce each concept before assessment; two Spellbook entries support review and stable exercise notes.
+
+Current totals: four worlds, 21 missions, 83 exercises (71 choices, ten builders, two typed), 42 lessons, 23 references and 1020 available XP. Existing 960-XP saves unlock World 4 without migration. Its two available chapters end at UP TO DATE / AVAILABLE CHAPTERS COMPLETE; there is no World 4 boss or permanent clear yet. Existing worlds, bosses, rewards, saved formats and audio are unchanged. See [Stage 3I.1 verification and manual Android checklist](docs/stage-3i1.md).

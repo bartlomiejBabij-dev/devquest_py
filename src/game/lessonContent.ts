@@ -267,6 +267,42 @@ export const lessons: readonly LessonContent[] = [
     whyItWorks: 'The for loop prints 1 and 2. The while loop prints 2 and 1, then fuel reaches 0 and its check fails. Printing before updating shows the current value.',
     importantRule: 'Keep updates inside while bodies. Missing, resetting or wrong-direction updates can prevent stopping. Outside instructions run once in their written order.',
   },
+  {
+    "id": "python-lesson-list-create",
+    "title": "One chest, many treasures",
+    "explanation": "A Python list keeps several related values together in order. Give the collection a variable name. Use square brackets around its items and commas between them. Text items need quotes.",
+    "codeExample": "supplies = [\"rope\", \"coin\"]\nprint(\"Ready\")",
+    "expectedOutput": "Ready",
+    "whyItWorks": "supplies now names an ordered list of two strings. Assignment stores the list without displaying it. The separate print shows Ready.",
+    "importantRule": "[ ] make a list. Quotes around the entire collection would make one string instead. Quote each text item separately."
+  },
+  {
+    "id": "python-lesson-list-display",
+    "title": "Pack, then show the chest",
+    "explanation": "You can print a whole list by putting its variable name inside print(). Python shows brackets and commas, plus quotes around text items. The lines run from top to bottom.",
+    "codeExample": "pack = [\"ink\", \"wax\"]\nprint(pack)\nprint(\"Stored\")",
+    "expectedOutput": "['ink', 'wax']\nStored",
+    "whyItWorks": "The assignment creates pack. The next line displays its two items in order. For these strings, Python shows single quotes even though the code used double quotes. The last line prints Stored.",
+    "importantRule": "Assign a variable before reading it. A message before the list would change the output order. Printing the whole list keeps its brackets and item quotes."
+  },
+  {
+    "id": "python-lesson-list-index",
+    "title": "The first island is zero",
+    "explanation": "An index is an item's position in an ordered list. Python counts positions from zero: [0] selects the first item, [1] the second and [2] the third. Put the index after the list name.",
+    "codeExample": "kit = [\"map\", \"oar\", \"gem\"]\nprint(kit[0])\nprint(kit[2])",
+    "expectedOutput": "map\ngem",
+    "whyItWorks": "The positions are map: 0, oar: 1, gem: 2. Each lookup selects one string. Printing that string shows its text without quotes or list brackets.",
+    "importantRule": "Index 1 means the second item, not the first. A list keeps the order in which its items were written."
+  },
+  {
+    "id": "python-lesson-list-length",
+    "title": "Count items, then choose one",
+    "explanation": "len() returns the number of items in a list. With two items, the valid indexes are 0 and 1. You can store a selected item in another variable before printing it.",
+    "codeExample": "gems = [\"red\", \"blue\"]\nprint(len(gems))\nlast = gems[1]\nprint(last)",
+    "expectedOutput": "2\nblue",
+    "whyItWorks": "len(gems) counts two items. gems[1] selects blue, the second item, and stores it in last. print(last) shows blue.",
+    "importantRule": "Length is not the last index. Here gems[2] has no item and would raise an IndexError. Read that example as text only; use an existing index."
+  },
 ];
 
 export function getLessonForExercise(exercise: Exercise): LessonContent | null {

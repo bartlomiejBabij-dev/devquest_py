@@ -21,6 +21,7 @@ const { spellbookEntries, exerciseSpellbookEntryIds, getSpellbookEntryForExercis
 const { worldMapForMission } = require('../src/navigation/worldRoutes.ts');
 const { isBossMission, isWorldCleared, getBossHp, getBossEncounter, loopWardenMissionId } = require('../src/game/boss.ts');
 const { trackForRoute } = require('../src/game/audioController.ts');
+const { archipelagoMissions, archipelagoExercises, archipelagoChapters } = require('../src/game/archipelagoContent.ts');
 const baseline = require('./fixtures/loop-warden-compatibility.json');
 const before = { completedMissionIds: Object.keys(baseline.missions) };
 const builders = questions.filter(isCodeBuilderExercise);
@@ -41,11 +42,11 @@ test('Warden preserves all 72 exercises, eighteen missions, earlier bosses, engi
 });
 
 test('One seventh-chapter boss adds five touch exercises, one recap, 100 XP and globally unique IDs', () => {
-  assert.deepEqual([worlds.length, chapters.length, missions.length, exercises.length, lessons.length, spellbookEntries.length], [3, 19, 19, 77, 38, 21]);
-  assert.deepEqual([exercises.filter(isChoiceExercise).length, exercises.filter(isCodeBuilderExercise).length], [67, 8]);
+  assert.deepEqual([worlds.length, chapters.length, missions.length, exercises.length, lessons.length, spellbookEntries.length], [4, 21, 21, 83, 42, 23]);
+  assert.deepEqual([exercises.filter(isChoiceExercise).length, exercises.filter(isCodeBuilderExercise).length], [71, 10]);
   assert.equal(exercises.filter(e => !isChoiceExercise(e) && !isCodeBuilderExercise(e)).length, 2);
-  assert.deepEqual(missions.filter(m => !Object.hasOwn(baseline.missions, m.id)), [mission]);
-  assert.deepEqual(exercises.filter(e => !Object.hasOwn(baseline.exercises, e.id)), questions);
+  assert.deepEqual(missions.filter(m => !Object.hasOwn(baseline.missions, m.id)), [mission, ...archipelagoMissions]);
+  assert.deepEqual(exercises.filter(e => !Object.hasOwn(baseline.exercises, e.id)), [...questions, ...archipelagoExercises]);
   assert.deepEqual(questions.map(e => e.type), ['output-choice', 'code-builder', 'output-choice', 'missing-token', 'code-builder']);
   assert.deepEqual(mission.exerciseIds, questions.map(e => e.id));
   assert.deepEqual([loopWardenMissionId, mission.encounter, mission.xpReward], [mission.id, 'loop-warden', 100]);
@@ -54,7 +55,7 @@ test('One seventh-chapter boss adds five touch exercises, one recap, 100 XP and 
   const ids = [...worlds, ...chapters, ...missions, ...exercises, ...lessons, ...spellbookEntries,
     ...exercises.filter(isChoiceExercise).flatMap(e => e.options), ...exercises.filter(isCodeBuilderExercise).flatMap(e => e.fragments)].map(v => v.id);
   assert.equal(new Set(ids).size, ids.length);
-  assert.equal(missions.reduce((xp, m) => xp + m.xpReward, 0), 960);
+  assert.equal(missions.reduce((xp, m) => xp + m.xpReward, 0), 1020);
   assert.equal(missions.filter(m => isBossMission(m.id)).length, 3);
 });
 
@@ -193,7 +194,7 @@ test('Five explicit spells yield 100→0 HP, explanations before Continue, 100 X
   assert.deepEqual(getWorldProgress(before, loopCaverns.id), { completed: 6, total: 7, percent: 86 });
   assert.equal(isWorldCleared(before, loopCaverns.id), false);
   const won = play(before, 100);
-  assert.deepEqual(won.attempt.result, { xpAwarded: 100, totalXp: 960, newlyUnlockedChapterIds: [] });
+  assert.deepEqual(won.attempt.result, { xpAwarded: 100, totalXp: 960, newlyUnlockedChapterIds: [archipelagoChapters[0].id] });
   assert.equal(isWorldCleared(won.progress, loopCaverns.id), true);
   assert.deepEqual(getWorldProgress(won.progress, loopCaverns.id), { completed: 7, total: 7, percent: 100 });
   assert.equal(play(won.progress, 0).progress, won.progress);
