@@ -42,8 +42,8 @@ test('Warden preserves all 72 exercises, eighteen missions, earlier bosses, engi
 });
 
 test('One seventh-chapter boss adds five touch exercises, one recap, 100 XP and globally unique IDs', () => {
-  assert.deepEqual([worlds.length, chapters.length, missions.length, exercises.length, lessons.length, spellbookEntries.length], [4, 21, 21, 83, 42, 23]);
-  assert.deepEqual([exercises.filter(isChoiceExercise).length, exercises.filter(isCodeBuilderExercise).length], [71, 10]);
+  assert.deepEqual([worlds.length, chapters.length, missions.length, exercises.length, lessons.length, spellbookEntries.length], [4, 23, 23, 89, 46, 25]);
+  assert.deepEqual([exercises.filter(isChoiceExercise).length, exercises.filter(isCodeBuilderExercise).length], [75, 12]);
   assert.equal(exercises.filter(e => !isChoiceExercise(e) && !isCodeBuilderExercise(e)).length, 2);
   assert.deepEqual(missions.filter(m => !Object.hasOwn(baseline.missions, m.id)), [mission, ...archipelagoMissions]);
   assert.deepEqual(exercises.filter(e => !Object.hasOwn(baseline.exercises, e.id)), [...questions, ...archipelagoExercises]);
@@ -55,7 +55,7 @@ test('One seventh-chapter boss adds five touch exercises, one recap, 100 XP and 
   const ids = [...worlds, ...chapters, ...missions, ...exercises, ...lessons, ...spellbookEntries,
     ...exercises.filter(isChoiceExercise).flatMap(e => e.options), ...exercises.filter(isCodeBuilderExercise).flatMap(e => e.fragments)].map(v => v.id);
   assert.equal(new Set(ids).size, ids.length);
-  assert.equal(missions.reduce((xp, m) => xp + m.xpReward, 0), 1020);
+  assert.equal(missions.reduce((xp, m) => xp + m.xpReward, 0), 1100);
   assert.equal(missions.filter(m => isBossMission(m.id)).length, 3);
 });
 

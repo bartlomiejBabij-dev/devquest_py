@@ -191,10 +191,36 @@ export const spellbookEntries: readonly SpellbookEntry[] = [
     "commonMistake": "Do not use the length as an index: cargo[2] has no existing item here and would raise an IndexError. This out-of-range example is text only.",
     "chapterId": "python-archipelago-index-island"
   },
+  {
+    "id": "python-list-append",
+    "title": "append(): add an item",
+    "explanation": "Use list.append(value) when you find one more item to keep. It changes the existing list by adding one element at the end. Earlier items stay in place and the length grows by one.",
+    "codeExample": "chest = [\"coin\"]\nchest.append(\"ring\")\nprint(chest[1])\nprint(len(chest))",
+    "expectedOutput": "ring\n2",
+    "whyItWorks": "coin stays at index 0. ring is added at index 1. Reading that index prints ring, and len(chest) counts the two items.",
+    "commonMistake": "Do not write chest = chest.append(\"ring\"). append changes chest directly; it does not return a new list to assign. Call chest.append(\"ring\") on its own line.",
+    "chapterId": "python-archipelago-growing-chest"
+  },
+  {
+    "id": "python-list-replacement",
+    "title": "Indexed assignment: replace an item",
+    "explanation": "Use list[index] = value to upgrade an item already in the list. The index selects the position to replace. Other positions and the number of items stay the same.",
+    "codeExample": "gear = [\"cloak\", \"boots\"]\ngear[0] = \"cape\"\nprint(gear[0])\nprint(len(gear))",
+    "expectedOutput": "cape\n2",
+    "whyItWorks": "The first position, index 0, changes from cloak to cape. boots remains second. The list still has two elements, so len(gear) prints 2.",
+    "commonMistake": "append would add another item rather than replace one. Choose an existing index; assigning to index 2 in this two-item list would be out of range.",
+    "chapterId": "python-archipelago-smiths-exchange"
+  },
 ];
 
 /** Every exercise links to reference material, never to its answer. */
 export const exerciseSpellbookEntryIds: Readonly<Record<string, string>> = {
+  'python-archipelago-append-output': 'python-list-append',
+  'python-archipelago-append-keyword': 'python-list-append',
+  'python-archipelago-append-build': 'python-list-append',
+  'python-archipelago-replace-output': 'python-list-replacement',
+  'python-archipelago-replace-choice': 'python-list-replacement',
+  'python-archipelago-replace-build': 'python-list-replacement',
   'python-archipelago-list-purpose': 'python-lists',
   'python-archipelago-list-syntax': 'python-lists',
   'python-archipelago-list-build': 'python-lists',

@@ -78,19 +78,21 @@ test('Real map renders four wrapping tabs, rejects locked chapter access and swi
   returned = null; backHandler(); assert.equal(returned, '/');
 });
 
-test('Real Archipelago map shows two chapters, preserves XP when viewed, and displays UP TO DATE rather than CLEARED', () => {
+test('Real Archipelago map shows four chapters, preserves XP when viewed, and displays UP TO DATE rather than CLEARED', () => {
   worldId = listArchipelago.id;
-  for (const n of [19, 20, 21]) {
+  for (const n of [19, 20, 21, 22, 23]) {
     progress = { completedMissionIds: missions.slice(0, n).map(m => m.id) };
     const snapshot = JSON.stringify(progress), xp = getTotalEarnedXp(progress), tree = render();
     assert.ok(!text(tree).includes('WORLD LOCKED'));
     const chapterNodes = nodes(tree).filter(v => v.props?.accessibilityHint === 'Opens chapter details');
-    assert.equal(chapterNodes.length, 2);
+    assert.equal(chapterNodes.length, 4);
     assert.match(chapterNodes[0].props.accessibilityLabel, n === 19 ? /available/ : /completed/);
     assert.match(chapterNodes[1].props.accessibilityLabel, n === 19 ? /locked/ : n === 20 ? /available/ : /completed/);
+    for (const i of [2, 3]) assert.match(chapterNodes[i].props.accessibilityLabel, n > 19 + i ? /completed/ : n === 19 + i ? /available/ : /locked/);
+    if (n === 21) assert.match(text(tree), /2\s+\/\s+4/);
     const tab = nodes(tree).find(v => v.props?.accessibilityRole === 'tab' && v.props.accessibilityState.selected);
     assert.ok(!text(tab).includes('CLEARED'));
-    if (n === 21) { assert.match(text(tab), /UP TO DATE/); assert.match(text(tree), /AVAILABLE CHAPTERS COMPLETE/); }
+    if (n === 23) { assert.match(text(tab), /UP TO DATE/); assert.match(text(tree), /AVAILABLE CHAPTERS COMPLETE/); }
     assert.equal(JSON.stringify(progress), snapshot); assert.equal(getTotalEarnedXp(progress), xp);
   }
 });

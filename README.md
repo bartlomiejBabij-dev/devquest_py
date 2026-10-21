@@ -1,6 +1,6 @@
 # DevQuest
 
-A local, playable Expo fantasy RPG that teaches beginner Python concepts. Forest of Variables has six five-exercise missions; completing it unlocks six Valley of Decisions missions: two five-exercise adventures, three short adventures with three exercises, and the five-spell Decision Keeper finale. Completing Valley unlocks Loop Caverns, with six three-spell adventures teaching for loops, range(), while loops and assembling Python code, followed by The Loop Warden five-spell finale. Completing it unlocks List Archipelago, with two short adventures introducing lists and indexing. Progression is saved locally. The original three-spell Goblin battle remains playable from Home.
+A local, playable Expo fantasy RPG that teaches beginner Python concepts. Forest of Variables has six five-exercise missions; completing it unlocks six Valley of Decisions missions: two five-exercise adventures, three short adventures with three exercises, and the five-spell Decision Keeper finale. Completing Valley unlocks Loop Caverns, with six three-spell adventures teaching for loops, range(), while loops and assembling Python code, followed by The Loop Warden five-spell finale. Completing it unlocks List Archipelago, with four short adventures teaching lists, indexing, adding items and replacing equipment. Progression is saved locally. The original three-spell Goblin battle remains playable from Home.
 
 ## Run in Expo Go
 
@@ -149,3 +149,10 @@ Current totals: three worlds, nineteen missions, 77 exercises (67 choices, eight
 World 4 unlocks after all seven Loop Caverns missions, including The Loop Warden. The shared four-world map adds turquoise sea, original island/chest/bridge artwork and a wrapping selector. Treasure Inventory teaches list syntax and displaying a collection; Index Island teaches zero-based positions and len(). Each mission has three touch exercises, including a three-fragment Code Builder, and pays 30 XP once, zero on replay. Four short lessons introduce each concept before assessment; two Spellbook entries support review and stable exercise notes.
 
 Current totals: four worlds, 21 missions, 83 exercises (71 choices, ten builders, two typed), 42 lessons, 23 references and 1020 available XP. Existing 960-XP saves unlock World 4 without migration. Its two available chapters end at UP TO DATE / AVAILABLE CHAPTERS COMPLETE; there is no World 4 boss or permanent clear yet. Existing worlds, bosses, rewards, saved formats and audio are unchanged. See [Stage 3I.1 verification and manual Android checklist](docs/stage-3i1.md).
+
+
+### Growing chests and inventory updates (Stage 3I.2)
+
+After Index Island, The Growing Chest teaches append(): add one item at the end of the existing list and increase its length by one. The Smith's Exchange follows it and teaches indexed assignment: replace an existing item while keeping the same length. Each mission has three touch exercises, including a three-line Code Builder, and rewards 40 XP once, zero on replay. Four concise lessons introduce the operations before assessment, and two new Spellbook references preserve exercise-linked notes.
+
+Current totals: four worlds, 23 missions, 89 exercises (75 choices, twelve builders, two typed), 46 lessons, 25 Spellbook entries and 1100 maximum XP. A completed 1020-XP save keeps all records and shows 2/4 Archipelago chapters; new completions bring 1060 then 1100 XP. Completing all four available chapters displays UP TO DATE, with no World 4 boss or permanent clear. Engine, navigation, audio, old content and save formats are unchanged. See [Stage 3I.2 verification and physical Android checklist](docs/stage-3i2.md).

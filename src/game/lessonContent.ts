@@ -303,6 +303,42 @@ export const lessons: readonly LessonContent[] = [
     "whyItWorks": "len(gems) counts two items. gems[1] selects blue, the second item, and stores it in last. print(last) shows blue.",
     "importantRule": "Length is not the last index. Here gems[2] has no item and would raise an IndexError. Read that example as text only; use an existing index."
   },
+  {
+    "id": "python-lesson-list-append",
+    "title": "Make room for new treasure",
+    "explanation": "A list can change after you create it. Call append(value) after the list name and a dot to add one item at the end. The earlier items keep their positions.",
+    "codeExample": "bag = [\"rope\", \"coin\"]\nbag.append(\"gem\")\nprint(bag[2])",
+    "expectedOutput": "gem",
+    "whyItWorks": "bag starts with two items at indexes 0 and 1. append adds gem at index 2, changing the existing list to three items. Printing that new position shows gem.",
+    "importantRule": "append() changes the list; it does not return a new list. Write bag.append(\"gem\") on its own line, not bag = bag.append(\"gem\")."
+  },
+  {
+    "id": "python-lesson-append-length",
+    "title": "Add one, count again",
+    "explanation": "Each append(value) call adds one element. The list length increases by one. Create the list first, add the item, then use len() to see the new count.",
+    "codeExample": "kit = [\"map\"]\nkit.append(\"ink\")\nprint(len(kit))",
+    "expectedOutput": "2",
+    "whyItWorks": "kit starts with one item. Adding ink makes two items: map at index 0 and ink at index 1. len(kit) counts those two items.",
+    "importantRule": "Count after the update. Printing len(kit) before append would still show the old length. Use append with one value inside the parentheses."
+  },
+  {
+    "id": "python-lesson-list-replace",
+    "title": "Upgrade an existing treasure",
+    "explanation": "To replace an item, write the list name, its index in brackets, an equals sign and the new value. The value at that position changes; the other items stay in order.",
+    "codeExample": "tools = [\"rod\", \"cup\"]\ntools[1] = \"mug\"\nprint(tools[1])",
+    "expectedOutput": "mug",
+    "whyItWorks": "Index 1 is the second position. Its cup is replaced by mug, while rod stays at index 0. Reading tools[1] after the change gives mug.",
+    "importantRule": "Indexes start at zero. Assign to an existing position: replacement does not create an extra slot at the end."
+  },
+  {
+    "id": "python-lesson-replace-length",
+    "title": "Same chest, new contents",
+    "explanation": "Replacement changes an existing item, so the length stays the same. append adds a new item at the end, so the length grows by one. Choose the operation that matches your goal.",
+    "codeExample": "kit = [\"oar\", \"flag\"]\nkit[0] = \"sail\"\nprint(len(kit))",
+    "expectedOutput": "2",
+    "whyItWorks": "sail replaces oar at index 0. flag stays at index 1. The list still has two items. Calling append(\"sail\") instead would keep oar and add a third item.",
+    "importantRule": "Create the list before changing it, and change it before printing the updated item. Use an existing index for replacement; use append to add at the end."
+  },
 ];
 
 export function getLessonForExercise(exercise: Exercise): LessonContent | null {

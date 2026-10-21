@@ -1,12 +1,13 @@
+import { inventoryUpdateChapters, inventoryUpdateMissions, inventoryUpdateExercises } from './archipelagoUpdatesContent';
 import { cavernMissions } from './cavernContent';
 import type { Chapter, Exercise, Mission, World } from './worldTypes';
 
 export const listArchipelago: World = {
   id: 'python-list-archipelago', languageId: 'python', title: 'List Archipelago',
   description: 'Sail turquoise waters, gather island treasures and organize your discoveries with Python lists.',
-  chapterIds: ['python-archipelago-treasure-inventory', 'python-archipelago-index-island'],
+  chapterIds: ['python-archipelago-treasure-inventory', 'python-archipelago-index-island', ...inventoryUpdateChapters.map(chapter => chapter.id)],
   prerequisiteMissionIds: cavernMissions.map(mission => mission.id),
-  unlockRequirement: 'Complete all seven chapters of Loop Caverns, including The Loop Warden.', xpReward: 60,
+  unlockRequirement: 'Complete all seven chapters of Loop Caverns, including The Loop Warden.', xpReward: 140,
 };
 
 export const archipelagoChapters: readonly Chapter[] = [
@@ -22,6 +23,7 @@ export const archipelagoChapters: readonly Chapter[] = [
     learningObjective: 'Read zero-based list positions and count items with len().',
     missionIds: ['python-archipelago-index-island-01'], prerequisiteMissionIds: ['python-archipelago-treasure-inventory-01'], xpReward: 30,
   },
+  ...inventoryUpdateChapters,
 ];
 
 export const archipelagoMissions: readonly Mission[] = [
@@ -37,6 +39,7 @@ export const archipelagoMissions: readonly Mission[] = [
     exerciseIds: ['python-archipelago-index-output', 'python-archipelago-index-length', 'python-archipelago-index-build'],
     prerequisiteMissionIds: [], xpReward: 30,
   },
+  ...inventoryUpdateMissions,
 ];
 
 /** Authored display text only. Choices and builders validate stable IDs, never Python. */
@@ -114,4 +117,5 @@ export const archipelagoExercises: readonly Exercise[] = [
       { id: 'python-archipelago-index-build-set', code: 'loot = ["ring", "map"]' },
     ], validation: { kind: 'fragment-sequence', expectedFragmentIds: ['python-archipelago-index-build-set', 'python-archipelago-index-build-read', 'python-archipelago-index-build-print'] },
   },
+  ...inventoryUpdateExercises,
 ];
