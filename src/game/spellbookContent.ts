@@ -164,10 +164,23 @@ export const spellbookEntries: readonly SpellbookEntry[] = [
     whyItWorks: 'The first loop prints 0 then 1. After it finishes, the second prints 5 then 6. Neither loop prints its stop value.',
     commonMistake: 'Including the stop value, or treating the first argument of range(start, stop) as the number of turns.',
   },
+  {
+    id: 'python-while-loops', title: 'while loops', chapterId: 'python-caverns-endless-echo',
+    explanation: 'Use while to repeat an indented body while a condition is True. The check happens before every turn, including the first. A False starting condition means zero turns. Set the counter first and update it inside the body.',
+    codeExample: 'steps = 1\nwhile steps < 3:\n    print("Shine")\n    steps = steps + 1', expectedOutput: 'Shine\nShine',
+    whyItWorks: 'steps is 1 on the first turn and 2 on the second. Each turn prints Shine and increases steps by 1. When steps reaches 3, the check 3 < 3 is False and the loop stops.',
+    commonMistake: 'Forgetting the update, resetting the counter, or changing it away from the stopping point can leave the condition always True. print() does not update the counter. Read such examples as text; never run a loop that cannot stop.',
+  },
 ];
 
 /** Every exercise links to reference material, never to its answer. */
 export const exerciseSpellbookEntryIds: Readonly<Record<string, string>> = {
+  'python-caverns-echo-while-output': 'python-while-loops',
+  'python-caverns-echo-zero': 'python-while-loops',
+  'python-caverns-echo-while-build': 'python-while-loops',
+  'python-caverns-crystal-missing-update': 'python-while-loops',
+  'python-caverns-crystal-build': 'python-while-loops',
+  'python-caverns-crystal-repair': 'python-while-loops',
   'python-caverns-bridge-output': 'python-for-loops',
   'python-caverns-bridge-build': 'python-for-loops',
   'python-caverns-bridge-crossing': 'python-for-loops',

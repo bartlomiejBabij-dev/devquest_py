@@ -8,6 +8,7 @@ require.extensions['.ts'] = (m, f) => m._compile(ts.transpileModule(fs.readFileS
 }).outputText, f);
 const { worlds, chapters, missions, exercises, loopCaverns } = require('../src/game/worldContent.ts');
 const { builderChapters, builderMissions, builderExercises } = require('../src/game/cavernBuilderContent.ts');
+const { whileChapters, whileMissions } = require('../src/game/cavernWhileContent.ts');
 const { isCodeBuilderExercise, readFragmentIds, editBuilderAnswer, assembledCode } = require('../src/game/codeBuilder.ts');
 const { isChoiceExercise, isExerciseAnswerCorrect } = require('../src/game/exerciseValidation.ts');
 const { getPlayableMission, startMissionAttempt, submitMissionAnswer, continueMissionAttempt } = require('../src/game/worldMission.ts');
@@ -33,19 +34,19 @@ test('Stage 3H.2 preserves all 60 prior exercises, 14 missions, lessons, referen
     assert.deepEqual(items.filter(v => Object.hasOwn(baseline[name], v.id)).map(v => v.id), Object.keys(baseline[name]));
   }
   for (const world of worlds.slice(0, 2)) assert.equal(hash(world), baseline.worlds[world.id]);
-  assert.deepEqual(loopCaverns, { ...baseline.loopCaverns, chapterIds: [...baseline.loopCaverns.chapterIds, ...builderChapters.map(c => c.id)], xpReward: 140 });
+  assert.deepEqual(loopCaverns, { ...baseline.loopCaverns, chapterIds: [...baseline.loopCaverns.chapterIds, ...builderChapters.map(c => c.id), ...whileChapters.map(c => c.id)], xpReward: 220 });
   for (const [id, entry] of Object.entries(baseline.spellbookLinks)) assert.equal(exerciseSpellbookEntryIds[id], entry);
   assert.equal(Object.keys(baseline.exercises).length, 60);
   assert.equal(getTotalEarnedXp(before), 700);
 });
 
-test('Only two three-spell 40-XP missions are appended; registry and all stable IDs are accurate', () => {
-  assert.deepEqual([worlds.length, chapters.length, missions.length, exercises.length, lessons.length, spellbookEntries.length], [3, 16, 16, 66, 33, 20]);
-  assert.deepEqual([exercises.filter(isChoiceExercise).length, exercises.filter(isCodeBuilderExercise).length], [60, 4]);
+test('Builder missions retain three spells and 40 XP within the expanded registry', () => {
+  assert.deepEqual([worlds.length, chapters.length, missions.length, exercises.length, lessons.length, spellbookEntries.length], [3, 18, 18, 72, 37, 21]);
+  assert.deepEqual([exercises.filter(isChoiceExercise).length, exercises.filter(isCodeBuilderExercise).length], [64, 6]);
   assert.equal(exercises.filter(e => !isChoiceExercise(e) && !isCodeBuilderExercise(e)).length, 2);
-  assert.deepEqual(missions.filter(m => !Object.hasOwn(baseline.missions, m.id)), builderMissions);
+  assert.deepEqual(missions.filter(m => !Object.hasOwn(baseline.missions, m.id)), [...builderMissions, ...whileMissions]);
   assert.deepEqual(builderMissions.map(m => [m.title, m.exerciseIds.length, m.xpReward, m.encounter]), [['Echo Bridge', 3, 40, undefined], ['Counting Tower', 3, 40, undefined]]);
-  assert.equal(missions.reduce((xp, m) => xp + m.xpReward, 0), 780);
+  assert.equal(missions.reduce((xp, m) => xp + m.xpReward, 0), 860);
   const ids = [...worlds, ...chapters, ...missions, ...exercises, ...lessons, ...spellbookEntries,
     ...exercises.filter(isChoiceExercise).flatMap(e => e.options), ...builders.flatMap(e => e.fragments)].map(v => v.id);
   assert.equal(new Set(ids).size, ids.length);
@@ -177,15 +178,15 @@ function play(progress, mission, reward) {
   return { progress, attempt };
 }
 
-test('New missions pay 40 XP only after three spells, replay for zero, and reach four available chapters without clearing World 3', () => {
+test('Builder missions pay 40 XP only after three spells, replay for zero, and reach four completed chapters without clearing World 3', () => {
   let progress = before;
-  assert.deepEqual(getWorldProgress(progress, loopCaverns.id), { completed: 2, total: 4, percent: 50 });
+  assert.deepEqual(getWorldProgress(progress, loopCaverns.id), { completed: 2, total: 6, percent: 33 });
   builderMissions.forEach((mission, i) => {
     const won = play(progress, mission, 40);
     progress = won.progress;
     assert.equal(getTotalEarnedXp(progress), 740 + 40 * i);
-    assert.deepEqual(won.attempt.result.newlyUnlockedChapterIds, i === 0 ? [builderChapters[1].id] : []);
-    assert.deepEqual(getWorldProgress(progress, loopCaverns.id), { completed: 3 + i, total: 4, percent: 75 + 25 * i });
+    assert.deepEqual(won.attempt.result.newlyUnlockedChapterIds, i === 0 ? [builderChapters[1].id] : ['python-caverns-endless-echo']);
+    assert.deepEqual(getWorldProgress(progress, loopCaverns.id), { completed: 3 + i, total: 6, percent: i === 0 ? 50 : 67 });
     assert.equal(isWorldCleared(progress, loopCaverns.id), false);
     const replayStart = startMissionAttempt(progress, mission.id);
     assert.deepEqual([replayStart.exerciseIndex, replayStart.solvedExerciseIds, replayStart.result], [0, [], null]);

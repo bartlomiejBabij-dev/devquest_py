@@ -1,6 +1,6 @@
 # DevQuest
 
-A local, playable Expo fantasy RPG that teaches beginner Python concepts. Forest of Variables has six five-exercise missions; completing it unlocks six Valley of Decisions missions: two five-exercise adventures, three short adventures with three exercises, and the five-spell Decision Keeper finale. Completing Valley unlocks Loop Caverns, with four three-spell adventures teaching for loops, range() and assembling Python code. Progression is saved locally. The original three-spell Goblin battle remains playable from Home.
+A local, playable Expo fantasy RPG that teaches beginner Python concepts. Forest of Variables has six five-exercise missions; completing it unlocks six Valley of Decisions missions: two five-exercise adventures, three short adventures with three exercises, and the five-spell Decision Keeper finale. Completing Valley unlocks Loop Caverns, with six three-spell adventures teaching for loops, range(), while loops and assembling Python code. Progression is saved locally. The original three-spell Goblin battle remains playable from Home.
 
 ## Run in Expo Go
 
@@ -23,7 +23,7 @@ Answers are checked against local challenge data; no Python code is executed. Co
 
 New players see a three-screen Python introduction. Skip and Start Adventure save its completion under a separate local key; players with completed missions bypass it. Learn Python on Home reopens it.
 
-The Spellbook on Home contains twenty short Python references. Each world mission can open the relevant entry without leaving the current exercise. Personal notes are tied to exercise IDs and saved locally with an explicit Save Note action; they can be edited or deleted and do not affect XP or progression.
+The Spellbook on Home contains twenty-one short Python references. Each world mission can open the relevant entry without leaving the current exercise. Personal notes are tied to exercise IDs and saved locally with an explicit Save Note action; they can be edited or deleted and do not affect XP or progression.
 
 My Profile saves only a trimmed 3–20 character nickname and one of five local avatars under `devquest.profile.v1`. Saves are explicit and queued. Missing or damaged profiles fall back to Python Apprentice/Mage; unreadable or future-version saves are protected from replacement. Profile editing never writes to progression, notes, or onboarding.
 
@@ -127,3 +127,9 @@ Current totals: three worlds, fourteen missions, sixty exercises (58 tap, two ty
 Echo Bridge follows Lanterns of Range; Counting Tower follows Echo Bridge. Each adds three exercises and awards 40 XP once, with zero replay XP. Four Code Builder puzzles let players tap prewritten fragments into order, undo or reset, and explicitly Cast Spell. Indentation is preserved, no keyboard is needed, and help/Spellbook views retain the arrangement. Validation checks authored fragment IDs and never executes Python.
 
 Two lessons teach loop assembly, execution order and range boundaries. The existing for/range Spellbook entries support all six new exercises. Current totals are three worlds, sixteen missions, 66 exercises (60 choices, four builders, two typed), 33 lessons, twenty references and 780 available XP. A completed 700-XP save retains its rewards and shows 2/4 available Caverns chapters until the new missions are completed. World 3 still has no final boss and displays UP TO DATE at 4/4. See [Stage 3H.2 verification](docs/stage-3h2.md).
+
+### While loops and the Stopping Crystal (Stage 3H.3)
+
+The Endless Echo follows Counting Tower and teaches checking a while condition, zero repetitions and counter updates. The Stopping Crystal follows it, teaching termination, countdowns and repairing a while loop to match a finite for loop. Each has three exercises and pays 40 XP once, zero on replay. Four lessons introduce the concepts before assessment; two four-fragment puzzles reuse Code Builder. A new while-loop Spellbook entry supports all six questions. Every program remains display-only text, including examples of nontermination.
+
+Current totals: three worlds, eighteen missions, 72 exercises (64 choices, six builders, two typed), 37 lessons, 21 references and 860 available XP. Existing 780-XP saves keep their records and show 4/6 (67%) available Caverns progress. Both new completions reach 6/6 and UP TO DATE; no Caverns boss or permanent clear is added. See [Stage 3H.3 verification and manual checklist](docs/stage-3h3.md).

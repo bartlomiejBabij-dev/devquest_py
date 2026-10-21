@@ -232,6 +232,34 @@ export const lessons: readonly LessonContent[] = [
     whyItWorks: 'On turn one n holds 2, so 2 prints. On turn two n holds 3, so 3 prints. Four is excluded. Lit prints once after counting finishes.',
     importantRule: 'The stop is not the last printed number. Keep print(n) indented so it runs during every turn, not once outside the loop.',
   },
+  {
+    id: 'python-lesson-while-condition', title: 'Repeat while it is True',
+    explanation: 'while repeats its indented body while a condition is True. Python checks before every turn. Set the counter first. Inside the body, print its value, then update it toward a False condition.',
+    codeExample: 'count = 0\nwhile count < 3:\n    print(count)\n    count = count + 1', expectedOutput: '0\n1\n2',
+    whyItWorks: 'The checks for 0, 1 and 2 are True. Each turn prints count and adds 1. After printing 2, count becomes 3. Now 3 < 3 is False, so repetition stops.',
+    importantRule: 'Both print and the counter update belong inside the loop. Print before updating to show the current value. The colon and indentation are required.',
+  },
+  {
+    id: 'python-lesson-while-zero', title: 'Sometimes there is no first turn',
+    explanation: 'A while loop checks its condition before running any body instructions. If that first check is False, the body runs zero times. Python goes on to the next instruction outside the loop.',
+    codeExample: 'charge = 4\nwhile charge < 4:\n    print("Glow")\n    charge = charge + 1\nprint("Rest")', expectedOutput: 'Rest',
+    whyItWorks: '4 < 4 is False immediately. Glow never prints and the update is skipped too. charge stays 4. The unindented Rest line still runs once.',
+    importantRule: 'Do not assume that a loop must run once. Check the starting value against the condition first.',
+  },
+  {
+    id: 'python-lesson-while-stop', title: 'Give the crystal a stopping point',
+    explanation: 'To stop, a while condition must become False. Increase a counter toward an upper limit; decrease it toward a lower limit. Missing updates, resets, or changes in the wrong direction can keep a condition True.',
+    codeExample: 'charge = 2\nwhile charge > 0:\n    print("Glow")\n    charge = charge - 1', expectedOutput: 'Glow\nGlow',
+    whyItWorks: 'The first turn prints Glow and changes charge to 1. The second prints Glow and changes it to 0. Now 0 > 0 is False. Without the update, charge would stay 2 forever.',
+    importantRule: 'print() displays a value; it does not change a counter. Keep the update inside the loop and make sure it moves toward a False condition.',
+  },
+  {
+    id: 'python-lesson-for-while', title: 'Two ways to count',
+    explanation: 'for takes each value from range() automatically. With while, you set and update the counter yourself. These two finite loops print the same values. Read the first loop, then the second.',
+    codeExample: 'for n in range(1, 3):\n    print(n)\nn = 1\nwhile n < 3:\n    print(n)\n    n = n + 1', expectedOutput: '1\n2\n1\n2',
+    whyItWorks: 'The for loop prints 1 and 2; range excludes 3. The while loop prints 1 and 2, then updates n to 3. Its next check is False. The two loops show the pair twice.',
+    importantRule: 'while does not automatically advance the counter. To match this range, use the same start, a less-than stop check, and an increase of 1.',
+  },
 ];
 
 export function getLessonForExercise(exercise: Exercise): LessonContent | null {

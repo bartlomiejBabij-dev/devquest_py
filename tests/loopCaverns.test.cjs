@@ -38,19 +38,19 @@ test('Loop Caverns preserves every prior world, chapter, mission, exercise, less
 });
 
 test('The foundation retains its two three-tap missions within the expanded registry', () => {
-  assert.deepEqual([worlds.length, chapters.length, missions.length, exercises.length, lessons.length, spellbookEntries.length], [3, 16, 16, 66, 33, 20]);
-  assert.equal(exercises.filter(isChoiceExercise).length, 60);
+  assert.deepEqual([worlds.length, chapters.length, missions.length, exercises.length, lessons.length, spellbookEntries.length], [3, 18, 18, 72, 37, 21]);
+  assert.equal(exercises.filter(isChoiceExercise).length, 64);
   assert.equal(exercises.filter(e => !isChoiceExercise(e) && e.type !== 'code-builder').length, 2);
   assert.deepEqual(missions.filter(m => !Object.hasOwn(baseline.missions, m.id)), cavernMissions);
   assert.deepEqual(foundationMissions.map(m => [m.title, m.exerciseIds.length, m.xpReward]), [['The Repeating Road', 3, 30], ['Lanterns of Range', 3, 30]]);
   assert.equal(foundationExercises.length, 6);
-  assert.equal(cavernExercises.length, 12);
+  assert.equal(cavernExercises.length, 18);
   assert.ok(foundationExercises.every(isChoiceExercise));
   assert.ok(cavernMissions.every(m => !isBossMission(m.id)));
   const ids = [...worlds, ...chapters, ...missions, ...exercises, ...lessons, ...spellbookEntries, ...exercises.filter(isChoiceExercise).flatMap(e => e.options)].map(v => v.id);
   assert.equal(new Set(ids).size, ids.length);
-  assert.equal(missions.reduce((sum, m) => sum + m.xpReward, 0), 780);
-  assert.equal(loopCaverns.xpReward, 140);
+  assert.equal(missions.reduce((sum, m) => sum + m.xpReward, 0), 860);
+  assert.equal(loopCaverns.xpReward, 220);
   assert.deepEqual(loopCaverns.chapterIds, cavernChapters.map(c => c.id));
 });
 
@@ -175,13 +175,13 @@ test('Each three-spell mission pays 30 XP only after its last answer; replay pay
   const road = play(oldComplete, cavernMissions[0], 30);
   assert.deepEqual(road.attempt.result.newlyUnlockedChapterIds, [cavernChapters[1].id]);
   assert.equal(getTotalEarnedXp(road.progress), 670);
-  assert.deepEqual(getWorldProgress(road.progress, loopCaverns.id), { completed: 1, total: 4, percent: 25 });
+  assert.deepEqual(getWorldProgress(road.progress, loopCaverns.id), { completed: 1, total: 6, percent: 17 });
   assert.equal(play(road.progress, cavernMissions[0], 0).progress, road.progress);
   const lanterns = play(road.progress, cavernMissions[1], 30);
   assert.equal(getTotalEarnedXp(lanterns.progress), 700);
   assert.deepEqual(lanterns.attempt.result.newlyUnlockedChapterIds, ['python-caverns-echo-bridge']);
   assert.equal(play(lanterns.progress, cavernMissions[1], 0).progress, lanterns.progress);
-  assert.deepEqual(getWorldProgress(lanterns.progress, loopCaverns.id), { completed: 2, total: 4, percent: 50 });
+  assert.deepEqual(getWorldProgress(lanterns.progress, loopCaverns.id), { completed: 2, total: 6, percent: 33 });
   assert.equal(isWorldCleared(lanterns.progress, loopCaverns.id), false);
   for (const world of [forestOfVariables, valleyOfDecisions]) {
     assert.equal(isWorldCleared(lanterns.progress, world.id), true);
@@ -190,8 +190,8 @@ test('Each three-spell mission pays 30 XP only after its last answer; replay pay
 });
 
 test('Every old save keeps XP and profile data; new saves retain 670/700 XP and stable notes without migrations', async () => {
-  const xp = [0, 20, 50, 90, 140, 200, 300, 370, 450, 480, 510, 540, 640, 670, 700, 740, 780];
-  const counts = [0, 5, 10, 15, 20, 25, 30, 35, 40, 43, 46, 49, 54, 57, 60, 63, 66];
+  const xp = [0, 20, 50, 90, 140, 200, 300, 370, 450, 480, 510, 540, 640, 670, 700, 740, 780, 820, 860];
+  const counts = [0, 5, 10, 15, 20, 25, 30, 35, 40, 43, 46, 49, 54, 57, 60, 63, 66, 69, 72];
   const profile = JSON.stringify({ version: 1, nickname: 'Crystal Mage', avatarId: 'wizard' });
   assert.equal(parseSavedProfile(profile).profile.nickname, 'Crystal Mage');
   for (let n = 0; n <= missions.length; n++) {
