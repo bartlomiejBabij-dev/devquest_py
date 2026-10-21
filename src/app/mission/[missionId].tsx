@@ -14,6 +14,7 @@ import { getVisibleLesson, initialLessonSession, lessonSessionReducer } from '@/
 import { GameButton } from '@/components/GameButton';
 import { GameScreen } from '@/components/GameScreen';
 import { DecisionKeeperEncounter } from '@/components/DecisionKeeperEncounter';
+import { LoopWardenEncounter } from '@/components/LoopWardenEncounter';
 import { GoblinKingEncounter } from '@/components/GoblinKingEncounter';
 import { ValleyGuardian } from '@/components/ValleyGuardian';
 import { worldMapForMission, resolveMapWorld } from '@/navigation/worldRoutes';
@@ -186,8 +187,8 @@ export default function WorldMissionScreen() {
       </View>
     }>
       {attempt.phase === 'complete' && result ? (
-        <View style={[styles.resultCard, bossMission && styles.bossResultCard]}>
-          <Text style={styles.resultGlyph}>{bossMission ? '♛' : '✦'}</Text>
+        <View style={[styles.resultCard, bossMission && styles.bossResultCard, boss?.kind === 'loop-warden' && styles.wardenResultCard]}>
+          <Text style={styles.resultGlyph}>{boss?.kind === 'loop-warden' ? '∞' : bossMission ? '♛' : '✦'}</Text>
           <Text style={styles.overline}>{bossMission ? 'FIVE SPELLS CAST' : `${attempt.solvedExerciseIds.length} / ${playable.exercises.length} SPELLS CAST`}</Text>
           <Text style={[styles.resultTitle, bossMission && styles.bossResultTitle]}>{boss ? `${boss.name.toUpperCase()} DEFEATED!` : 'MISSION COMPLETE!'}</Text>
           {bossMission && isWorldCleared(progression, chapter.worldId) ? <Text style={styles.worldClear}>WORLD {worldNumber} CLEARED!</Text> : null}
@@ -206,6 +207,7 @@ export default function WorldMissionScreen() {
         <>
           {boss?.kind === 'goblin-king' && bossHp !== null ? <GoblinKingEncounter hp={bossHp} hitCount={attempt.solvedExerciseIds.length} showDamage={solved} reducedMotion={!!reduceMotion} /> : null}
           {boss?.kind === 'decision-keeper' && bossHp !== null ? <DecisionKeeperEncounter hp={bossHp} hitCount={attempt.solvedExerciseIds.length} showDamage={solved} reducedMotion={!!reduceMotion} /> : null}
+          {boss?.kind === 'loop-warden' && bossHp !== null ? <LoopWardenEncounter hp={bossHp} hitCount={attempt.solvedExerciseIds.length} showDamage={solved} reducedMotion={!!reduceMotion} /> : null}
           {mission.encounter === 'guardian' ? <ValleyGuardian solvedCount={attempt.solvedExerciseIds.length} totalCount={playable.exercises.length} /> : null}
           <View style={[styles.headerCard, bossMission && styles.bossHeaderCard, lesson && styles.learningHeader]}>
             <Text style={styles.overline}>{chapter.title.toUpperCase()}  ·  PYTHON MISSION</Text>
@@ -342,6 +344,7 @@ const styles = StyleSheet.create({
   bossResultCard: { borderColor: colors.gold, backgroundColor: '#282037' },
   resultGlyph: { color: colors.gold, fontSize: 59, marginBottom: 7 },
   resultTitle: { color: colors.gold, fontSize: 29, fontWeight: '900', textAlign: 'center', marginTop: 7 },
+  wardenResultCard: { borderColor: '#70E3EA', backgroundColor: '#152936' },
   bossResultTitle: { fontSize: 25 },
   worldClear: { color: colors.green, fontSize: 17, fontWeight: '900', letterSpacing: 1.3, marginTop: 10, textAlign: 'center' },
   worldCompletion: { color: colors.green, fontSize: 11, fontWeight: '900', letterSpacing: 0.8, marginTop: 17, textAlign: 'center' },

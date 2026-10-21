@@ -1,15 +1,16 @@
 import { valleyMissions } from './valleyContent';
 import { builderChapters, builderExercises, builderMissions } from './cavernBuilderContent';
 import { whileChapters, whileExercises, whileMissions } from './cavernWhileContent';
+import { eternalLoopChapter, eternalLoopExercises, eternalLoopMission } from './cavernBossContent';
 import type { Chapter, Exercise, Mission, World } from './worldTypes';
 
 export const loopCaverns: World = {
   id: 'python-loop-caverns', languageId: 'python', title: 'Loop Caverns',
   description: 'Blue crystals pulse beneath the valley. Use repeating Python spells to awaken ancient mechanisms.',
-  chapterIds: ['python-caverns-repeating-road', 'python-caverns-lanterns-of-range', ...builderChapters.map(chapter => chapter.id), ...whileChapters.map(chapter => chapter.id)],
+  chapterIds: ['python-caverns-repeating-road', 'python-caverns-lanterns-of-range', ...builderChapters.map(chapter => chapter.id), ...whileChapters.map(chapter => chapter.id), eternalLoopChapter.id],
   prerequisiteMissionIds: valleyMissions.map(mission => mission.id),
   unlockRequirement: 'Complete all six chapters of Valley of Decisions, including The Decision Keeper.',
-  xpReward: 220,
+  xpReward: 320,
 };
 
 export const cavernChapters: readonly Chapter[] = [
@@ -28,6 +29,7 @@ export const cavernChapters: readonly Chapter[] = [
   },
   ...builderChapters,
   ...whileChapters,
+  eternalLoopChapter,
 ];
 
 export const cavernMissions: readonly Mission[] = [
@@ -45,6 +47,7 @@ export const cavernMissions: readonly Mission[] = [
   },
   ...builderMissions,
   ...whileMissions,
+  eternalLoopMission,
 ];
 
 export const cavernExercises: readonly Exercise[] = [
@@ -134,4 +137,5 @@ export const cavernExercises: readonly Exercise[] = [
   },
   ...builderExercises,
   ...whileExercises,
+  ...eternalLoopExercises,
 ];

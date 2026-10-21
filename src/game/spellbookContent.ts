@@ -175,6 +175,11 @@ export const spellbookEntries: readonly SpellbookEntry[] = [
 
 /** Every exercise links to reference material, never to its answer. */
 export const exerciseSpellbookEntryIds: Readonly<Record<string, string>> = {
+  'python-caverns-warden-rune': 'python-range',
+  'python-caverns-warden-path': 'python-for-loops',
+  'python-caverns-warden-counter': 'python-while-loops',
+  'python-caverns-warden-echo': 'python-while-loops',
+  'python-caverns-warden-final': 'python-while-loops',
   'python-caverns-echo-while-output': 'python-while-loops',
   'python-caverns-echo-zero': 'python-while-loops',
   'python-caverns-echo-while-build': 'python-while-loops',

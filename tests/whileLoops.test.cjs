@@ -22,6 +22,7 @@ const { spellbookEntries, exerciseSpellbookEntryIds, getSpellbookEntryForExercis
 const { getAccessibleMapChapters, worldMapForMission } = require('../src/navigation/worldRoutes.ts');
 const { isWorldCleared, getBossHp } = require('../src/game/boss.ts');
 const { trackForRoute } = require('../src/game/audioController.ts');
+const { eternalLoopChapter, eternalLoopMission } = require('../src/game/cavernBossContent.ts');
 const baseline = require('./fixtures/while-compatibility.json');
 const before = { completedMissionIds: Object.keys(baseline.missions) };
 const builders = whileExercises.filter(isCodeBuilderExercise);
@@ -34,24 +35,24 @@ test('While expansion preserves all 66 exercises, sixteen missions, prior lesson
     assert.deepEqual(items.filter(v => Object.hasOwn(baseline[name], v.id)).map(v => v.id), Object.keys(baseline[name]));
   }
   for (const world of worlds.slice(0, 2)) assert.equal(hash(world), baseline.worlds[world.id]);
-  assert.deepEqual(loopCaverns, { ...baseline.loopCaverns, chapterIds: [...baseline.loopCaverns.chapterIds, ...whileChapters.map(c => c.id)], xpReward: 220 });
+  assert.deepEqual(loopCaverns, { ...baseline.loopCaverns, chapterIds: [...baseline.loopCaverns.chapterIds, ...whileChapters.map(c => c.id), eternalLoopChapter.id], xpReward: 320 });
   for (const [id, entry] of Object.entries(baseline.spellbookLinks)) assert.equal(exerciseSpellbookEntryIds[id], entry);
   assert.equal(Object.keys(baseline.exercises).length, 66);
   assert.equal(getTotalEarnedXp(before), 780);
 });
 
 test('Exactly two sequential three-question missions add 80 XP; all IDs and registry totals are correct', () => {
-  assert.deepEqual([worlds.length, chapters.length, missions.length, exercises.length, lessons.length, spellbookEntries.length], [3, 18, 18, 72, 37, 21]);
-  assert.deepEqual([exercises.filter(isChoiceExercise).length, exercises.filter(isCodeBuilderExercise).length], [64, 6]);
+  assert.deepEqual([worlds.length, chapters.length, missions.length, exercises.length, lessons.length, spellbookEntries.length], [3, 19, 19, 77, 38, 21]);
+  assert.deepEqual([exercises.filter(isChoiceExercise).length, exercises.filter(isCodeBuilderExercise).length], [67, 8]);
   assert.equal(exercises.filter(e => !isChoiceExercise(e) && !isCodeBuilderExercise(e)).length, 2);
-  assert.deepEqual(missions.filter(m => !Object.hasOwn(baseline.missions, m.id)), whileMissions);
+  assert.deepEqual(missions.filter(m => !Object.hasOwn(baseline.missions, m.id)), [...whileMissions, eternalLoopMission]);
   assert.deepEqual(whileMissions.map(m => [m.title, m.exerciseIds.length, m.xpReward, m.encounter]), [['The Endless Echo', 3, 40, undefined], ['The Stopping Crystal', 3, 40, undefined]]);
   assert.deepEqual(whileExercises.map(e => e.type), ['output-choice', 'missing-token', 'code-builder', 'multiple-choice', 'code-builder', 'missing-token']);
   const ids = [...worlds, ...chapters, ...missions, ...exercises, ...lessons, ...spellbookEntries,
     ...exercises.filter(isChoiceExercise).flatMap(e => e.options), ...exercises.filter(isCodeBuilderExercise).flatMap(e => e.fragments)].map(v => v.id);
   assert.equal(new Set(ids).size, ids.length);
-  assert.equal(missions.reduce((xp, m) => xp + m.xpReward, 0), 860);
-  assert.equal(loopCaverns.chapterIds.length, 6);
+  assert.equal(missions.reduce((xp, m) => xp + m.xpReward, 0), 960);
+  assert.equal(loopCaverns.chapterIds.length, 7);
 });
 
 // These are independently reviewed text fixtures and finite arithmetic tables.
@@ -181,7 +182,7 @@ function play(progress, mission, reward) {
   return { progress, attempt };
 }
 
-test('Sequential access rejects locked deep links and forged attempts; 40 XP is paid once at spell three; Caverns remains up to date', () => {
+test('Sequential access rejects locked deep links and forged attempts; 40 XP is paid once at spell three; Caverns awaits its final boss', () => {
   assert.deepEqual(whileChapters.map(c => c.prerequisiteMissionIds), [['python-caverns-counting-tower-01'], [whileMissions[0].id]]);
   const locked = { completedMissionIds: before.completedMissionIds.slice(0, -1) };
   for (const mission of whileMissions) {
@@ -196,12 +197,12 @@ test('Sequential access rejects locked deep links and forged attempts; 40 XP is 
   assert.equal(isMissionUnlocked(before, whileMissions[1].id), false);
   assert.deepEqual(getAccessibleMapChapters({ completedMissionIds: [] }, loopCaverns.id), []);
   let progress = before;
-  assert.deepEqual(getWorldProgress(progress, loopCaverns.id), { completed: 4, total: 6, percent: 67 });
+  assert.deepEqual(getWorldProgress(progress, loopCaverns.id), { completed: 4, total: 7, percent: 57 });
   whileMissions.forEach((mission, i) => {
     const won = play(progress, mission, 40); progress = won.progress;
     assert.equal(getTotalEarnedXp(progress), 820 + 40 * i);
-    assert.deepEqual(won.attempt.result.newlyUnlockedChapterIds, i === 0 ? [whileChapters[1].id] : []);
-    assert.deepEqual(getWorldProgress(progress, loopCaverns.id), { completed: 5 + i, total: 6, percent: i === 0 ? 83 : 100 });
+    assert.deepEqual(won.attempt.result.newlyUnlockedChapterIds, i === 0 ? [whileChapters[1].id] : [eternalLoopChapter.id]);
+    assert.deepEqual(getWorldProgress(progress, loopCaverns.id), { completed: 5 + i, total: 7, percent: i === 0 ? 71 : 86 });
     assert.equal(isWorldCleared(progress, loopCaverns.id), false);
     assert.equal(play(progress, mission, 0).progress, progress);
     assert.deepEqual(startMissionAttempt(progress, mission.id).solvedExerciseIds, []);

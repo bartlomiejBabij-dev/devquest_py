@@ -7,16 +7,20 @@ export const GOBLIN_KING_MAX_HP = 100;
 export const GOBLIN_KING_DAMAGE = 20;
 export const DECISION_KEEPER_MAX_HP = 100;
 export const DECISION_KEEPER_DAMAGE = 20;
+export const LOOP_WARDEN_MAX_HP = 100;
+export const LOOP_WARDEN_DAMAGE = 20;
 
 const finalChapterId = forestOfVariables.chapterIds.at(-1);
 const finalChapter = chapters.find((chapter) => chapter.id === finalChapterId);
 export const goblinKingMissionId = missions.find((mission) => finalChapter?.missionIds.includes(mission.id))?.id;
 export const decisionKeeperMissionId = missions.find((mission) => mission.encounter === 'decision-keeper')?.id;
+export const loopWardenMissionId = missions.find((mission) => mission.encounter === 'loop-warden')?.id;
 
 /** Boss identity comes from registered content; ordinary guardians are not bosses. */
 export function getBossEncounter(missionId: string) {
   if (isGoblinKingMission(missionId)) return { kind: 'goblin-king' as const, name: 'Goblin King' };
   if (decisionKeeperMissionId !== undefined && missionId === decisionKeeperMissionId) return { kind: 'decision-keeper' as const, name: 'The Decision Keeper' };
+  if (loopWardenMissionId !== undefined && missionId === loopWardenMissionId) return { kind: 'loop-warden' as const, name: 'The Loop Warden' };
   return null;
 }
 
@@ -30,12 +34,15 @@ export function isWorldCleared(progress: ProgressionState, worldId: string): boo
 
 export function getBossHp(attempt: MissionAttempt): number | null {
   if (isGoblinKingMission(attempt.missionId)) return getGoblinKingHp(attempt);
-  if (getBossEncounter(attempt.missionId)?.kind !== 'decision-keeper') return null;
+  const kind = getBossEncounter(attempt.missionId)?.kind;
+  if (kind !== 'decision-keeper' && kind !== 'loop-warden') return null;
   const mission = missions.find(item => item.id === attempt.missionId);
   if (!mission) return null;
   let solved = 0;
   while (solved < mission.exerciseIds.length && attempt.solvedExerciseIds[solved] === mission.exerciseIds[solved]) solved++;
-  return Math.max(0, DECISION_KEEPER_MAX_HP - solved * DECISION_KEEPER_DAMAGE);
+  return kind === 'loop-warden'
+    ? Math.max(0, LOOP_WARDEN_MAX_HP - solved * LOOP_WARDEN_DAMAGE)
+    : Math.max(0, DECISION_KEEPER_MAX_HP - solved * DECISION_KEEPER_DAMAGE);
 }
 
 export function isGoblinKingMission(missionId: string): boolean {

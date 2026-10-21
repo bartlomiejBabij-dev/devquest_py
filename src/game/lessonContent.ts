@@ -260,6 +260,13 @@ export const lessons: readonly LessonContent[] = [
     whyItWorks: 'The for loop prints 1 and 2; range excludes 3. The while loop prints 1 and 2, then updates n to 3. Its next check is False. The two loops show the pair twice.',
     importantRule: 'while does not automatically advance the counter. To match this range, use the same start, a less-than stop check, and an increase of 1.',
   },
+  {
+    id: 'python-lesson-caverns-mastery', title: 'The rhythm of the caverns', optionalReview: true,
+    explanation: 'for takes values from range(), including the start but excluding the stop. Indentation marks the repeating body. while checks before every turn and can run zero times. Its counter needs an update that eventually makes the condition False.',
+    codeExample: 'for n in range(1, 3):\n    print(n)\nfuel = 2\nwhile fuel > 0:\n    print(fuel)\n    fuel = fuel - 1', expectedOutput: '1\n2\n2\n1',
+    whyItWorks: 'The for loop prints 1 and 2. The while loop prints 2 and 1, then fuel reaches 0 and its check fails. Printing before updating shows the current value.',
+    importantRule: 'Keep updates inside while bodies. Missing, resetting or wrong-direction updates can prevent stopping. Outside instructions run once in their written order.',
+  },
 ];
 
 export function getLessonForExercise(exercise: Exercise): LessonContent | null {

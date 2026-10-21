@@ -8,6 +8,7 @@ require.extensions['.ts'] = (m, f) => m._compile(ts.transpileModule(fs.readFileS
   compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2020 },
 }).outputText, f);
 const { builderExercises } = require('../src/game/cavernBuilderContent.ts');
+const { eternalLoopExercises } = require('../src/game/cavernBossContent.ts');
 const { whileExercises } = require('../src/game/cavernWhileContent.ts');
 const { isExerciseAnswerCorrect } = require('../src/game/exerciseValidation.ts');
 const { getVisibleLesson, initialLessonSession, lessonSessionReducer } = require('../src/game/lessonSession.ts');
@@ -90,8 +91,8 @@ test('Real CodeBuilder controls build/undo/reset explicitly; partial drafts surv
   assert.equal(readFragmentIds(exercise, answer).length, 0);
 });
 
-for (const exercise of whileExercises.filter(e => e.type === 'code-builder')) {
-  test(`${exercise.id}: real four-fragment controls retain drafts for help and notes, recover from wrong order, and never open a text input`, () => {
+for (const exercise of [...whileExercises, ...eternalLoopExercises].filter(e => e.type === 'code-builder')) {
+  test(`${exercise.id}: real fragment controls retain drafts for help and notes, recover from wrong order, and never open a text input`, () => {
     let answer = '', incorrect = false, casts = 0;
     const render = () => CodeBuilder({ exercise, answer, incorrect,
       onEdit: action => { answer = editBuilderAnswer(exercise, answer, action); incorrect = false; },
@@ -100,7 +101,7 @@ for (const exercise of whileExercises.filter(e => e.type === 'code-builder')) {
     const cast = () => nodes(render()).find(n => n.type === 'GameButton');
     const action = label => nodes(render()).find(n => n.type === 'Pressable' && text(n) === label).props.onPress();
     const add = id => fragments().find(n => n.props.accessibilityLabel.endsWith(exercise.fragments.find(f => f.id === id).code.trim())).props.onPress();
-    assert.equal(fragments().length, 4);
+    assert.equal(fragments().length, exercise.fragments.length);
     assert.equal(nodes(render()).some(n => n.type === 'TextInput'), false);
     assert.equal(cast().props.disabled, true);
     add(exercise.fragments[0].id);
@@ -114,7 +115,7 @@ for (const exercise of whileExercises.filter(e => e.type === 'code-builder')) {
     const notes = setExerciseNote({}, exercise.id, 'Check, print, update.');
     assert.ok(notes[exercise.id]);
     assert.equal(answer, draft);
-    assert.equal(fragments().length, 3, 'controlled remount still excludes the chosen fragment');
+    assert.equal(fragments().length, exercise.fragments.length - 1, 'controlled remount still excludes the chosen fragment');
     assert.ok(text(render()).includes(exercise.fragments[0].code), 'spaces survive rendering');
     action('Reset');
     for (const id of [...exercise.validation.expectedFragmentIds].reverse()) add(id);
@@ -123,12 +124,12 @@ for (const exercise of whileExercises.filter(e => e.type === 'code-builder')) {
     const wrongDraft = answer; cast().props.onPress();
     assert.equal(incorrect, true); assert.equal(answer, wrongDraft);
     assert.ok(text(render()).includes('Your spell is still here'));
-    action('Undo Last'); assert.equal(readFragmentIds(exercise, answer).length, 3);
+    action('Undo Last'); assert.equal(readFragmentIds(exercise, answer).length, exercise.fragments.length - 1);
     assert.equal(fragments().length, 1); assert.equal(cast().props.disabled, true);
-    action('Reset'); assert.equal(fragments().length, 4);
+    action('Reset'); assert.equal(fragments().length, exercise.fragments.length);
     for (const id of exercise.validation.expectedFragmentIds) add(id);
     cast().props.onPress(); assert.equal(incorrect, false); assert.equal(casts, 2);
-    assert.equal(assembledCode(exercise, answer).split('\n').length, 4);
-    assert.equal(assembledCode(exercise, answer).split('\n').filter(line => line.startsWith('    ')).length, 2);
+    assert.equal(assembledCode(exercise, answer).split('\n').length, exercise.fragments.length);
+    assert.equal(assembledCode(exercise, answer).split('\n').filter(line => line.startsWith('    ')).length, exercise.fragments.filter(f => f.code.startsWith('    ')).length);
   });
 }

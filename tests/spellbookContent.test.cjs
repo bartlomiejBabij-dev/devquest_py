@@ -51,7 +51,7 @@ test('Spellbook covers all twenty-one beginner Python concepts with complete con
   }
 });
 
-test('All 72 exercises resolve to a valid relevant Spellbook entry', () => {
+test('All 77 exercises resolve to a valid relevant Spellbook entry', () => {
   const exerciseIds = new Set(exercises.map((exercise) => exercise.id));
   assert.deepEqual(new Set(Object.keys(exerciseSpellbookEntryIds)), exerciseIds);
   const entryIds = new Set(spellbookEntries.map((entry) => entry.id));

@@ -1,6 +1,6 @@
 # DevQuest
 
-A local, playable Expo fantasy RPG that teaches beginner Python concepts. Forest of Variables has six five-exercise missions; completing it unlocks six Valley of Decisions missions: two five-exercise adventures, three short adventures with three exercises, and the five-spell Decision Keeper finale. Completing Valley unlocks Loop Caverns, with six three-spell adventures teaching for loops, range(), while loops and assembling Python code. Progression is saved locally. The original three-spell Goblin battle remains playable from Home.
+A local, playable Expo fantasy RPG that teaches beginner Python concepts. Forest of Variables has six five-exercise missions; completing it unlocks six Valley of Decisions missions: two five-exercise adventures, three short adventures with three exercises, and the five-spell Decision Keeper finale. Completing Valley unlocks Loop Caverns, with six three-spell adventures teaching for loops, range(), while loops and assembling Python code, followed by The Loop Warden five-spell finale. Progression is saved locally. The original three-spell Goblin battle remains playable from Home.
 
 ## Run in Expo Go
 
@@ -27,7 +27,7 @@ The Spellbook on Home contains twenty-one short Python references. Each world mi
 
 My Profile saves only a trimmed 3–20 character nickname and one of five local avatars under `devquest.profile.v1`. Saves are explicit and queued. Missing or damaged profiles fall back to Python Apprentice/Mage; unreadable or future-version saves are protected from replacement. Profile editing never writes to progression, notes, or onboarding.
 
-Profile and Home XP come from completed mission IDs using the existing XP selector. Completed exercises count unique exercises belonging to completed missions; unfinished attempts and prototype battles do not count. Boss victories count the completed Goblin King and Decision Keeper missions. Display-only level is `1 + floor(total XP / 100)`, with progress toward the next 100 XP. Achievements require completing the first mission, three Forest chapters, Broken Spells, and the Goblin King respectively; they grant no rewards.
+Profile and Home XP come from completed mission IDs using the existing XP selector. Completed exercises count unique exercises belonging to completed missions; unfinished attempts and prototype battles do not count. Boss victories count the completed Goblin King, Decision Keeper and Loop Warden missions. Display-only level is `1 + floor(total XP / 100)`, with progress toward the next 100 XP. Achievements require completing the first mission, three Forest chapters, Broken Spells, and the Goblin King respectively; they grant no rewards.
 
 Initial adventure hydration and profile hydration use reusable, reduced-motion-aware skeletons. The placeholder shapes appear only if loading is still unresolved after 120 ms, and disappear as soon as data arrives. Data is never delayed; navigation and background saves do not trigger new skeletons.
 
@@ -133,3 +133,12 @@ Two lessons teach loop assembly, execution order and range boundaries. The exist
 The Endless Echo follows Counting Tower and teaches checking a while condition, zero repetitions and counter updates. The Stopping Crystal follows it, teaching termination, countdowns and repairing a while loop to match a finite for loop. Each has three exercises and pays 40 XP once, zero on replay. Four lessons introduce the concepts before assessment; two four-fragment puzzles reuse Code Builder. A new while-loop Spellbook entry supports all six questions. Every program remains display-only text, including examples of nontermination.
 
 Current totals: three worlds, eighteen missions, 72 exercises (64 choices, six builders, two typed), 37 lessons, 21 references and 860 available XP. Existing 780-XP saves keep their records and show 4/6 (67%) available Caverns progress. Both new completions reach 6/6 and UP TO DATE; no Caverns boss or permanent clear is added. See [Stage 3H.3 verification and manual checklist](docs/stage-3h3.md).
+
+
+### The Eternal Loop (Stage 3H.4)
+
+The seventh Loop Caverns chapter unlocks after The Stopping Crystal. The Loop Warden combines three choice questions and two Code Builder puzzles to assess range boundaries, indentation, execution order and finite while loops. One optional recap is available before and during combat; it never opens automatically. All code remains display-only text.
+
+Original cyan crystal and stone artwork accompanies HP derived from validated answers: 100 → 80 → 60 → 40 → 20 → 0. Explicit successful casts trigger damage; editing fragments, wrong answers and duplicate taps do not. First completion awards 100 XP, replay zero. Completing all seven chapters displays WORLD 3 CLEARED and adds the third defeated boss to Profile.
+
+Current totals: three worlds, nineteen missions, 77 exercises (67 choices, eight builders, two typed), 38 lessons, 21 Spellbook references and 960 available XP. A completed 860-XP save retains all progress and shows 6/7 (86%) Caverns completion until the Warden is defeated. No save migration or dependency change is required. See [Stage 3H.4 verification and physical-device checklist](docs/stage-3h4.md).

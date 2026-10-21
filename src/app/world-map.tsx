@@ -16,7 +16,7 @@ import { colors } from '@/theme';
 
 type ChapterState = 'completed' | 'available' | 'locked';
 
-const chapterGlyphs = ['✦', '◆', '◈', '✣', '✧', '♛'];
+const chapterGlyphs = ['✦', '◆', '◈', '✣', '✧', '♛', '∞'];
 
 function LockMark() {
   return <View style={styles.lockMark}><View style={styles.lockShackle} /><View style={styles.lockBody} /></View>;
@@ -37,9 +37,9 @@ function ChapterNode({ chapter, index, state, onPress, pulse }: {
         accessibilityHint="Opens chapter details" style={({ pressed }) => [styles.chapterCard, state === 'available' && styles.chapterCardAvailable,
           chapter.worldId === loopCaverns.id && state !== 'locked' && styles.cavernCard,
           state === 'completed' && styles.chapterCardCompleted, boss && styles.bossCard, boss && state === 'available' && styles.bossCardAvailable,
-          boss && state === 'completed' && styles.bossCardCompleted, pressed && styles.pressed]}>
+          boss && state === 'completed' && styles.bossCardCompleted, boss?.kind === 'loop-warden' && state !== 'locked' && styles.wardenCard, pressed && styles.pressed]}>
         <View style={[styles.glyphFrame, state === 'available' && styles.glyphFrameAvailable, state === 'completed' && styles.glyphFrameCompleted, boss && styles.bossGlyphFrame, boss && state === 'completed' && styles.bossGlyphFrameCompleted]}>
-          <Text style={[styles.glyph, state === 'locked' && styles.glyphLocked]}>{state === 'completed' ? '✓' : chapterGlyphs[index]}</Text>
+          <Text style={[styles.glyph, state === 'locked' && styles.glyphLocked]}>{boss?.kind === 'loop-warden' ? '∞' : state === 'completed' ? '✓' : chapterGlyphs[index]}</Text>
         </View>
         <View style={styles.chapterCopy}>
           <View style={styles.chapterTopLine}>
@@ -52,7 +52,7 @@ function ChapterNode({ chapter, index, state, onPress, pulse }: {
           <View style={styles.statusRow}>
             {state === 'locked' ? <LockMark /> : null}
             <Text style={[styles.statusText, state === 'available' && styles.availableText, state === 'completed' && styles.completedText]}>
-              {state === 'completed' ? boss ? boss.kind === 'goblin-king' ? '♛  KING DEFEATED' : '✧  KEEPER DEFEATED' : '✓  COMPLETED' : state === 'available' ? boss ? boss.kind === 'goblin-king' ? '♛  FACE THE KING' : '✧  FACE THE KEEPER' : '●  AVAILABLE' : 'LOCKED'}
+              {state === 'completed' ? boss ? boss.kind === 'goblin-king' ? '♛  KING DEFEATED' : boss.kind === 'loop-warden' ? '✓  WARDEN DEFEATED' : '✧  KEEPER DEFEATED' : '✓  COMPLETED' : state === 'available' ? boss ? boss.kind === 'goblin-king' ? '♛  FACE THE KING' : boss.kind === 'loop-warden' ? '∞  FACE THE WARDEN' : '✧  FACE THE KEEPER' : '●  AVAILABLE' : 'LOCKED'}
             </Text>
           </View>
         </View>
@@ -124,7 +124,7 @@ function ChapterDetails({ chapter, index, progress, onClose, onOpenMission }: {
                   {isMissionUnlocked(progress, mission.id) ? (
                     <Pressable onPress={() => onOpenMission(mission.id)} accessibilityRole="button" accessibilityLabel={`${isMissionCompleted(progress, mission.id) ? 'Replay' : 'Start'} ${mission.title}`}
                       style={({ pressed }) => [styles.missionAction, pressed && styles.pressed]}>
-                      <Text style={styles.missionActionText}>{isBossMission(mission.id) ? isMissionCompleted(progress, mission.id) ? 'REPLAY BOSS' : boss?.kind === 'goblin-king' ? 'FACE GOBLIN KING' : 'FACE THE KEEPER' : isMissionCompleted(progress, mission.id) ? 'REPLAY MISSION' : 'START MISSION'}  ›</Text>
+                      <Text style={styles.missionActionText}>{isBossMission(mission.id) ? isMissionCompleted(progress, mission.id) ? 'REPLAY BOSS' : boss?.kind === 'goblin-king' ? 'FACE GOBLIN KING' : boss?.kind === 'loop-warden' ? 'FACE THE WARDEN' : 'FACE THE KEEPER' : isMissionCompleted(progress, mission.id) ? 'REPLAY MISSION' : 'START MISSION'}  ›</Text>
                     </Pressable>
                   ) : <Text style={styles.missionComplete}>LOCKED</Text>}
                 </View>
@@ -301,6 +301,7 @@ const styles = StyleSheet.create({
   chapterCard: { width: '92%', minHeight: 115, flexDirection: 'row', alignItems: 'center', gap: 12, padding: 13, borderWidth: 1, borderRadius: 19, borderColor: '#3D4D5F', backgroundColor: '#1C2839' },
   chapterCardAvailable: { borderColor: colors.green, backgroundColor: '#1D3A3C', shadowColor: colors.green, shadowOpacity: 0.2, shadowRadius: 11, elevation: 4 },
   chapterCardCompleted: { borderColor: colors.gold, backgroundColor: '#302F3F' },
+  wardenCard: { borderColor: '#70E3EA', backgroundColor: '#152936' },
   bossCard: { borderColor: '#765B75', backgroundColor: '#33273F' },
   bossCardAvailable: { borderColor: colors.gold, backgroundColor: '#3B2C49', shadowColor: colors.gold, shadowOpacity: 0.25, shadowRadius: 12, elevation: 5 },
   bossCardCompleted: { borderColor: colors.gold, backgroundColor: '#3B3341' },
