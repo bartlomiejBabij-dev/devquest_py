@@ -339,6 +339,42 @@ export const lessons: readonly LessonContent[] = [
     "whyItWorks": "sail replaces oar at index 0. flag stays at index 1. The list still has two items. Calling append(\"sail\") instead would keep oar and add a third item.",
     "importantRule": "Create the list before changing it, and change it before printing the updated item. Use an existing index for replacement; use append to add at the end."
   },
+  {
+    "id": "python-lesson-list-iteration",
+    "title": "Visit every discovery",
+    "explanation": "A for loop can visit the values in a list directly. Read for treasure in treasures as: for every treasure in treasures. The indented body runs once per item, following list order. You do not need range() to visit these values.",
+    "codeExample": "treasures = [\"ruby\", \"map\", \"coin\"]\nfor treasure in treasures:\n    print(treasure)",
+    "expectedOutput": "ruby\nmap\ncoin",
+    "whyItWorks": "On the first turn, treasure holds ruby; next it holds map; then coin. Three list items give three turns and three printed lines.",
+    "importantRule": "The loop variable holds a value, not automatically an index. Keep the print indented beneath the header, which ends with a colon."
+  },
+  {
+    "id": "python-lesson-list-current-item",
+    "title": "A name for this turn",
+    "explanation": "The name before in is the loop variable. On each turn it refers to the current element. Choose a clear name and use the same name in the indented body to work with one item at a time.",
+    "codeExample": "colors = [\"red\", \"blue\"]\nfor color in colors:\n    print(color)",
+    "expectedOutput": "red\nblue",
+    "whyItWorks": "color holds red on the first turn and blue on the second. print(color) reads that current value. colors still names the whole list.",
+    "importantRule": "Use the variable without quotes: print(\"color\") would repeat the literal word color. Indent the body so it runs for each item; create the list before looping over it."
+  },
+  {
+    "id": "python-lesson-list-append-iterate",
+    "title": "Pack first, inspect next",
+    "explanation": "Prepare your list before starting the inspection loop. append() adds one item at the end of the existing list. A for loop that starts afterward visits the updated values.",
+    "codeExample": "supplies = [\"rope\"]\nsupplies.append(\"torch\")\nfor item in supplies:\n    print(item)",
+    "expectedOutput": "rope\ntorch",
+    "whyItWorks": "supplies starts with rope. The next line adds torch, so the loop visits rope and then torch. Both items are present before its first turn.",
+    "importantRule": "Keep this append before the loop and unindented. If you append only after inspection, that inspection will not have shown the new item."
+  },
+  {
+    "id": "python-lesson-list-replace-iterate",
+    "title": "Inspect the upgraded equipment",
+    "explanation": "You can also replace an existing item before inspection. Indexed assignment changes one position without changing the length. The later loop reads the new value in that same position.",
+    "codeExample": "tools = [\"rod\", \"pan\"]\ntools[1] = \"pot\"\nfor tool in tools:\n    print(tool)",
+    "expectedOutput": "rod\npot",
+    "whyItWorks": "Index 1 is the second position. pot replaces pan before the loop, while rod stays first. The loop visits rod and pot, giving two turns.",
+    "importantRule": "Replace before you display. This changes one item, unlike append(), which would add another at the end. Do not expect the loop to read the old value."
+  },
 ];
 
 export function getLessonForExercise(exercise: Exercise): LessonContent | null {

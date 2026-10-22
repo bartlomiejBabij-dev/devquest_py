@@ -39,8 +39,8 @@ test('Loop Caverns preserves every prior world, chapter, mission, exercise, less
 });
 
 test('The foundation retains its two three-tap missions within the expanded registry', () => {
-  assert.deepEqual([worlds.length, chapters.length, missions.length, exercises.length, lessons.length, spellbookEntries.length], [4, 23, 23, 89, 46, 25]);
-  assert.equal(exercises.filter(isChoiceExercise).length, 75);
+  assert.deepEqual([worlds.length, chapters.length, missions.length, exercises.length, lessons.length, spellbookEntries.length], [4, 25, 25, 95, 50, 26]);
+  assert.equal(exercises.filter(isChoiceExercise).length, 79);
   assert.equal(exercises.filter(e => !isChoiceExercise(e) && e.type !== 'code-builder').length, 2);
   assert.deepEqual(missions.filter(m => !Object.hasOwn(baseline.missions, m.id)), [...cavernMissions, ...archipelagoMissions]);
   assert.deepEqual(foundationMissions.map(m => [m.title, m.exerciseIds.length, m.xpReward]), [['The Repeating Road', 3, 30], ['Lanterns of Range', 3, 30]]);
@@ -51,7 +51,7 @@ test('The foundation retains its two three-tap missions within the expanded regi
   assert.ok(isBossMission(cavernMissions[6].id));
   const ids = [...worlds, ...chapters, ...missions, ...exercises, ...lessons, ...spellbookEntries, ...exercises.filter(isChoiceExercise).flatMap(e => e.options)].map(v => v.id);
   assert.equal(new Set(ids).size, ids.length);
-  assert.equal(missions.reduce((sum, m) => sum + m.xpReward, 0), 1100);
+  assert.equal(missions.reduce((sum, m) => sum + m.xpReward, 0), 1180);
   assert.equal(loopCaverns.xpReward, 320);
   assert.deepEqual(loopCaverns.chapterIds, cavernChapters.map(c => c.id));
 });
@@ -192,8 +192,8 @@ test('Each three-spell mission pays 30 XP only after its last answer; replay pay
 });
 
 test('Every old save keeps XP and profile data; new saves retain 670/700 XP and stable notes without migrations', async () => {
-  const xp = [0, 20, 50, 90, 140, 200, 300, 370, 450, 480, 510, 540, 640, 670, 700, 740, 780, 820, 860, 960, 990, 1020, 1060, 1100];
-  const counts = [0, 5, 10, 15, 20, 25, 30, 35, 40, 43, 46, 49, 54, 57, 60, 63, 66, 69, 72, 77, 80, 83, 86, 89];
+  const xp = [0, 20, 50, 90, 140, 200, 300, 370, 450, 480, 510, 540, 640, 670, 700, 740, 780, 820, 860, 960, 990, 1020, 1060, 1100, 1140, 1180];
+  const counts = [0, 5, 10, 15, 20, 25, 30, 35, 40, 43, 46, 49, 54, 57, 60, 63, 66, 69, 72, 77, 80, 83, 86, 89, 92, 95];
   const profile = JSON.stringify({ version: 1, nickname: 'Crystal Mage', avatarId: 'wizard' });
   assert.equal(parseSavedProfile(profile).profile.nickname, 'Crystal Mage');
   for (let n = 0; n <= missions.length; n++) {

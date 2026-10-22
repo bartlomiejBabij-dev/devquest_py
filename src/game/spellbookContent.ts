@@ -211,10 +211,26 @@ export const spellbookEntries: readonly SpellbookEntry[] = [
     "commonMistake": "append would add another item rather than replace one. Choose an existing index; assigning to index 2 in this two-item list would be out of range.",
     "chapterId": "python-archipelago-smiths-exchange"
   },
+  {
+    "id": "python-list-iteration",
+    "title": "Iterating through lists",
+    "explanation": "for item in inventory: means visit every value in inventory, in order. item is a name for the current element on each turn. The indented body repeats once per element; range() is not needed to read each value.",
+    "codeExample": "cargo = [\"sail\", \"rope\"]\nfor item in cargo:\n    print(item)",
+    "expectedOutput": "sail\nrope",
+    "whyItWorks": "item holds sail on the first turn and rope on the second. The indented print displays each current string. Two elements give two turns. Changes made to the list before the loop are already present when inspection begins.",
+    "commonMistake": "item is not automatically an index, and cargo is the whole list. Use print(item), not print(\"item\"), to display each value. Keep the body indented and the header ending in a colon.",
+    "chapterId": "python-archipelago-island-expedition"
+  },
 ];
 
 /** Every exercise links to reference material, never to its answer. */
 export const exerciseSpellbookEntryIds: Readonly<Record<string, string>> = {
+  'python-archipelago-iteration-output': 'python-list-iteration',
+  'python-archipelago-iteration-variable': 'python-list-iteration',
+  'python-archipelago-iteration-build': 'python-list-iteration',
+  'python-archipelago-supply-output': 'python-list-iteration',
+  'python-archipelago-supply-build': 'python-list-iteration',
+  'python-archipelago-supply-replace': 'python-list-iteration',
   'python-archipelago-append-output': 'python-list-append',
   'python-archipelago-append-keyword': 'python-list-append',
   'python-archipelago-append-build': 'python-list-append',

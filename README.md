@@ -1,6 +1,6 @@
 # DevQuest
 
-A local, playable Expo fantasy RPG that teaches beginner Python concepts. Forest of Variables has six five-exercise missions; completing it unlocks six Valley of Decisions missions: two five-exercise adventures, three short adventures with three exercises, and the five-spell Decision Keeper finale. Completing Valley unlocks Loop Caverns, with six three-spell adventures teaching for loops, range(), while loops and assembling Python code, followed by The Loop Warden five-spell finale. Completing it unlocks List Archipelago, with four short adventures teaching lists, indexing, adding items and replacing equipment. Progression is saved locally. The original three-spell Goblin battle remains playable from Home.
+A local, playable Expo fantasy RPG that teaches beginner Python concepts. Forest of Variables has six five-exercise missions; completing it unlocks six Valley of Decisions missions: two five-exercise adventures, three short adventures with three exercises, and the five-spell Decision Keeper finale. Completing Valley unlocks Loop Caverns, with six three-spell adventures teaching for loops, range(), while loops and assembling Python code, followed by The Loop Warden five-spell finale. Completing it unlocks List Archipelago, with six short adventures teaching lists, indexing, adding and replacing items, and visiting list values with for loops. Progression is saved locally. The original three-spell Goblin battle remains playable from Home.
 
 ## Run in Expo Go
 
@@ -23,7 +23,7 @@ Answers are checked against local challenge data; no Python code is executed. Co
 
 New players see a three-screen Python introduction. Skip and Start Adventure save its completion under a separate local key; players with completed missions bypass it. Learn Python on Home reopens it.
 
-The Spellbook on Home contains twenty-one short Python references. Each world mission can open the relevant entry without leaving the current exercise. Personal notes are tied to exercise IDs and saved locally with an explicit Save Note action; they can be edited or deleted and do not affect XP or progression.
+The Spellbook on Home contains twenty-six short Python references. Each world mission can open the relevant entry without leaving the current exercise. Personal notes are tied to exercise IDs and saved locally with an explicit Save Note action; they can be edited or deleted and do not affect XP or progression.
 
 My Profile saves only a trimmed 3–20 character nickname and one of five local avatars under `devquest.profile.v1`. Saves are explicit and queued. Missing or damaged profiles fall back to Python Apprentice/Mage; unreadable or future-version saves are protected from replacement. Profile editing never writes to progression, notes, or onboarding.
 
@@ -156,3 +156,9 @@ Current totals: four worlds, 21 missions, 83 exercises (71 choices, ten builders
 After Index Island, The Growing Chest teaches append(): add one item at the end of the existing list and increase its length by one. The Smith's Exchange follows it and teaches indexed assignment: replace an existing item while keeping the same length. Each mission has three touch exercises, including a three-line Code Builder, and rewards 40 XP once, zero on replay. Four concise lessons introduce the operations before assessment, and two new Spellbook references preserve exercise-linked notes.
 
 Current totals: four worlds, 23 missions, 89 exercises (75 choices, twelve builders, two typed), 46 lessons, 25 Spellbook entries and 1100 maximum XP. A completed 1020-XP save keeps all records and shows 2/4 Archipelago chapters; new completions bring 1060 then 1100 XP. Completing all four available chapters displays UP TO DATE, with no World 4 boss or permanent clear. Engine, navigation, audio, old content and save formats are unchanged. See [Stage 3I.2 verification and physical Android checklist](docs/stage-3i2.md).
+
+### Island Expedition and list iteration (Stage 3I.3)
+
+Island Expedition follows The Smith's Exchange and teaches visiting list values in order, the current loop variable and the indented body. The Supply Run follows it and combines append or indexed replacement before inspecting the updated list. Each mission contains three touch exercises and awards 40 XP once, zero on replay. Four short lessons, two Code Builder puzzles (three and four fragments), and one list-iteration Spellbook reference reuse the existing learning flow. Python remains display-only text.
+
+Current totals: four worlds, 25 missions, 95 exercises (79 choices, fourteen builders, two typed), 50 lessons, 26 references and 1180 maximum XP. A completed 1100-XP save remains valid and shows 4/6 Archipelago chapters; new completions bring 1140 then 1180 XP. At 6/6, World 4 is UP TO DATE, awaiting a future boss. Earlier content, rewards, engines, save formats and audio remain unchanged. See [Stage 3I.3 verification and manual checklist](docs/stage-3i3.md).
