@@ -41,7 +41,7 @@ function ChapterNode({ chapter, index, state, onPress, pulse }: {
           state === 'completed' && styles.chapterCardCompleted, boss && styles.bossCard, boss && state === 'available' && styles.bossCardAvailable,
           boss && state === 'completed' && styles.bossCardCompleted, boss?.kind === 'loop-warden' && state !== 'locked' && styles.wardenCard, pressed && styles.pressed]}>
         <View style={[styles.glyphFrame, state === 'available' && styles.glyphFrameAvailable, state === 'completed' && styles.glyphFrameCompleted, boss && styles.bossGlyphFrame, boss && state === 'completed' && styles.bossGlyphFrameCompleted]}>
-          <Text style={[styles.glyph, state === 'locked' && styles.glyphLocked]}>{boss?.kind === 'loop-warden' ? '∞' : state === 'completed' ? '✓' : chapterGlyphs[index]}</Text>
+          <Text style={[styles.glyph, state === 'locked' && styles.glyphLocked]}>{boss?.kind === 'treasure-guardian' ? (state === 'completed' ? '✓' : '◇') : boss?.kind === 'loop-warden' ? '∞' : state === 'completed' ? '✓' : chapterGlyphs[index]}</Text>
         </View>
         <View style={styles.chapterCopy}>
           <View style={styles.chapterTopLine}>
@@ -54,7 +54,7 @@ function ChapterNode({ chapter, index, state, onPress, pulse }: {
           <View style={styles.statusRow}>
             {state === 'locked' ? <LockMark /> : null}
             <Text style={[styles.statusText, state === 'available' && styles.availableText, state === 'completed' && styles.completedText]}>
-              {state === 'completed' ? boss ? boss.kind === 'goblin-king' ? '♛  KING DEFEATED' : boss.kind === 'loop-warden' ? '✓  WARDEN DEFEATED' : '✧  KEEPER DEFEATED' : '✓  COMPLETED' : state === 'available' ? boss ? boss.kind === 'goblin-king' ? '♛  FACE THE KING' : boss.kind === 'loop-warden' ? '∞  FACE THE WARDEN' : '✧  FACE THE KEEPER' : '●  AVAILABLE' : 'LOCKED'}
+              {state === 'completed' ? boss ? boss.kind === 'goblin-king' ? '♛  KING DEFEATED' : boss.kind === 'treasure-guardian' ? '◇  GUARDIAN DEFEATED' : boss.kind === 'loop-warden' ? '✓  WARDEN DEFEATED' : '✧  KEEPER DEFEATED' : '✓  COMPLETED' : state === 'available' ? boss ? boss.kind === 'goblin-king' ? '♛  FACE THE KING' : boss.kind === 'treasure-guardian' ? '◇  FACE THE GUARDIAN' : boss.kind === 'loop-warden' ? '∞  FACE THE WARDEN' : '✧  FACE THE KEEPER' : '●  AVAILABLE' : 'LOCKED'}
             </Text>
           </View>
         </View>
@@ -126,7 +126,7 @@ function ChapterDetails({ chapter, index, progress, onClose, onOpenMission }: {
                   {isMissionUnlocked(progress, mission.id) ? (
                     <Pressable onPress={() => onOpenMission(mission.id)} accessibilityRole="button" accessibilityLabel={`${isMissionCompleted(progress, mission.id) ? 'Replay' : 'Start'} ${mission.title}`}
                       style={({ pressed }) => [styles.missionAction, pressed && styles.pressed]}>
-                      <Text style={styles.missionActionText}>{isBossMission(mission.id) ? isMissionCompleted(progress, mission.id) ? 'REPLAY BOSS' : boss?.kind === 'goblin-king' ? 'FACE GOBLIN KING' : boss?.kind === 'loop-warden' ? 'FACE THE WARDEN' : 'FACE THE KEEPER' : isMissionCompleted(progress, mission.id) ? 'REPLAY MISSION' : 'START MISSION'}  ›</Text>
+                      <Text style={styles.missionActionText}>{isBossMission(mission.id) ? isMissionCompleted(progress, mission.id) ? 'REPLAY BOSS' : boss?.kind === 'goblin-king' ? 'FACE GOBLIN KING' : boss?.kind === 'treasure-guardian' ? 'FACE THE GUARDIAN' : boss?.kind === 'loop-warden' ? 'FACE THE WARDEN' : 'FACE THE KEEPER' : isMissionCompleted(progress, mission.id) ? 'REPLAY MISSION' : 'START MISSION'}  ›</Text>
                     </Pressable>
                   ) : <Text style={styles.missionComplete}>LOCKED</Text>}
                 </View>

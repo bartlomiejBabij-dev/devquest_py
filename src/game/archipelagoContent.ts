@@ -1,3 +1,4 @@
+import { treasureGuardianChapter, treasureGuardianMission, treasureGuardianExercises } from './archipelagoBossContent';
 import { listIterationChapters, listIterationMissions, listIterationExercises } from './archipelagoIterationContent';
 import { inventoryUpdateChapters, inventoryUpdateMissions, inventoryUpdateExercises } from './archipelagoUpdatesContent';
 import { cavernMissions } from './cavernContent';
@@ -6,9 +7,9 @@ import type { Chapter, Exercise, Mission, World } from './worldTypes';
 export const listArchipelago: World = {
   id: 'python-list-archipelago', languageId: 'python', title: 'List Archipelago',
   description: 'Sail turquoise waters, gather island treasures and organize your discoveries with Python lists.',
-  chapterIds: ['python-archipelago-treasure-inventory', 'python-archipelago-index-island', ...inventoryUpdateChapters.map(chapter => chapter.id), ...listIterationChapters.map(chapter => chapter.id)],
+  chapterIds: ['python-archipelago-treasure-inventory', 'python-archipelago-index-island', ...inventoryUpdateChapters.map(chapter => chapter.id), ...listIterationChapters.map(chapter => chapter.id), treasureGuardianChapter.id],
   prerequisiteMissionIds: cavernMissions.map(mission => mission.id),
-  unlockRequirement: 'Complete all seven chapters of Loop Caverns, including The Loop Warden.', xpReward: 220,
+  unlockRequirement: 'Complete all seven chapters of Loop Caverns, including The Loop Warden.', xpReward: 320,
 };
 
 export const archipelagoChapters: readonly Chapter[] = [
@@ -26,6 +27,7 @@ export const archipelagoChapters: readonly Chapter[] = [
   },
   ...inventoryUpdateChapters,
   ...listIterationChapters,
+  treasureGuardianChapter,
 ];
 
 export const archipelagoMissions: readonly Mission[] = [
@@ -43,6 +45,7 @@ export const archipelagoMissions: readonly Mission[] = [
   },
   ...inventoryUpdateMissions,
   ...listIterationMissions,
+  treasureGuardianMission,
 ];
 
 /** Authored display text only. Choices and builders validate stable IDs, never Python. */
@@ -122,4 +125,5 @@ export const archipelagoExercises: readonly Exercise[] = [
   },
   ...inventoryUpdateExercises,
   ...listIterationExercises,
+  ...treasureGuardianExercises,
 ];

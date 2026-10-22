@@ -14,6 +14,7 @@ import { getVisibleLesson, initialLessonSession, lessonSessionReducer } from '@/
 import { GameButton } from '@/components/GameButton';
 import { GameScreen } from '@/components/GameScreen';
 import { DecisionKeeperEncounter } from '@/components/DecisionKeeperEncounter';
+import { TreasureGuardianEncounter } from '@/components/TreasureGuardianEncounter';
 import { LoopWardenEncounter } from '@/components/LoopWardenEncounter';
 import { GoblinKingEncounter } from '@/components/GoblinKingEncounter';
 import { ValleyGuardian } from '@/components/ValleyGuardian';
@@ -187,8 +188,8 @@ export default function WorldMissionScreen() {
       </View>
     }>
       {attempt.phase === 'complete' && result ? (
-        <View style={[styles.resultCard, bossMission && styles.bossResultCard, boss?.kind === 'loop-warden' && styles.wardenResultCard]}>
-          <Text style={styles.resultGlyph}>{boss?.kind === 'loop-warden' ? '∞' : bossMission ? '♛' : '✦'}</Text>
+        <View style={[styles.resultCard, bossMission && styles.bossResultCard, boss?.kind === 'loop-warden' && styles.wardenResultCard, boss?.kind === 'treasure-guardian' && styles.guardianResultCard]}>
+          <Text style={styles.resultGlyph}>{boss?.kind === 'treasure-guardian' ? '◇' : boss?.kind === 'loop-warden' ? '∞' : bossMission ? '♛' : '✦'}</Text>
           <Text style={styles.overline}>{bossMission ? 'FIVE SPELLS CAST' : `${attempt.solvedExerciseIds.length} / ${playable.exercises.length} SPELLS CAST`}</Text>
           <Text style={[styles.resultTitle, bossMission && styles.bossResultTitle]}>{boss ? `${boss.name.toUpperCase()} DEFEATED!` : 'MISSION COMPLETE!'}</Text>
           {bossMission && isWorldCleared(progression, chapter.worldId) ? <Text style={styles.worldClear}>WORLD {worldNumber} CLEARED!</Text> : null}
@@ -207,6 +208,7 @@ export default function WorldMissionScreen() {
         <>
           {boss?.kind === 'goblin-king' && bossHp !== null ? <GoblinKingEncounter hp={bossHp} hitCount={attempt.solvedExerciseIds.length} showDamage={solved} reducedMotion={!!reduceMotion} /> : null}
           {boss?.kind === 'decision-keeper' && bossHp !== null ? <DecisionKeeperEncounter hp={bossHp} hitCount={attempt.solvedExerciseIds.length} showDamage={solved} reducedMotion={!!reduceMotion} /> : null}
+          {boss?.kind === 'treasure-guardian' && bossHp !== null ? <TreasureGuardianEncounter hp={bossHp} hitCount={attempt.solvedExerciseIds.length} showDamage={solved} reducedMotion={!!reduceMotion} /> : null}
           {boss?.kind === 'loop-warden' && bossHp !== null ? <LoopWardenEncounter hp={bossHp} hitCount={attempt.solvedExerciseIds.length} showDamage={solved} reducedMotion={!!reduceMotion} /> : null}
           {mission.encounter === 'guardian' ? <ValleyGuardian solvedCount={attempt.solvedExerciseIds.length} totalCount={playable.exercises.length} /> : null}
           <View style={[styles.headerCard, bossMission && styles.bossHeaderCard, lesson && styles.learningHeader]}>
@@ -290,6 +292,7 @@ export default function WorldMissionScreen() {
 }
 
 const styles = StyleSheet.create({
+  guardianResultCard: { borderColor: colors.gold, backgroundColor: '#142D31' },
   learningHeader: { paddingVertical: 12 },
   learningTitle: { fontSize: 22 },
   reviewLesson: { minHeight: 48, alignSelf: 'flex-start', justifyContent: 'center', paddingHorizontal: 12, marginTop: 8, borderRadius: 10, borderWidth: 1, borderColor: '#75659B', backgroundColor: '#322B4A' },

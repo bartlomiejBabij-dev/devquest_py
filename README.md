@@ -1,6 +1,6 @@
 # DevQuest
 
-A local, playable Expo fantasy RPG that teaches beginner Python concepts. Forest of Variables has six five-exercise missions; completing it unlocks six Valley of Decisions missions: two five-exercise adventures, three short adventures with three exercises, and the five-spell Decision Keeper finale. Completing Valley unlocks Loop Caverns, with six three-spell adventures teaching for loops, range(), while loops and assembling Python code, followed by The Loop Warden five-spell finale. Completing it unlocks List Archipelago, with six short adventures teaching lists, indexing, adding and replacing items, and visiting list values with for loops. Progression is saved locally. The original three-spell Goblin battle remains playable from Home.
+A local, playable Expo fantasy RPG that teaches beginner Python concepts. Forest of Variables has six five-exercise missions; completing it unlocks six Valley of Decisions missions: two five-exercise adventures, three short adventures with three exercises, and the five-spell Decision Keeper finale. Completing Valley unlocks Loop Caverns, with six three-spell adventures teaching for loops, range(), while loops and assembling Python code, followed by The Loop Warden five-spell finale. Completing it unlocks List Archipelago, with six short adventures teaching lists, indexing, adding and replacing items, and visiting list values with for loops, followed by the five-spell Treasure Guardian finale. Progression is saved locally. The original three-spell Goblin battle remains playable from Home.
 
 ## Run in Expo Go
 
@@ -27,7 +27,7 @@ The Spellbook on Home contains twenty-six short Python references. Each world mi
 
 My Profile saves only a trimmed 3–20 character nickname and one of five local avatars under `devquest.profile.v1`. Saves are explicit and queued. Missing or damaged profiles fall back to Python Apprentice/Mage; unreadable or future-version saves are protected from replacement. Profile editing never writes to progression, notes, or onboarding.
 
-Profile and Home XP come from completed mission IDs using the existing XP selector. Completed exercises count unique exercises belonging to completed missions; unfinished attempts and prototype battles do not count. Boss victories count the completed Goblin King, Decision Keeper and Loop Warden missions. Display-only level is `1 + floor(total XP / 100)`, with progress toward the next 100 XP. Achievements require completing the first mission, three Forest chapters, Broken Spells, and the Goblin King respectively; they grant no rewards.
+Profile and Home XP come from completed mission IDs using the existing XP selector. Completed exercises count unique exercises belonging to completed missions; unfinished attempts and prototype battles do not count. Boss victories count the completed Goblin King, Decision Keeper, Loop Warden and Treasure Guardian missions. Display-only level is `1 + floor(total XP / 100)`, with progress toward the next 100 XP. Achievements require completing the first mission, three Forest chapters, Broken Spells, and the Goblin King respectively; they grant no rewards.
 
 Initial adventure hydration and profile hydration use reusable, reduced-motion-aware skeletons. The placeholder shapes appear only if loading is still unresolved after 120 ms, and disappear as soon as data arrives. Data is never delayed; navigation and background saves do not trigger new skeletons.
 
@@ -162,3 +162,11 @@ Current totals: four worlds, 23 missions, 89 exercises (75 choices, twelve build
 Island Expedition follows The Smith's Exchange and teaches visiting list values in order, the current loop variable and the indented body. The Supply Run follows it and combines append or indexed replacement before inspecting the updated list. Each mission contains three touch exercises and awards 40 XP once, zero on replay. Four short lessons, two Code Builder puzzles (three and four fragments), and one list-iteration Spellbook reference reuse the existing learning flow. Python remains display-only text.
 
 Current totals: four worlds, 25 missions, 95 exercises (79 choices, fourteen builders, two typed), 50 lessons, 26 references and 1180 maximum XP. A completed 1100-XP save remains valid and shows 4/6 Archipelago chapters; new completions bring 1140 then 1180 XP. At 6/6, World 4 is UP TO DATE, awaiting a future boss. Earlier content, rewards, engines, save formats and audio remain unchanged. See [Stage 3I.3 verification and manual checklist](docs/stage-3i3.md).
+
+### The Treasure Guardian (Stage 3I.4)
+
+The seventh List Archipelago chapter follows The Supply Run. An original stone-and-gold vault guardian with turquoise crystals guards the final list assessment: three choice questions and two Code Builder puzzles covering indexing, append/length, replacement and direct iteration. One optional recap is available throughout combat. No new Python syntax or execution engine is introduced.
+
+Boss HP follows validated answers: 100 → 80 → 60 → 40 → 20 → 0. Wrong answers, fragment edits and duplicate submissions do not damage it. First completion grants 100 XP; replay grants zero. The vault opens and releases its core on defeat; reduced motion uses the final pose immediately. Completing all seven chapters shows WORLD 4 CLEARED and the fourth boss victory in Profile.
+
+Current totals: four worlds, 26 missions, 100 exercises (82 choices, sixteen builders, two typed), 51 lessons, 26 references and 1280 maximum XP. A completed 1180-XP save retains its records and shows 6/7 (86%) Archipelago completion until the Guardian is defeated. Save formats, earlier content/bosses and audio remain unchanged. See [Stage 3I.4 verification and physical-device checklist](docs/stage-3i4.md).

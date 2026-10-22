@@ -375,6 +375,16 @@ export const lessons: readonly LessonContent[] = [
     "whyItWorks": "Index 1 is the second position. pot replaces pan before the loop, while rod stays first. The loop visits rod and pot, giving two turns.",
     "importantRule": "Replace before you display. This changes one item, unlike append(), which would add another at the end. Do not expect the loop to read the old value."
   },
+  {
+    "id": "python-lesson-archipelago-mastery",
+    "title": "Inventory magic: a quick recap",
+    "optionalReview": true,
+    "explanation": "Lists use square brackets and commas. Index 0 is first; len() counts items. append() adds at the end, while indexed assignment replaces an existing item. Prepare the list before reading it.",
+    "codeExample": "bag = [\"map\", \"rope\"]\nbag[0] = \"chart\"\nbag.append(\"torch\")\nprint(len(bag))\nfor item in bag:\n    print(item)",
+    "expectedOutput": "3\nchart\nrope\ntorch",
+    "whyItWorks": "chart replaces map at index 0; torch is added at the end. There are now three items. item holds each current value in order, and the indented print runs once per item.",
+    "importantRule": "Create first, update next, inspect last. End the for header with a colon and indent its body. An index is a position, not a count."
+  },
 ];
 
 export function getLessonForExercise(exercise: Exercise): LessonContent | null {

@@ -35,34 +35,34 @@ test('Archipelago preserves all 77 exercises, nineteen missions, three worlds/bo
     assert.deepEqual(items.filter(v => Object.hasOwn(baseline[name], v.id)).map(v => v.id), Object.keys(baseline[name]));
   }
   for (const [id, entry] of Object.entries(baseline.spellbookLinks)) assert.equal(exerciseSpellbookEntryIds[id], entry);
-  for (const [file, expected] of Object.entries(baseline.protectedFiles)) assert.equal(hash(fs.readFileSync(file, 'utf8').replace(/\r\n/g, '\n')), expected, file);
+  for (const [file, expected] of Object.entries(baseline.protectedFiles)) require('./protectedSource.cjs').assertProtectedSource(file, expected);
   assert.equal(Object.keys(baseline.exercises).length, 77);
   assert.equal(getTotalEarnedXp(before), 960);
 });
 
 test('Four worlds register exactly two short list missions, four lessons, two references and six unique touch questions', () => {
-  assert.deepEqual([worlds.length, chapters.length, missions.length, exercises.length, lessons.length, spellbookEntries.length], [4, 25, 25, 95, 50, 26]);
-  assert.deepEqual([exercises.filter(isChoiceExercise).length, exercises.filter(isCodeBuilderExercise).length], [79, 14]);
+  assert.deepEqual([worlds.length, chapters.length, missions.length, exercises.length, lessons.length, spellbookEntries.length], [4, 26, 26, 100, 51, 26]);
+  assert.deepEqual([exercises.filter(isChoiceExercise).length, exercises.filter(isCodeBuilderExercise).length], [82, 16]);
   assert.equal(exercises.filter(e => !isChoiceExercise(e) && !isCodeBuilderExercise(e)).length, 2);
   assert.deepEqual(missions.filter(m => !Object.hasOwn(baseline.missions, m.id)), archipelagoMissions);
   assert.deepEqual(exercises.filter(e => !Object.hasOwn(baseline.exercises, e.id)), archipelagoExercises);
   assert.deepEqual(targets.map(m => [m.title, m.exerciseIds.length, m.xpReward]), [['Treasure Inventory', 3, 30], ['Index Island', 3, 30]]);
   assert.deepEqual(questions.map(e => e.type), ['multiple-choice', 'multiple-choice', 'code-builder', 'output-choice', 'output-choice', 'code-builder']);
   assert.deepEqual(listArchipelago.chapterIds, islands.map(c => c.id));
-  assert.equal(listArchipelago.xpReward, 220);
+  assert.equal(listArchipelago.xpReward, 320);
   assert.ok(targets.every(m => !m.encounter && !isBossMission(m.id)));
   const ids = [...worlds, ...chapters, ...missions, ...exercises, ...lessons, ...spellbookEntries,
     ...exercises.filter(isChoiceExercise).flatMap(e => e.options), ...exercises.filter(isCodeBuilderExercise).flatMap(e => e.fragments)].map(v => v.id);
   assert.equal(new Set(ids).size, ids.length);
-  assert.equal(missions.reduce((xp, m) => xp + m.xpReward, 0), 1180);
-  assert.equal(missions.filter(m => isBossMission(m.id)).length, 3);
+  assert.equal(missions.reduce((xp, m) => xp + m.xpReward, 0), 1280);
+  assert.equal(missions.filter(m => isBossMission(m.id)).length, 4);
 });
 
 test('All seven Caverns chapters including Warden gate World 4 and locked map/mission links; mission two follows one', () => {
   const cavernIds = missions.filter(m => loopCaverns.chapterIds.includes(m.chapterId)).map(m => m.id);
   assert.deepEqual(listArchipelago.prerequisiteMissionIds, cavernIds);
   assert.ok(cavernIds.includes('python-caverns-eternal-loop-01'));
-  assert.deepEqual(islands.map(c => c.prerequisiteMissionIds), [[], [targets[0].id], [targets[1].id], ['python-archipelago-growing-chest-01'], ['python-archipelago-smiths-exchange-01'], ['python-archipelago-island-expedition-01']]);
+  assert.deepEqual(islands.map(c => c.prerequisiteMissionIds), [[], [targets[0].id], [targets[1].id], ['python-archipelago-growing-chest-01'], ['python-archipelago-smiths-exchange-01'], ['python-archipelago-island-expedition-01'], ['python-archipelago-supply-run-01']]);
   for (const missing of cavernIds) {
     const locked = { completedMissionIds: before.completedMissionIds.filter(id => id !== missing) };
     assert.equal(isWorldUnlocked(locked, listArchipelago.id), false, missing);
@@ -189,7 +189,7 @@ test('Three valid spells pay 30 XP once, replay zero, sequential unlocking and 2
     const won = play(progress, m, 30); progress = won.progress;
     assert.equal(getTotalEarnedXp(progress), 990 + i * 30);
     assert.deepEqual(won.attempt.result.newlyUnlockedChapterIds, [islands[i + 1].id]);
-    assert.deepEqual(getWorldProgress(progress, listArchipelago.id), { completed: 1 + i, total: 6, percent: i === 0 ? 17 : 33 });
+    assert.deepEqual(getWorldProgress(progress, listArchipelago.id), { completed: 1 + i, total: 7, percent: i === 0 ? 14 : 29 });
     assert.equal(isWorldCleared(progress, listArchipelago.id), false);
     assert.equal(play(progress, m, 0).progress, progress);
     assert.equal(completeMission(progress, m.id).xpAwarded, 0);

@@ -30,7 +30,7 @@ export interface Mission {
   exerciseIds: readonly string[];
   prerequisiteMissionIds: readonly string[];
   xpReward: number;
-  encounter?: 'guardian' | 'decision-keeper' | 'loop-warden';
+  encounter?: 'guardian' | 'decision-keeper' | 'loop-warden' | 'treasure-guardian';
 }
 
 interface ExerciseBase {

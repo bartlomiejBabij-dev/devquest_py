@@ -36,14 +36,14 @@ test('Warden preserves all 72 exercises, eighteen missions, earlier bosses, engi
   for (const world of worlds.slice(0, 2)) assert.equal(hash(world), baseline.worlds[world.id]);
   assert.deepEqual(loopCaverns, { ...baseline.loopCaverns, chapterIds: [...baseline.loopCaverns.chapterIds, chapter.id], xpReward: 320 });
   for (const [id, entry] of Object.entries(baseline.spellbookLinks)) assert.equal(exerciseSpellbookEntryIds[id], entry);
-  for (const [file, expected] of Object.entries(baseline.protectedFiles)) assert.equal(hash(fs.readFileSync(file, 'utf8').replace(/\r\n/g, '\n')), expected, file);
+  for (const [file, expected] of Object.entries(baseline.protectedFiles)) require('./protectedSource.cjs').assertProtectedSource(file, expected);
   assert.equal(Object.keys(baseline.exercises).length, 72);
   assert.equal(getTotalEarnedXp(before), 860);
 });
 
 test('One seventh-chapter boss adds five touch exercises, one recap, 100 XP and globally unique IDs', () => {
-  assert.deepEqual([worlds.length, chapters.length, missions.length, exercises.length, lessons.length, spellbookEntries.length], [4, 25, 25, 95, 50, 26]);
-  assert.deepEqual([exercises.filter(isChoiceExercise).length, exercises.filter(isCodeBuilderExercise).length], [79, 14]);
+  assert.deepEqual([worlds.length, chapters.length, missions.length, exercises.length, lessons.length, spellbookEntries.length], [4, 26, 26, 100, 51, 26]);
+  assert.deepEqual([exercises.filter(isChoiceExercise).length, exercises.filter(isCodeBuilderExercise).length], [82, 16]);
   assert.equal(exercises.filter(e => !isChoiceExercise(e) && !isCodeBuilderExercise(e)).length, 2);
   assert.deepEqual(missions.filter(m => !Object.hasOwn(baseline.missions, m.id)), [mission, ...archipelagoMissions]);
   assert.deepEqual(exercises.filter(e => !Object.hasOwn(baseline.exercises, e.id)), [...questions, ...archipelagoExercises]);
@@ -55,8 +55,8 @@ test('One seventh-chapter boss adds five touch exercises, one recap, 100 XP and 
   const ids = [...worlds, ...chapters, ...missions, ...exercises, ...lessons, ...spellbookEntries,
     ...exercises.filter(isChoiceExercise).flatMap(e => e.options), ...exercises.filter(isCodeBuilderExercise).flatMap(e => e.fragments)].map(v => v.id);
   assert.equal(new Set(ids).size, ids.length);
-  assert.equal(missions.reduce((xp, m) => xp + m.xpReward, 0), 1180);
-  assert.equal(missions.filter(m => isBossMission(m.id)).length, 3);
+  assert.equal(missions.reduce((xp, m) => xp + m.xpReward, 0), 1280);
+  assert.equal(missions.filter(m => isBossMission(m.id)).length, 4);
 });
 
 test('Stopping Crystal and all earlier prerequisites gate Warden, including deep links and forged attempts', () => {

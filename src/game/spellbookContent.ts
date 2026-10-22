@@ -225,6 +225,11 @@ export const spellbookEntries: readonly SpellbookEntry[] = [
 
 /** Every exercise links to reference material, never to its answer. */
 export const exerciseSpellbookEntryIds: Readonly<Record<string, string>> = {
+  'python-archipelago-guardian-index': 'python-list-indexing',
+  'python-archipelago-guardian-vault': 'python-list-append',
+  'python-archipelago-guardian-mark': 'python-list-replacement',
+  'python-archipelago-guardian-expedition': 'python-list-iteration',
+  'python-archipelago-guardian-trial': 'python-list-iteration',
   'python-archipelago-iteration-output': 'python-list-iteration',
   'python-archipelago-iteration-variable': 'python-list-iteration',
   'python-archipelago-iteration-build': 'python-list-iteration',
