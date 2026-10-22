@@ -54,7 +54,7 @@ function play(progress, missionIndex) {
 }
 
 test('Two worlds contain unique linked IDs, exactly ten new exercises and five per new chapter', () => {
-  assert.equal(worlds.length, 4);
+  assert.equal(worlds.length, 5);
   assert.equal(valleyChapters.length, 2);
   assert.equal(valleyMissions.length, 2);
   assert.equal(valleyExercises.length, 10);

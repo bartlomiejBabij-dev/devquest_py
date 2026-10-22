@@ -27,7 +27,7 @@ export function CodeBuilder({ exercise, answer, incorrect, solved = false, onEdi
         </Pressable>)}
       </View>
       <Text style={styles.label}>AVAILABLE FRAGMENTS · TAP TO ADD</Text>
-      <Text style={styles.help}>Spaces are part of the code. Indented lines belong inside the loop. Swipe code sideways if needed.</Text>
+      <Text style={styles.help}>Spaces are part of the code. Indented lines belong inside their block, such as a loop or function. Swipe code sideways if needed.</Text>
       {remaining.map(fragment => <ScrollView key={fragment.id} horizontal contentContainerStyle={styles.fragmentScroll}>
         <Pressable accessibilityRole="button"
         accessibilityLabel={`Add ${fragment.code.startsWith('    ') ? 'indented line: ' : 'line: '}${fragment.code.trim()}`}

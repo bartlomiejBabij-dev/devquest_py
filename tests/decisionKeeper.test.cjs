@@ -20,6 +20,7 @@ const { goblinKingMissionId, getGoblinKingHp, decisionKeeperMissionId, getBossHp
 const { worldMapForMission } = require('../src/navigation/worldRoutes.ts');
 const { trackForRoute } = require('../src/game/audioController.ts');
 const { archipelagoMissions } = require('../src/game/archipelagoContent.ts');
+const { forgeMissions, forgeExercises, forgeChapters } = require('../src/game/forgeContent.ts');
 const baseline = require('./fixtures/decision-keeper-compatibility.json');
 const hash = value => crypto.createHash('sha256').update(JSON.stringify(value)).digest('hex');
 const id = 'python-valley-decision-keeper-01';
@@ -39,10 +40,10 @@ test('Keeper preserves all 49 previous exercises, eleven missions, 26 lessons, 1
 });
 
 test('Registry adds just one five-tap final boss and one recap with unique IDs and correct totals', () => {
-  assert.deepEqual([worlds.length, chapters.length, missions.length, exercises.length, lessons.length, spellbookEntries.length], [4, 26, 26, 100, 51, 26]);
-  assert.equal(exercises.filter(isChoiceExercise).length, 82);
+  assert.deepEqual([worlds.length, chapters.length, missions.length, exercises.length, lessons.length, spellbookEntries.length], [5, 28, 28, 106, 55, 28]);
+  assert.equal(exercises.filter(isChoiceExercise).length, 86);
   assert.equal(exercises.filter(e => !isChoiceExercise(e) && e.type !== 'code-builder').length, 2);
-  assert.deepEqual(missions.filter(m => !Object.hasOwn(baseline.missions, m.id)), [mission, ...missions.filter(m => m.chapterId.startsWith('python-caverns-')), ...archipelagoMissions]);
+  assert.deepEqual(missions.filter(m => !Object.hasOwn(baseline.missions, m.id)), [mission, ...missions.filter(m => m.chapterId.startsWith('python-caverns-')), ...archipelagoMissions, ...forgeMissions]);
   assert.equal(decisionKeeperMissionId, id);
   assert.equal(mission.title, 'The Decision Keeper');
   assert.equal(mission.xpReward, 100);
@@ -52,7 +53,7 @@ test('Registry adds just one five-tap final boss and one recap with unique IDs a
   assert.deepEqual(targets.map(e => e.id), ['comparison', 'branch', 'runes', 'mirror', 'mastery'].map(s => `python-valley-keeper-${s}`));
   const ids = [...worlds, ...chapters, ...missions, ...exercises, ...lessons, ...spellbookEntries, ...exercises.filter(isChoiceExercise).flatMap(e => e.options)].map(v => v.id);
   assert.equal(new Set(ids).size, ids.length);
-  assert.equal(missions.reduce((sum, m) => sum + m.xpReward, 0), 1280);
+  assert.equal(missions.reduce((sum, m) => sum + m.xpReward, 0), 1340);
   assert.equal(valleyOfDecisions.chapterIds.length, 6);
   assert.equal(isBossMission(id), true);
   assert.equal(isBossMission('python-valley-guardian-01'), false);
@@ -205,8 +206,8 @@ test('Optional recap remains optional on first attempts and replays, preserves a
 
 test('Old saves and new boss completion survive reload with accurate XP, profile counts, achievements and stable notes', async () => {
   assert.equal(PROGRESSION_STORAGE_KEY, 'devquest.progression');
-  const xp = [0, 20, 50, 90, 140, 200, 300, 370, 450, 480, 510, 540, 640, 670, 700, 740, 780, 820, 860, 960, 990, 1020, 1060, 1100, 1140, 1180, 1280];
-  const countExercises = [0, 5, 10, 15, 20, 25, 30, 35, 40, 43, 46, 49, 54, 57, 60, 63, 66, 69, 72, 77, 80, 83, 86, 89, 92, 95, 100];
+  const xp = [0, 20, 50, 90, 140, 200, 300, 370, 450, 480, 510, 540, 640, 670, 700, 740, 780, 820, 860, 960, 990, 1020, 1060, 1100, 1140, 1180, 1280, 1310, 1340];
+  const countExercises = [0, 5, 10, 15, 20, 25, 30, 35, 40, 43, 46, 49, 54, 57, 60, 63, 66, 69, 72, 77, 80, 83, 86, 89, 92, 95, 100, 103, 106];
   for (let count = 0; count <= missions.length; count++) {
     const completedMissionIds = missions.slice(0, count).map(m => m.id);
     const raw = JSON.stringify({ version: 1, completedMissionIds });

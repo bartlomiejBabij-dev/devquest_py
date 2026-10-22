@@ -1,3 +1,4 @@
+import { functionForge, forgeChapters, forgeMissions, forgeExercises } from './forgeContent';
 import { archipelagoChapters, archipelagoExercises, archipelagoMissions, listArchipelago } from './archipelagoContent';
 import { cavernChapters, cavernExercises, cavernMissions, loopCaverns } from './cavernContent';
 import { valleyChapters, valleyExercises, valleyMissions, valleyOfDecisions } from './valleyContent';
@@ -20,7 +21,7 @@ export const forestOfVariables: World = {
   xpReward: 300,
 };
 
-export const worlds: readonly World[] = [forestOfVariables, valleyOfDecisions, loopCaverns, listArchipelago];
+export const worlds: readonly World[] = [forestOfVariables, valleyOfDecisions, loopCaverns, listArchipelago, functionForge];
 
 export const forestChapters: readonly Chapter[] = [
   { id: 'python-forest-awakening', worldId: forestOfVariables.id, title: 'The Awakening', description: 'Speak your first command aloud.', learningObjective: 'Use print() to display text.', missionIds: ['python-forest-awakening-01'], prerequisiteMissionIds: [], xpReward: 20 },
@@ -607,7 +608,7 @@ export const forestExercises: readonly Exercise[] = [
   { id: 'python-forest-goblin-king-debug', chapterId: 'python-forest-goblin-king', languageId: 'python', difficulty: 'challenge', type: 'fix-mistake', lessonId: 'python-lesson-forest-mastery', concept: 'mixed debugging', prompt: 'Final spell: type only the variable name that should replace powr so the spell prints 6.', code: 'power = 3\nprint(powr * 2)', hint: 'The assigned name contains an e before r.', explanation: 'You repaired the final spell! powr is undefined. The name power reads 3, and power * 2 produces 6. Matching a defined name fixes this bug.', validation: { kind: 'exact', acceptedAnswers: ['power'], caseSensitive: true } },
 ];
 
-export { valleyOfDecisions, loopCaverns, listArchipelago };
-export const chapters: readonly Chapter[] = [...forestChapters, ...valleyChapters, ...cavernChapters, ...archipelagoChapters];
-export const missions: readonly Mission[] = [...forestMissions, ...valleyMissions, ...cavernMissions, ...archipelagoMissions];
-export const exercises: readonly Exercise[] = [...forestExercises, ...valleyExercises, ...cavernExercises, ...archipelagoExercises];
+export { valleyOfDecisions, loopCaverns, listArchipelago, functionForge };
+export const chapters: readonly Chapter[] = [...forestChapters, ...valleyChapters, ...cavernChapters, ...archipelagoChapters, ...forgeChapters];
+export const missions: readonly Mission[] = [...forestMissions, ...valleyMissions, ...cavernMissions, ...archipelagoMissions, ...forgeMissions];
+export const exercises: readonly Exercise[] = [...forestExercises, ...valleyExercises, ...cavernExercises, ...archipelagoExercises, ...forgeExercises];

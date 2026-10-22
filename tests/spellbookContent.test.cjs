@@ -41,9 +41,11 @@ const expectedTitles = [
   'append(): add an item',
   'Indexed assignment: replace an item',
   'Iterating through lists',
+  'Defining and calling functions',
+  'Parameters and arguments',
 ];
 
-test('Spellbook covers all twenty-six beginner Python concepts with complete content', () => {
+test('Spellbook covers all twenty-eight beginner Python concepts with complete content', () => {
   assert.deepEqual(spellbookEntries.map((entry) => entry.title), expectedTitles);
   assert.equal(new Set(spellbookEntries.map((entry) => entry.id)).size, spellbookEntries.length);
   const chapterIds = new Set(chapters.map((chapter) => chapter.id));
@@ -56,7 +58,7 @@ test('Spellbook covers all twenty-six beginner Python concepts with complete con
   }
 });
 
-test('All 100 exercises resolve to a valid relevant Spellbook entry', () => {
+test('All 106 exercises resolve to a valid relevant Spellbook entry', () => {
   const exerciseIds = new Set(exercises.map((exercise) => exercise.id));
   assert.deepEqual(new Set(Object.keys(exerciseSpellbookEntryIds)), exerciseIds);
   const entryIds = new Set(spellbookEntries.map((entry) => entry.id));

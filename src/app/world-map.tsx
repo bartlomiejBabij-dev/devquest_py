@@ -1,3 +1,5 @@
+import { ForgeScenery } from '@/components/ForgeScenery';
+import { functionForge } from '@/game/forgeContent';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { Animated, Modal, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
@@ -38,6 +40,7 @@ function ChapterNode({ chapter, index, state, onPress, pulse }: {
         accessibilityHint="Opens chapter details" style={({ pressed }) => [styles.chapterCard, state === 'available' && styles.chapterCardAvailable,
           chapter.worldId === loopCaverns.id && state !== 'locked' && styles.cavernCard,
           chapter.worldId === listArchipelago.id && state !== 'locked' && styles.islandCard,
+          chapter.worldId === functionForge.id && state !== 'locked' && styles.forgeCard,
           state === 'completed' && styles.chapterCardCompleted, boss && styles.bossCard, boss && state === 'available' && styles.bossCardAvailable,
           boss && state === 'completed' && styles.bossCardCompleted, boss?.kind === 'loop-warden' && state !== 'locked' && styles.wardenCard, pressed && styles.pressed]}>
         <View style={[styles.glyphFrame, state === 'available' && styles.glyphFrameAvailable, state === 'completed' && styles.glyphFrameCompleted, boss && styles.bossGlyphFrame, boss && state === 'completed' && styles.bossGlyphFrameCompleted]}>
@@ -147,6 +150,7 @@ export default function WorldMapScreen() {
   const valley = world.id === valleyOfDecisions.id;
   const caverns = world.id === loopCaverns.id;
   const archipelago = world.id === listArchipelago.id;
+  const forge = world.id === functionForge.id;
   const expandedWorld = world.id !== forestOfVariables.id;
   const { progression } = useGame();
   const [selectedId, setSelectedId] = useState<string | null>(null);
@@ -196,12 +200,12 @@ export default function WorldMapScreen() {
             </Pressable>;
           })}
         </View>
-        <View style={[styles.banner, valley && styles.valleyBanner, caverns && styles.cavernBanner, archipelago && styles.islandBanner]}>
+        <View style={[styles.banner, valley && styles.valleyBanner, caverns && styles.cavernBanner, archipelago && styles.islandBanner, forge && styles.forgeBanner]}>
           <Text style={styles.bannerStars}>✦  ·  ✧  ·  ✦</Text>
-          <Text style={styles.bannerEyebrow}>{archipelago ? 'GATHER · ORDER · DISCOVER' : caverns ? 'ONE SPELL · MANY ECHOES' : valley ? 'EVERY CHOICE IS A SPELL' : 'THE ADVENTURE BEGINS'}</Text>
-          <Text style={[styles.bannerTitle, archipelago && styles.islandTitle]}>{archipelago ? 'List' : caverns ? 'Loop' : valley ? 'Valley of' : 'Forest of'}{'\n'}<Text style={[styles.bannerAccent, (caverns || archipelago) && styles.crystalText]}>{archipelago ? 'Archipelago' : caverns ? 'Caverns' : valley ? 'Decisions' : 'Variables'}</Text></Text>
+          <Text style={styles.bannerEyebrow}>{forge ? 'DEFINE · CALL · REUSE' : archipelago ? 'GATHER · ORDER · DISCOVER' : caverns ? 'ONE SPELL · MANY ECHOES' : valley ? 'EVERY CHOICE IS A SPELL' : 'THE ADVENTURE BEGINS'}</Text>
+          <Text style={[styles.bannerTitle, archipelago && styles.islandTitle]}>{forge ? 'Function' : archipelago ? 'List' : caverns ? 'Loop' : valley ? 'Valley of' : 'Forest of'}{'\n'}<Text style={[styles.bannerAccent, (caverns || archipelago) && styles.crystalText, forge && styles.forgeAccent]}>{forge ? 'Forge' : archipelago ? 'Archipelago' : caverns ? 'Caverns' : valley ? 'Decisions' : 'Variables'}</Text></Text>
           <Text style={styles.bannerDescription}>{world.description}</Text>
-          {archipelago ? <ArchipelagoScenery /> : caverns ? <View style={styles.crystalRow} accessible={false}>{[0, 1, 2].map(index => <Animated.View key={index} style={[styles.crystal, { opacity: pulse }]}><Text style={styles.crystalRune}>✧</Text></Animated.View>)}</View>
+          {forge ? <ForgeScenery /> : archipelago ? <ArchipelagoScenery /> : caverns ? <View style={styles.crystalRow} accessible={false}>{[0, 1, 2].map(index => <Animated.View key={index} style={[styles.crystal, { opacity: pulse }]}><Text style={styles.crystalRune}>✧</Text></Animated.View>)}</View>
             : valley ? <Text style={styles.valleyPeaks} accessible={false}>◇  △  ◈  △  ◇</Text> : <View style={styles.treeLine}><Text style={styles.treeGlyph}>♠</Text><Text style={styles.treeGlyphSmall}>♠</Text><Text style={styles.treeGlyph}>♠</Text><Text style={styles.treeGlyphSmall}>♠</Text><Text style={styles.treeGlyph}>♠</Text></View>}
         </View>
 
@@ -220,9 +224,9 @@ export default function WorldMapScreen() {
         </View>
 
         {worldUnlocked ? <>
-        <View style={styles.sectionHeading}><Text style={styles.sectionTitle}>{archipelago ? 'THE TREASURE TRAIL' : caverns ? 'THE ECHOING PATH' : valley ? 'THE DIVIDED PATH' : 'THE ENCHANTED PATH'}</Text><Text style={styles.sectionHint}>{worldProgress.completed} / {worldProgress.total} {archipelago ? 'COMPLETE' : 'CLEARED'}</Text></View>
-        <View style={[styles.mapSurface, valley && styles.valleyMap, caverns && styles.cavernMap, archipelago && styles.islandMap]}>
-          <View style={styles.mapCaption}><Text style={styles.mapCaptionText}>{archipelago ? '◇  CHART YOUR COURSE  ◇' : '✧  FOLLOW THE RUNES  ✧'}</Text></View>
+        <View style={styles.sectionHeading}><Text style={styles.sectionTitle}>{forge ? 'THE RUNIC WORKSHOP' : archipelago ? 'THE TREASURE TRAIL' : caverns ? 'THE ECHOING PATH' : valley ? 'THE DIVIDED PATH' : 'THE ENCHANTED PATH'}</Text><Text style={styles.sectionHint}>{worldProgress.completed} / {worldProgress.total} {(archipelago || forge) ? 'COMPLETE' : 'CLEARED'}</Text></View>
+        <View style={[styles.mapSurface, valley && styles.valleyMap, caverns && styles.cavernMap, archipelago && styles.islandMap, forge && styles.forgeMap]}>
+          <View style={styles.mapCaption}><Text style={styles.mapCaptionText}>{forge ? '✧  SHAPE YOUR NEXT SPELL  ✧' : archipelago ? '◇  CHART YOUR COURSE  ◇' : '✧  FOLLOW THE RUNES  ✧'}</Text></View>
           {chapterList.map((chapter, index) => (
             <View key={chapter.id}>
               <ChapterNode chapter={chapter} index={index} state={getChapterState(progression, chapter)} onPress={() => setSelectedId(chapter.id)} pulse={pulse} />
@@ -234,7 +238,7 @@ export default function WorldMapScreen() {
               ) : null}
             </View>
           ))}
-          <Text style={styles.mapFooter}>{worldProgress.percent === 100 ? isWorldCleared(progression, world.id) ? `${world.title.toUpperCase()} CLEARED` : 'AVAILABLE CHAPTERS COMPLETE' : archipelago ? 'NEW DISCOVERIES ACROSS THE SEA' : caverns ? 'FOLLOW THE CRYSTAL ECHOES' : valley ? 'CHOOSE YOUR PATH THROUGH THE VALLEY' : 'MORE OF THE FOREST AWAITS'}</Text>
+          <Text style={styles.mapFooter}>{worldProgress.percent === 100 ? isWorldCleared(progression, world.id) ? `${world.title.toUpperCase()} CLEARED` : 'AVAILABLE CHAPTERS COMPLETE' : forge ? 'MORE SPELLS AWAIT THE FORGE' : archipelago ? 'NEW DISCOVERIES ACROSS THE SEA' : caverns ? 'FOLLOW THE CRYSTAL ECHOES' : valley ? 'CHOOSE YOUR PATH THROUGH THE VALLEY' : 'MORE OF THE FOREST AWAITS'}</Text>
         </View>
         </> : null}
       </GameScreen>
@@ -252,6 +256,10 @@ export default function WorldMapScreen() {
 }
 
 const styles = StyleSheet.create({
+  forgeBanner: { backgroundColor: '#302336', borderColor: '#D6A55D' },
+  forgeAccent: { color: '#FFD181' },
+  forgeMap: { backgroundColor: '#231F33', borderColor: '#68516A' },
+  forgeCard: { backgroundColor: '#382B40', borderColor: '#D6A55D' },
   worldPicker: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginBottom: 12 },
   worldChoice: { flex: 1, flexBasis: '45%', minWidth: 130, minHeight: 72, padding: 11, borderRadius: 14, borderWidth: 1, borderColor: colors.border, backgroundColor: colors.panel, justifyContent: 'center' },
   islandBanner: { backgroundColor: '#123F4B', borderColor: '#72D3C6' },

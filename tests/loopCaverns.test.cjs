@@ -24,6 +24,7 @@ const { getAccessibleMapChapters, resolveMapWorld, worldMapForMission } = requir
 const { trackForRoute } = require('../src/game/audioController.ts');
 const { isBossMission, isWorldCleared, getBossHp } = require('../src/game/boss.ts');
 const { archipelagoMissions } = require('../src/game/archipelagoContent.ts');
+const { forgeMissions, forgeExercises, forgeChapters } = require('../src/game/forgeContent.ts');
 const baseline = require('./fixtures/loop-caverns-compatibility.json');
 const oldComplete = { completedMissionIds: Object.keys(baseline.missions) };
 const hash = value => crypto.createHash('sha256').update(JSON.stringify(value)).digest('hex');
@@ -39,10 +40,10 @@ test('Loop Caverns preserves every prior world, chapter, mission, exercise, less
 });
 
 test('The foundation retains its two three-tap missions within the expanded registry', () => {
-  assert.deepEqual([worlds.length, chapters.length, missions.length, exercises.length, lessons.length, spellbookEntries.length], [4, 26, 26, 100, 51, 26]);
-  assert.equal(exercises.filter(isChoiceExercise).length, 82);
+  assert.deepEqual([worlds.length, chapters.length, missions.length, exercises.length, lessons.length, spellbookEntries.length], [5, 28, 28, 106, 55, 28]);
+  assert.equal(exercises.filter(isChoiceExercise).length, 86);
   assert.equal(exercises.filter(e => !isChoiceExercise(e) && e.type !== 'code-builder').length, 2);
-  assert.deepEqual(missions.filter(m => !Object.hasOwn(baseline.missions, m.id)), [...cavernMissions, ...archipelagoMissions]);
+  assert.deepEqual(missions.filter(m => !Object.hasOwn(baseline.missions, m.id)), [...cavernMissions, ...archipelagoMissions, ...forgeMissions]);
   assert.deepEqual(foundationMissions.map(m => [m.title, m.exerciseIds.length, m.xpReward]), [['The Repeating Road', 3, 30], ['Lanterns of Range', 3, 30]]);
   assert.equal(foundationExercises.length, 6);
   assert.equal(cavernExercises.length, 23);
@@ -51,7 +52,7 @@ test('The foundation retains its two three-tap missions within the expanded regi
   assert.ok(isBossMission(cavernMissions[6].id));
   const ids = [...worlds, ...chapters, ...missions, ...exercises, ...lessons, ...spellbookEntries, ...exercises.filter(isChoiceExercise).flatMap(e => e.options)].map(v => v.id);
   assert.equal(new Set(ids).size, ids.length);
-  assert.equal(missions.reduce((sum, m) => sum + m.xpReward, 0), 1280);
+  assert.equal(missions.reduce((sum, m) => sum + m.xpReward, 0), 1340);
   assert.equal(loopCaverns.xpReward, 320);
   assert.deepEqual(loopCaverns.chapterIds, cavernChapters.map(c => c.id));
 });
@@ -192,8 +193,8 @@ test('Each three-spell mission pays 30 XP only after its last answer; replay pay
 });
 
 test('Every old save keeps XP and profile data; new saves retain 670/700 XP and stable notes without migrations', async () => {
-  const xp = [0, 20, 50, 90, 140, 200, 300, 370, 450, 480, 510, 540, 640, 670, 700, 740, 780, 820, 860, 960, 990, 1020, 1060, 1100, 1140, 1180, 1280];
-  const counts = [0, 5, 10, 15, 20, 25, 30, 35, 40, 43, 46, 49, 54, 57, 60, 63, 66, 69, 72, 77, 80, 83, 86, 89, 92, 95, 100];
+  const xp = [0, 20, 50, 90, 140, 200, 300, 370, 450, 480, 510, 540, 640, 670, 700, 740, 780, 820, 860, 960, 990, 1020, 1060, 1100, 1140, 1180, 1280, 1310, 1340];
+  const counts = [0, 5, 10, 15, 20, 25, 30, 35, 40, 43, 46, 49, 54, 57, 60, 63, 66, 69, 72, 77, 80, 83, 86, 89, 92, 95, 100, 103, 106];
   const profile = JSON.stringify({ version: 1, nickname: 'Crystal Mage', avatarId: 'wizard' });
   assert.equal(parseSavedProfile(profile).profile.nickname, 'Crystal Mage');
   for (let n = 0; n <= missions.length; n++) {
@@ -204,7 +205,7 @@ test('Every old save keeps XP and profile data; new saves retain 670/700 XP and 
     assert.deepEqual([stats.totalXp, stats.completedExercises, stats.completedMissions, stats.defeatedBosses], [xp[n], counts[n], n, n >= 26 ? 4 : n >= 19 ? 3 : n >= 12 ? 2 : n >= 6 ? 1 : 0]);
     assert.equal(isWorldUnlocked(loaded.progression, loopCaverns.id), n >= 12);
     if (n >= 13) {
-      assert.equal(stats.currentWorld, n >= 20 ? 'List Archipelago' : 'Loop Caverns');
+      assert.equal(stats.currentWorld, n >= 27 ? 'Function Forge' : n >= 20 ? 'List Archipelago' : 'Loop Caverns');
       assert.deepEqual(getAchievements(loaded.progression), getAchievements(oldComplete));
     }
     const data = new Map([[PROGRESSION_STORAGE_KEY, raw], ['devquest.profile.v1', profile], ['devquest.audio.v1', 'audio-sentinel']]);

@@ -22,6 +22,7 @@ const { getAccessibleMapChapters, worldMapForMission } = require('../src/navigat
 const { isBossMission, isWorldCleared, getBossHp } = require('../src/game/boss.ts');
 const { trackForRoute } = require('../src/game/audioController.ts');
 const { treasureGuardianChapter, treasureGuardianMission, treasureGuardianExercises } = require('../src/game/archipelagoBossContent.ts');
+const { forgeMissions, forgeExercises, forgeChapters } = require('../src/game/forgeContent.ts');
 const baseline = require('./fixtures/list-iteration-compatibility.json');
 const before = { completedMissionIds: Object.keys(baseline.missions) };
 const builders = questions.filter(isCodeBuilderExercise);
@@ -63,18 +64,18 @@ test('Iteration preserves all 89 earlier exercises, 23 missions, lessons, refere
 });
 
 test('Two three-question adventures, four lessons and one reference register unique IDs and 1280 available XP', () => {
-  assert.deepEqual([worlds.length, chapters.length, missions.length, exercises.length, lessons.length, spellbookEntries.length], [4, 26, 26, 100, 51, 26]);
-  assert.deepEqual([exercises.filter(isChoiceExercise).length, exercises.filter(isCodeBuilderExercise).length], [82, 16]);
+  assert.deepEqual([worlds.length, chapters.length, missions.length, exercises.length, lessons.length, spellbookEntries.length], [5, 28, 28, 106, 55, 28]);
+  assert.deepEqual([exercises.filter(isChoiceExercise).length, exercises.filter(isCodeBuilderExercise).length], [86, 18]);
   assert.equal(exercises.filter(e => !isChoiceExercise(e) && !isCodeBuilderExercise(e)).length, 2);
-  assert.deepEqual(missions.filter(m => !Object.hasOwn(baseline.missions, m.id)), [...targets, treasureGuardianMission]);
-  assert.deepEqual(exercises.filter(e => !Object.hasOwn(baseline.exercises, e.id)), [...questions, ...treasureGuardianExercises]);
+  assert.deepEqual(missions.filter(m => !Object.hasOwn(baseline.missions, m.id)), [...targets, treasureGuardianMission, ...forgeMissions]);
+  assert.deepEqual(exercises.filter(e => !Object.hasOwn(baseline.exercises, e.id)), [...questions, ...treasureGuardianExercises, ...forgeExercises]);
   assert.deepEqual(targets.map(m => [m.title, m.exerciseIds.length, m.xpReward]), [['Island Expedition', 3, 40], ['The Supply Run', 3, 40]]);
   assert.deepEqual(questions.map(e => e.type), ['output-choice', 'missing-token', 'code-builder', 'output-choice', 'code-builder', 'output-choice']);
   assert.ok(targets.every(m => !m.encounter && !isBossMission(m.id)));
   const ids = [...worlds, ...chapters, ...missions, ...exercises, ...lessons, ...spellbookEntries,
     ...exercises.filter(isChoiceExercise).flatMap(e => e.options), ...exercises.filter(isCodeBuilderExercise).flatMap(e => e.fragments)].map(v => v.id);
   assert.equal(new Set(ids).size, ids.length);
-  assert.equal(missions.reduce((sum, m) => sum + m.xpReward, 0), 1280);
+  assert.equal(missions.reduce((sum, m) => sum + m.xpReward, 0), 1340);
   assert.equal(missions.filter(m => isBossMission(m.id)).length, 4);
 });
 
@@ -161,7 +162,7 @@ for (const [index, e] of builders.entries()) test(`${e.id}: one intended order, 
 });
 
 test('Four focused lessons teach before assessment; review remains available and replays skip introductions', () => {
-  const added = lessons.filter(l => !Object.hasOwn(baseline.lessons, l.id) && l.id !== 'python-lesson-archipelago-mastery');
+  const added = lessons.filter(l => questions.some(e => e.lessonId === l.id));
   assert.deepEqual(added.map(l => [l.codeExample, l.expectedOutput]), [
     ['treasures = ["ruby", "map", "coin"]\nfor treasure in treasures:\n    print(treasure)', 'ruby\nmap\ncoin'],
     ['colors = ["red", "blue"]\nfor color in colors:\n    print(color)', 'red\nblue'],
@@ -238,7 +239,7 @@ test('Old prefixes and 1100/1140/1180 saves restore without migration; all notes
   }
   await createNotesStore(storage).save(notes); assert.deepEqual((await createNotesStore(storage).load()).notes, notes);
   assert.ok(questions.every(e => getSpellbookEntryForExercise(e.id).id === 'python-list-iteration'));
-  const entries = spellbookEntries.filter(e => !Object.hasOwn(baseline.spellbook, e.id));
+  const entries = spellbookEntries.filter(e => e.id === 'python-list-iteration');
   assert.equal(entries.length, 1);
   assert.deepEqual([entries[0].codeExample, entries[0].expectedOutput], ['cargo = ["sail", "rope"]\nfor item in cargo:\n    print(item)', 'sail\nrope']);
 });

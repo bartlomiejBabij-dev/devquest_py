@@ -221,10 +221,36 @@ export const spellbookEntries: readonly SpellbookEntry[] = [
     "commonMistake": "item is not automatically an index, and cargo is the whole list. Use print(item), not print(\"item\"), to display each value. Keep the body indented and the header ending in a colon.",
     "chapterId": "python-archipelago-island-expedition"
   },
+  {
+    "id": "python-functions",
+    "title": "Defining and calling functions",
+    "explanation": "A function groups instructions under a reusable name. def defines the instructions; a call runs them. A function can have no parameters.",
+    "codeExample": "def greet():\n    print(\"Welcome!\")\ngreet()\ngreet()",
+    "expectedOutput": "Welcome!\nWelcome!",
+    "whyItWorks": "The indented body belongs to greet. Each call runs it once; the definition alone would produce no output. Reusing the name avoids copying its body.",
+    "commonMistake": "Include def, parentheses and a colon in the header, and indent the body. Call the name with parentheses after defining it. Defining is not calling.",
+    "chapterId": "python-forge-silent-anvil"
+  },
+  {
+    "id": "python-function-parameters",
+    "title": "Parameters and arguments",
+    "explanation": "A parameter names the value a function receives. An argument supplies that value in a call. This lets the same body work with different values.",
+    "codeExample": "def display(symbol):\n    print(symbol)\ndisplay(\"Star\")\ndisplay(\"Wave\")",
+    "expectedOutput": "Star\nWave",
+    "whyItWorks": "symbol is the parameter. \"Star\" and \"Wave\" are arguments supplied by successive calls. print(symbol) displays the received value each time.",
+    "commonMistake": "A parameter name is not a quoted string. print(\"symbol\") would repeat fixed text. This definition takes one argument, while a function defined with () takes none.",
+    "chapterId": "python-forge-rune-engraver"
+  },
 ];
 
 /** Every exercise links to reference material, never to its answer. */
 export const exerciseSpellbookEntryIds: Readonly<Record<string, string>> = {
+  'python-forge-anvil-silence': 'python-functions',
+  'python-forge-anvil-definition': 'python-functions',
+  'python-forge-anvil-build': 'python-functions',
+  'python-forge-rune-output': 'python-function-parameters',
+  'python-forge-rune-parameter': 'python-function-parameters',
+  'python-forge-rune-build': 'python-function-parameters',
   'python-archipelago-guardian-index': 'python-list-indexing',
   'python-archipelago-guardian-vault': 'python-list-append',
   'python-archipelago-guardian-mark': 'python-list-replacement',

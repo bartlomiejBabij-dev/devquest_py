@@ -10,6 +10,7 @@ require.extensions['.ts'] = (m, f) => m._compile(ts.transpileModule(fs.readFileS
 const { builderExercises } = require('../src/game/cavernBuilderContent.ts');
 const { eternalLoopExercises } = require('../src/game/cavernBossContent.ts');
 const { archipelagoExercises } = require('../src/game/archipelagoContent.ts');
+const { forgeExercises } = require('../src/game/forgeContent.ts');
 const { whileExercises } = require('../src/game/cavernWhileContent.ts');
 const { isExerciseAnswerCorrect } = require('../src/game/exerciseValidation.ts');
 const { getVisibleLesson, initialLessonSession, lessonSessionReducer } = require('../src/game/lessonSession.ts');
@@ -92,7 +93,7 @@ test('Real CodeBuilder controls build/undo/reset explicitly; partial drafts surv
   assert.equal(readFragmentIds(exercise, answer).length, 0);
 });
 
-for (const exercise of [...whileExercises, ...eternalLoopExercises, ...archipelagoExercises].filter(e => e.type === 'code-builder')) {
+for (const exercise of [...whileExercises, ...eternalLoopExercises, ...archipelagoExercises, ...forgeExercises].filter(e => e.type === 'code-builder')) {
   test(`${exercise.id}: real fragment controls retain drafts for help and notes, recover from wrong order, and never open a text input`, () => {
     let answer = '', incorrect = false, casts = 0;
     const render = () => CodeBuilder({ exercise, answer, incorrect,

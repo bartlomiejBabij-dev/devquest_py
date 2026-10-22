@@ -1,0 +1,10 @@
+{
+  "src/app/world-map.tsx": {
+    "before": "f7a270687ce77b2d76945ce592f27768aded4d74a9b221843aad046f75a7b298",
+    "after": "e8c94d21eb95b43c1085957d75f7a9b8cd51b307b830df897c6092dfcfe531d3"
+  },
+  "src/components/CodeBuilder.tsx": {
+    "before": "c3bc75d7fcefa8be6b2f3ff083533715cded4bead97577e6bfe27c54c073c9df",
+    "after": "58514cb298735eb6f5fac5162a331a97428a8ffc81a2cc85df6c6c88fe56fdcc"
+  }
+}

@@ -38,10 +38,10 @@ test('Mirror only appends content: ten prior missions, 46 exercises, 24 lessons,
 });
 
 test('Registry adds exactly one three-tap mission with unique IDs, 30 XP and accurate totals', () => {
-  assert.deepEqual([worlds.length, chapters.length, missions.length, exercises.length, lessons.length, spellbookEntries.length], [4, 26, 26, 100, 51, 26]);
-  assert.equal(exercises.filter(isChoiceExercise).length, 82);
+  assert.deepEqual([worlds.length, chapters.length, missions.length, exercises.length, lessons.length, spellbookEntries.length], [5, 28, 28, 106, 55, 28]);
+  assert.equal(exercises.filter(isChoiceExercise).length, 86);
   assert.equal(exercises.filter(e => !isChoiceExercise(e) && e.type !== 'code-builder').length, 2);
-  assert.deepEqual(missions.filter(m => !Object.hasOwn(baseline.missions, m.id)).map(m => m.id), [id, 'python-valley-decision-keeper-01', 'python-caverns-repeating-road-01', 'python-caverns-lanterns-of-range-01', 'python-caverns-echo-bridge-01', 'python-caverns-counting-tower-01', 'python-caverns-endless-echo-01', 'python-caverns-stopping-crystal-01', 'python-caverns-eternal-loop-01', 'python-archipelago-treasure-inventory-01', 'python-archipelago-index-island-01', 'python-archipelago-growing-chest-01', 'python-archipelago-smiths-exchange-01', 'python-archipelago-island-expedition-01', 'python-archipelago-supply-run-01', 'python-archipelago-treasure-guardian-01']);
+  assert.deepEqual(missions.filter(m => !Object.hasOwn(baseline.missions, m.id)).map(m => m.id), [id, 'python-valley-decision-keeper-01', 'python-caverns-repeating-road-01', 'python-caverns-lanterns-of-range-01', 'python-caverns-echo-bridge-01', 'python-caverns-counting-tower-01', 'python-caverns-endless-echo-01', 'python-caverns-stopping-crystal-01', 'python-caverns-eternal-loop-01', 'python-archipelago-treasure-inventory-01', 'python-archipelago-index-island-01', 'python-archipelago-growing-chest-01', 'python-archipelago-smiths-exchange-01', 'python-archipelago-island-expedition-01', 'python-archipelago-supply-run-01', 'python-archipelago-treasure-guardian-01', 'python-forge-silent-anvil-01', 'python-forge-rune-engraver-01']);
   assert.equal(mission.title, 'Mirror of Truth');
   assert.equal(mission.xpReward, 30);
   assert.equal(mission.chapterId, chapterId);
@@ -50,7 +50,7 @@ test('Registry adds exactly one three-tap mission with unique IDs, 30 XP and acc
   assert.ok(targets.every(e => isChoiceExercise(e) && e.chapterId === chapterId));
   const allIds = [...worlds, ...chapters, ...missions, ...exercises, ...lessons, ...spellbookEntries, ...exercises.filter(isChoiceExercise).flatMap(e => e.options)].map(v => v.id);
   assert.equal(new Set(allIds).size, allIds.length);
-  assert.equal(missions.reduce((sum, m) => sum + m.xpReward, 0), 1280);
+  assert.equal(missions.reduce((sum, m) => sum + m.xpReward, 0), 1340);
   assert.equal(missions.filter(m => valleyOfDecisions.chapterIds.includes(m.chapterId)).reduce((sum, m) => sum + m.xpReward, 0), valleyOfDecisions.xpReward);
 });
 
@@ -217,8 +217,8 @@ test('Two-answer exit and review retain zero extra XP; a fabricated last-questio
 
 test('Version-1 saves keep all old XP and records; Mirror persists across storage instances and still replays for zero', async () => {
   assert.equal(PROGRESSION_STORAGE_KEY, 'devquest.progression');
-  const xp = [0, 20, 50, 90, 140, 200, 300, 370, 450, 480, 510, 540, 640, 670, 700, 740, 780, 820, 860, 960, 990, 1020, 1060, 1100, 1140, 1180, 1280];
-  const exerciseCounts = [0, 5, 10, 15, 20, 25, 30, 35, 40, 43, 46, 49, 54, 57, 60, 63, 66, 69, 72, 77, 80, 83, 86, 89, 92, 95, 100];
+  const xp = [0, 20, 50, 90, 140, 200, 300, 370, 450, 480, 510, 540, 640, 670, 700, 740, 780, 820, 860, 960, 990, 1020, 1060, 1100, 1140, 1180, 1280, 1310, 1340];
+  const exerciseCounts = [0, 5, 10, 15, 20, 25, 30, 35, 40, 43, 46, 49, 54, 57, 60, 63, 66, 69, 72, 77, 80, 83, 86, 89, 92, 95, 100, 103, 106];
   for (let count = 0; count <= missions.length; count++) {
     const completedMissionIds = missions.slice(0, count).map(m => m.id);
     const payload = { version: 1, completedMissionIds };

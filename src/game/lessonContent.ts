@@ -385,6 +385,42 @@ export const lessons: readonly LessonContent[] = [
     "whyItWorks": "chart replaces map at index 0; torch is added at the end. There are now three items. item holds each current value in order, and the indented print runs once per item.",
     "importantRule": "Create first, update next, inspect last. End the for header with a colon and indent its body. An index is a position, not a count."
   },
+  {
+    "id": "python-lesson-function-call",
+    "title": "A spell waiting for your call",
+    "explanation": "A function is a named group of instructions you can reuse. def creates it. Defining a function does not run its body: call the name with parentheses when you want those instructions to run.",
+    "codeExample": "def ring_bell():\n    print(\"Bell!\")\nring_bell()",
+    "expectedOutput": "Bell!",
+    "whyItWorks": "def creates ring_bell. The indented print belongs to that function. The last line calls it, so the body prints Bell! once.",
+    "importantRule": "Without the last ring_bell() call, this definition produces no output. A function can have empty parentheses; it does not always need a parameter."
+  },
+  {
+    "id": "python-lesson-function-shape",
+    "title": "Shape a reusable spell",
+    "explanation": "Start with def, a name, parentheses and a colon. Use a clear name made of letters, digits or underscores, not starting with a digit. Indent the body. Call the same name with parentheses after the definition.",
+    "codeExample": "def light_lamp():\n    print(\"Lit\")\nlight_lamp()\nlight_lamp()",
+    "expectedOutput": "Lit\nLit",
+    "whyItWorks": "The definition stores the instructions once. Each unindented call runs the body again, so Lit appears twice.",
+    "importantRule": "Keep the body indented, include the header colon and define before calling. A call is not another def statement; calling requires parentheses too."
+  },
+  {
+    "id": "python-lesson-function-parameter",
+    "title": "Send a value into the spell",
+    "explanation": "A parameter is a name inside the parentheses of a function definition. An argument is a value you supply in a call. During the call, the parameter lets the body use that value.",
+    "codeExample": "def announce(item):\n    print(item)\nannounce(\"Ruby\")",
+    "expectedOutput": "Ruby",
+    "whyItWorks": "item is the parameter. \"Ruby\" is the argument. During this call, item holds Ruby, and print(item) displays it.",
+    "importantRule": "Use the parameter without quotes to read its value. print(\"item\") would show the fixed word item. This function takes one argument, unlike our earlier functions with empty parentheses."
+  },
+  {
+    "id": "python-lesson-function-reuse",
+    "title": "One spell, different treasures",
+    "explanation": "Call one function again with a different argument. The body stays the same, but the parameter receives the value supplied by each call. Calls run in the order you write them.",
+    "codeExample": "def reveal(treasure):\n    print(treasure)\nreveal(\"Pearl\")\nreveal(\"Coin\")",
+    "expectedOutput": "Pearl\nCoin",
+    "whyItWorks": "The first call gives treasure the value Pearl; the next gives it Coin. Each call runs print(treasure) once, producing two lines in that order.",
+    "importantRule": "The parameter is the name in the definition; arguments are the values in calls. Do not replace the parameter in the body with fixed text if you want different values."
+  },
 ];
 
 export function getLessonForExercise(exercise: Exercise): LessonContent | null {

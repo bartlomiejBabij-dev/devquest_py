@@ -21,6 +21,7 @@ const { spellbookEntries, exerciseSpellbookEntryIds, getSpellbookEntryForExercis
 const { getAccessibleMapChapters, resolveMapWorld, worldMapForMission } = require('../src/navigation/worldRoutes.ts');
 const { isBossMission, isWorldCleared, getBossHp } = require('../src/game/boss.ts');
 const { trackForRoute } = require('../src/game/audioController.ts');
+const { forgeMissions, forgeExercises, forgeChapters } = require('../src/game/forgeContent.ts');
 const baseline = require('./fixtures/archipelago-compatibility.json');
 const before = { completedMissionIds: Object.keys(baseline.missions) };
 const targets = archipelagoMissions.slice(0, 2);
@@ -41,11 +42,11 @@ test('Archipelago preserves all 77 exercises, nineteen missions, three worlds/bo
 });
 
 test('Four worlds register exactly two short list missions, four lessons, two references and six unique touch questions', () => {
-  assert.deepEqual([worlds.length, chapters.length, missions.length, exercises.length, lessons.length, spellbookEntries.length], [4, 26, 26, 100, 51, 26]);
-  assert.deepEqual([exercises.filter(isChoiceExercise).length, exercises.filter(isCodeBuilderExercise).length], [82, 16]);
+  assert.deepEqual([worlds.length, chapters.length, missions.length, exercises.length, lessons.length, spellbookEntries.length], [5, 28, 28, 106, 55, 28]);
+  assert.deepEqual([exercises.filter(isChoiceExercise).length, exercises.filter(isCodeBuilderExercise).length], [86, 18]);
   assert.equal(exercises.filter(e => !isChoiceExercise(e) && !isCodeBuilderExercise(e)).length, 2);
-  assert.deepEqual(missions.filter(m => !Object.hasOwn(baseline.missions, m.id)), archipelagoMissions);
-  assert.deepEqual(exercises.filter(e => !Object.hasOwn(baseline.exercises, e.id)), archipelagoExercises);
+  assert.deepEqual(missions.filter(m => !Object.hasOwn(baseline.missions, m.id)), [...archipelagoMissions, ...forgeMissions]);
+  assert.deepEqual(exercises.filter(e => !Object.hasOwn(baseline.exercises, e.id)), [...archipelagoExercises, ...forgeExercises]);
   assert.deepEqual(targets.map(m => [m.title, m.exerciseIds.length, m.xpReward]), [['Treasure Inventory', 3, 30], ['Index Island', 3, 30]]);
   assert.deepEqual(questions.map(e => e.type), ['multiple-choice', 'multiple-choice', 'code-builder', 'output-choice', 'output-choice', 'code-builder']);
   assert.deepEqual(listArchipelago.chapterIds, islands.map(c => c.id));
@@ -54,7 +55,7 @@ test('Four worlds register exactly two short list missions, four lessons, two re
   const ids = [...worlds, ...chapters, ...missions, ...exercises, ...lessons, ...spellbookEntries,
     ...exercises.filter(isChoiceExercise).flatMap(e => e.options), ...exercises.filter(isCodeBuilderExercise).flatMap(e => e.fragments)].map(v => v.id);
   assert.equal(new Set(ids).size, ids.length);
-  assert.equal(missions.reduce((xp, m) => xp + m.xpReward, 0), 1280);
+  assert.equal(missions.reduce((xp, m) => xp + m.xpReward, 0), 1340);
   assert.equal(missions.filter(m => isBossMission(m.id)).length, 4);
 });
 
